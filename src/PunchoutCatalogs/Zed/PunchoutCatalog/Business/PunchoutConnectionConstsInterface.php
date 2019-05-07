@@ -26,6 +26,13 @@ interface PunchoutConnectionConstsInterface
     public const MESSAGE_CART_RETURN = 'punchout-catalog.cart.return.msg';
 
     public const CONNECTION_TYPE_SETUP_REQUEST = 'SETUP_REQUEST';
+    public const CONNECTION_TYPE_SETUP_RESPONSE = 'SETUP_RESPONSE';
+    public const CONNECTION_TYPE_ORDER_REQUEST  = 'ORDER_REQUEST';
+    public const CONNECTION_TYPE_ORDER_RESPONSE  = 'ORDER_RESPONSE';
+    public const CONNECTION_TYPE_TRANSFER_TO_REQUISITION  = 'TRANSFER_TO_REQUISITION';
+
+    public const STATUS_SUCCESS = 1;
+    public const STATUS_FAILURE = 2;
 
     public const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
 

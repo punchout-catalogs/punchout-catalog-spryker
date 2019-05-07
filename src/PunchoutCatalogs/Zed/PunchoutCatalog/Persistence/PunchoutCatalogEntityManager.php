@@ -21,37 +21,6 @@ use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 class PunchoutCatalogEntityManager extends AbstractEntityManager implements PunchoutCatalogEntityManagerInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
-     */
-    public function addRequestCatalogTransaction(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer, EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer = null): EcoPunchoutCatalogTransactionEntityTransfer
-    {
-        if ($punchoutCatalogTransactionEntityTransfer === null) {
-            $punchoutCatalogTransactionEntityTransfer = new EcoPunchoutCatalogTransactionEntityTransfer();
-        }
-        $punchoutCatalogTransactionEntityTransfer = $this
-            ->getTransactionMapper()
-            ->mapCatalogRequestTransferToEntityTransfer($punchoutCatalogRequestTransfer, $punchoutCatalogTransactionEntityTransfer);
-
-        return $this->saveTransaction($punchoutCatalogTransactionEntityTransfer);
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer
-     *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
-     */
-    public function addResponseCatalogTransaction(PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer): EcoPunchoutCatalogTransactionEntityTransfer
-    {
-        $punchoutCatalogTransactionEntityTransfer = $this
-            ->getTransactionMapper()
-            ->mapCatalogResponseTransferToEntityTransfer($punchoutCatalogResponseTransfer, new EcoPunchoutCatalogTransactionEntityTransfer());
-
-        return $this->saveTransaction($punchoutCatalogTransactionEntityTransfer);
-    }
-
-    /**
      * @param \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer

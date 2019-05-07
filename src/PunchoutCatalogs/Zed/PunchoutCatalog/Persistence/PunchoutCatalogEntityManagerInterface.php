@@ -16,20 +16,6 @@ use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction;
 interface PunchoutCatalogEntityManagerInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
-     */
-    public function addRequestCatalogTransaction(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer, EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer = null): EcoPunchoutCatalogTransactionEntityTransfer;
-
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer
-     *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
-     */
-    public function addResponseCatalogTransaction(PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer): EcoPunchoutCatalogTransactionEntityTransfer;
-
-    /**
      * @param \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer

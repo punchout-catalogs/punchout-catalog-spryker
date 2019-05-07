@@ -61,11 +61,12 @@ class GatewayController extends AbstractGatewayController
      */
     public function processCartCancelAction(): PunchoutCatalogCartResponseTransfer
     {
-        return (new PunchoutCatalogCartResponseTransfer())
-            ->setIsSuccess(true)
-            ->setContentType('text/html')
-            ->setContent('SAMPLE CANCEL');
-        //return $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer);
+//        return (new PunchoutCatalogCartResponseTransfer())
+//            ->setIsSuccess(true)
+//            ->setContentType('text/html')
+//            ->setContent('SAMPLE CANCEL');
+        $punchoutCatalogCartRequestTransfer = new PunchoutCatalogCartRequestTransfer();
+        return $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer);
     }
 
     /**

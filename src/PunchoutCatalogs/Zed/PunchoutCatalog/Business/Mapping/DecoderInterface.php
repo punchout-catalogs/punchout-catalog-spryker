@@ -22,5 +22,5 @@ interface DecoderInterface
      *
      * @return array
      */
-    public function execute(PunchoutCatalogMappingTransfer $mapping, $source): array;
+    public function execute(PunchoutCatalogMappingTransfer $mapping, $source);
 }

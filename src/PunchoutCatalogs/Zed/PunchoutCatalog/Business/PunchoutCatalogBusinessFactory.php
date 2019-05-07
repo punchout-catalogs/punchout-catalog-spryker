@@ -7,6 +7,8 @@
 
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Business;
 
+use PunchoutCatalogs\Zed\PunchoutCatalog\Business\Transaction\Mapper;
+use PunchoutCatalogs\Zed\PunchoutCatalog\Business\Transaction\MapperInterface;
 use Spryker\Zed\Kernel\Business\AbstractBusinessFactory;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Business\AccessToken\UrlHandler;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface;
@@ -57,6 +59,14 @@ class PunchoutCatalogBusinessFactory extends AbstractBusinessFactory
             $this->getVaultFacade(),
             $this->getRepository()
         );
+    }
+
+    /**
+     * @return MapperInterface|Mapper
+     */
+    public function createTransactionMapper(): MapperInterface
+    {
+        return new Mapper();
     }
 
     /**

@@ -37,6 +37,8 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     {
         $map = $this->decode($punchoutCatalogRequestTransfer);
 
+        $punchoutCatalogRequestTransfer->setDecodedContent(json_encode($map, JSON_PRETTY_PRINT));
+
         /**
          * @todo: move to a separate class like Persistence/Mapper/ConnectionMapper
          */
@@ -68,7 +70,9 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $landingUrl = 'http://www.democe23.com/?SID=f59a04fdb07a77053dcbdf36e71c52f9&test=' . rand(0, 1000);
         /** /TEST STUB */
 
-        return (new PunchoutCatalogResponseTransfer())
+        $punchoutCatalogResponseTransfer = new PunchoutCatalogResponseTransfer();
+        $punchoutCatalogResponseTransfer->setRequest($punchoutCatalogRequestTransfer);
+        return $punchoutCatalogResponseTransfer
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(true)
             ->setContent($this->createEntryResponse($landingUrl));

@@ -131,7 +131,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
     public function findConnectionByCredential(PunchoutCatalogConnectionCredentialSearchTransfer $connectionCredentialSearch): ?PunchoutCatalogConnectionTransfer
     {
         $connection = $this->punchoutCatalogRepository->findConnectionByCredential($connectionCredentialSearch);
-        if ($connection === null) {
+        if ($connection === null || $connection->getIdPunchoutCatalogConnection() === null) {
             return null;
         }
 

@@ -140,14 +140,23 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      */
     public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer
     {
-        $requestTransaction = $this->getEntityManager()->addRequestCatalogTransaction($punchoutCatalogRequestTransfer);
+        $transactionMapper = $this->getFactory()->createTransactionMapper();
+
+        $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer($punchoutCatalogRequestTransfer);
+
+        $this->getEntityManager()->saveTransaction($requestTransaction);
 
         $punchoutCatalogResponseTransfer = $this->getFactory()
             ->createRequestProcessor()
             ->processRequest($punchoutCatalogRequestTransfer);
 
-        $this->getEntityManager()->addResponseCatalogTransaction($punchoutCatalogResponseTransfer);
-        $this->getEntityManager()->addRequestCatalogTransaction($punchoutCatalogResponseTransfer->getRequest(), $requestTransaction);
+        $responseTransaction = $transactionMapper->mapResponseTransferToEntityTransfer($punchoutCatalogResponseTransfer);
+
+        $this->getEntityManager()->saveTransaction($responseTransaction);
+        if ($punchoutCatalogResponseTransfer->getRequest() !== null) {
+            $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer($punchoutCatalogResponseTransfer->getRequest(), $requestTransaction);
+            $this->getEntityManager()->saveTransaction($requestTransaction);
+        }
 
         return $punchoutCatalogResponseTransfer;
     }
@@ -163,8 +172,24 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      */
     public function processCart(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): PunchoutCatalogCartResponseTransfer
     {
-        return $this->getFactory()
+        $transactionMapper = $this->getFactory()->createTransactionMapper();
+
+        $requestTransaction = $transactionMapper->mapCartRequestTransferToEntityTransfer($punchoutCatalogCartRequestTransfer);
+
+        $this->getEntityManager()->saveTransaction($requestTransaction);
+
+        $punchoutCatalogCartResponseTransfer = $this->getFactory()
             ->createCartProcessor()
             ->processCart($punchoutCatalogCartRequestTransfer);
+
+        $responseTransaction = $transactionMapper->mapCartResponseTransferToEntityTransfer($punchoutCatalogCartResponseTransfer);
+
+        $this->getEntityManager()->saveTransaction($responseTransaction);
+        if ($punchoutCatalogCartResponseTransfer->getRequest() !== null) {
+            $requestTransaction = $transactionMapper->mapCartRequestTransferToEntityTransfer($punchoutCatalogCartResponseTransfer->getRequest(), $requestTransaction);
+            $this->getEntityManager()->saveTransaction($requestTransaction);
+        }
+
+        return $punchoutCatalogCartResponseTransfer;
     }
 }

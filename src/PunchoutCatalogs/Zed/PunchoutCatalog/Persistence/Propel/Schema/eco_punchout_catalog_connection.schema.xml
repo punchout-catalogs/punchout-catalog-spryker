@@ -104,6 +104,8 @@
 
         <column name="status" type="VARCHAR" size="16" required="false"/>
 
+        <column name="type" type="VARCHAR" size="64" required="true"/>
+
         <column name="connection_session_id" type="VARCHAR" size="36" required="false"/>
 
         <column name="raw_data" type="LONGVARCHAR" required="false"/>

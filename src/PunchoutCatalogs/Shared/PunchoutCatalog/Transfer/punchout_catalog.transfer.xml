@@ -6,6 +6,7 @@
     <transfer name="PunchoutCatalogRequest">
         <property name="contentType" type="string" />
         <property name="content" type="string" /><!-- it can be an string or array -->
+        <property name="decodedContent" type="string" />
 
         <property name="protocolType" type="string" />
         <property name="protocolData" type="PunchoutCatalogProtocolData" />
@@ -157,6 +158,8 @@
 
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
+
+        <property name="request" type="PunchoutCatalogCartRequest"/>
     </transfer>
 
     <transfer name="PunchoutCatalogCart">

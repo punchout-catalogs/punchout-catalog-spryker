@@ -73,7 +73,6 @@ class RequestProcessor implements RequestProcessorInterface
         }
 
         $punchoutCatalogResponseTransfer = $this->process($punchoutCatalogRequestTransfer);
-        $punchoutCatalogResponseTransfer->setRequest($punchoutCatalogRequestTransfer);
 
         if ($punchoutCatalogResponseTransfer === null) {
             return $this->createErrorResponse($this->getMissingProcessorErrorMessage());

@@ -7,36 +7,11 @@
 
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Persistence\Propel\Mapper;
 
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogTransactionTransfer;
 use Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer;
 use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction;
 
 interface PunchoutCatalogTransactionMapperInterface
 {
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogTransactionTransfer $punchoutCatalogRequestTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction $ecoPunchoutCatalogTransactionEntityTransfer
-     *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
-     */
-    public function mapCatalogRequestTransferToEntityTransfer(
-        PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer,
-        EcoPunchoutCatalogTransactionEntityTransfer $ecoPunchoutCatalogTransactionEntityTransfer
-    ): EcoPunchoutCatalogTransactionEntityTransfer;
-
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction $ecoPunchoutCatalogTransactionEntityTransfer
-     *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
-     */
-    public function mapCatalogResponseTransferToEntityTransfer(
-        PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer,
-        EcoPunchoutCatalogTransactionEntityTransfer $ecoPunchoutCatalogTransactionEntityTransfer
-    ): EcoPunchoutCatalogTransactionEntityTransfer;
-
     /**
      * @param \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer
      * @param \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction $punchoutCatalogTransactionEntity
@@ -57,5 +32,5 @@ interface PunchoutCatalogTransactionMapperInterface
     public function mapEntityToTransactionTransfer(
         EcoPunchoutCatalogTransaction $punchoutCatalogTransactionEntity,
         EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer
-    ): PunchoutCatalogTransactionTransfer;
+    ): EcoPunchoutCatalogTransactionEntityTransfer;
 }

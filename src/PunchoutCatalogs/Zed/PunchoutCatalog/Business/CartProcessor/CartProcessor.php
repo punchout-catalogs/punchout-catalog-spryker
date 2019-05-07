@@ -71,10 +71,12 @@ class CartProcessor implements CartProcessorInterface
                 throw new InvalidArgumentException(static::ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR);
             }
 
-            return $this->cartProcessorPlugins[$format]->processCart(
+            $punchoutCatalogCartResponseTransfer = $this->cartProcessorPlugins[$format]->processCart(
                 $punchoutCatalogCartRequestTransfer,
                 $this->getCurrentCartOptions()
             );
+            $punchoutCatalogCartResponseTransfer->setRequest($punchoutCatalogCartRequestTransfer);
+            return $punchoutCatalogCartResponseTransfer;
         } catch (Exception $e) {
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
             $punchoutCatalogResponseTransfer->setIsSuccess(false);

@@ -8,67 +8,10 @@
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Persistence\Propel\Mapper;
 
 use Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogTransactionTransfer;
 use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction;
 
 class PunchoutCatalogTransactionMapper implements PunchoutCatalogTransactionMapperInterface
 {
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogTransactionTransfer $punchoutCatalogRequestTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransactionEntityTransfer $ecoPunchoutCatalogTransactionEntityTransfer
-     *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
-     */
-    public function mapCatalogRequestTransferToEntityTransfer(
-        PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer,
-        EcoPunchoutCatalogTransactionEntityTransfer $ecoPunchoutCatalogTransactionEntityTransfer
-    ): EcoPunchoutCatalogTransactionEntityTransfer
-    {
-        //@TODO implement it
-        $ecoPunchoutCatalogTransactionEntityTransfer->setMessage($punchoutCatalogRequestTransfer->getContent());
-        if ($punchoutCatalogRequestTransfer->getCompany()) {
-            $ecoPunchoutCatalogTransactionEntityTransfer->setFkCompany($punchoutCatalogRequestTransfer->getCompany()->getIdCompany());
-        }
-        if ($punchoutCatalogRequestTransfer->getIsSuccess()) {
-            $ecoPunchoutCatalogTransactionEntityTransfer->setStatus('SUCCESS');
-        } else {
-            $ecoPunchoutCatalogTransactionEntityTransfer->setStatus('ERROR');
-        }
-        if ($punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()) {
-            $ecoPunchoutCatalogTransactionEntityTransfer->setFkPunchoutCatalogConnection($punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
-        }
-        return $ecoPunchoutCatalogTransactionEntityTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransactionEntityTransfer $ecoPunchoutCatalogTransactionEntityTransfer
-     *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
-     */
-    public function mapCatalogResponseTransferToEntityTransfer(
-        PunchoutCatalogResponseTransfer $punchoutCatalogResponseTransfer,
-        EcoPunchoutCatalogTransactionEntityTransfer $ecoPunchoutCatalogTransactionEntityTransfer
-    ): EcoPunchoutCatalogTransactionEntityTransfer
-    {
-        //@TODO implement it
-        $ecoPunchoutCatalogTransactionEntityTransfer->setMessage($punchoutCatalogResponseTransfer->getContent());
-        if ($punchoutCatalogResponseTransfer->getIsSuccess()) {
-            $ecoPunchoutCatalogTransactionEntityTransfer->setStatus('SUCCESS');
-        } else {
-            $ecoPunchoutCatalogTransactionEntityTransfer->setStatus('ERROR');
-        }
-        if ($punchoutCatalogResponseTransfer->getRequest()
-            && $punchoutCatalogResponseTransfer->getRequest()->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection()
-            && $punchoutCatalogResponseTransfer->getRequest()->getPunchoutCatalogConnection()) {
-            $ecoPunchoutCatalogTransactionEntityTransfer->setFkPunchoutCatalogConnection($punchoutCatalogResponseTransfer->getRequest()->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
-        }
-        return $ecoPunchoutCatalogTransactionEntityTransfer;
-    }
-
-
     /**
      * @param \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer
      * @param \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction $punchoutCatalogTransaction
@@ -95,7 +38,7 @@ class PunchoutCatalogTransactionMapper implements PunchoutCatalogTransactionMapp
     public function mapEntityToTransactionTransfer(
         EcoPunchoutCatalogTransaction $punchoutCatalogTransactionEntity,
         EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer
-    ): PunchoutCatalogTransactionTransfer
+    ): EcoPunchoutCatalogTransactionEntityTransfer
     {
         $punchoutCatalogTransactionEntityTransfer = $punchoutCatalogTransactionEntityTransfer->fromArray(
             $punchoutCatalogTransactionEntity->toArray(),
@@ -104,6 +47,4 @@ class PunchoutCatalogTransactionMapper implements PunchoutCatalogTransactionMapp
 
         return $punchoutCatalogTransactionEntityTransfer;
     }
-
-
 }
