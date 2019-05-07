@@ -1,0 +1,6 @@
+connection_name,business_unit_key,company_user_key,login_mode
+Client 1 - cXml - User 1,business-unit-regular-1,BoB--1,single company user login
+Client 1 - Oci - User 1,business-unit-regular-1,BoB--1,single company user login
+Client 1 - cXml - User 2,business-unit-regular-1,,single company user login
+Client 2 - cXml - User 1,,,dynamic login
+Client 3 - cXml - User 3,business-unit-mitte-1,,single company user login

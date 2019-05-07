@@ -1,0 +1,76 @@
+company_key,username,password,credentials,is_active,type,format,name,mapping_request
+BoB-Regular,user_1,user_1_pass,,1,SETUP_REQUEST,cxml,Client 1 - cXml - User 1,"{
+  ""customer"": {
+    ""fields"": {
+      ""first_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='FirstName']""
+      },
+      ""last_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='LastName']""
+      },
+      ""email"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='UserEmail']""
+      }
+    }
+  },
+  ""cart_item"": {
+    ""fields"": {
+      ""internal_id"":{
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/ItemOut/ItemID[1]/SupplierPartAuxiliaryID""
+      }
+    }
+  }
+}
+"
+BoB-Regular,user_1,user_1_pass,,1,SETUP_REQUEST,oci,Client 1 - Oci - User 1,"{
+  ""customer"": {
+    ""fields"": {
+      ""firstname"": {
+        ""path"": ""first_name""
+      },
+      ""lastname"": {
+        ""path"": ""last_name""
+      },
+      ""email"": {
+        ""path"": ""email""
+      }
+    }
+  }
+}"
+BoB-Regular,user_2,user_2_pass,,1,SETUP_REQUEST,cxml,Client 1 - cXml - User 2,"{
+  ""customer"": {
+    ""fields"": {
+      ""first_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Contact[1]/Name[1]"",
+        ""transform"": [{
+          ""split"": {
+            ""sep"": ""\\s"",
+            ""index"": ""1""
+          }
+        }]
+      },
+      ""last_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Contact[1]/Name[1]"",
+        ""transform"": [{
+          ""split"": {
+            ""sep"": ""\\s"",
+            ""index"": ""2""
+          }
+        }]
+      },
+      ""email"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Contact[1]/Email[1]""
+      }
+    }
+  },
+  ""cart_item"": {
+    ""fields"": {
+      ""internal_id"":{
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/ItemOut/ItemID[1]/SupplierPartAuxiliaryID""
+      }
+    }
+  }
+}
+"
+BoB-Regular,user_1,user_1_pass,,1,SETUP_REQUEST,cxml,Client 2 - cXml - User 1,{}
+BoB-Hotel-Mitte,user_3,user_3_pass,,1,SETUP_REQUEST,cxml,Client 3 - cXml - User 3,{}

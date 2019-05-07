@@ -1,0 +1,290 @@
+connection_name,max_description_length,cart_encoding,mapping_cart
+Client 1 - cXml - User 1,100,base64,"{
+  ""cart"": {
+    ""fields"": {
+      ""comment"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
+      },
+      ""grand_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]""
+      },
+
+      ""tax_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]""
+      },
+      ""tax_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Description[1]""
+      },
+
+      ""shipping_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]""
+      },
+      ""shipping_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Description[1]""
+      },
+
+      ""handling_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]""
+      },
+      ""handling_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Description[1]""
+      },
+
+      ""discount_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]""
+      },
+      ""discount_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Description[1]""
+      },
+
+      ""currency"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency""
+      }
+    }
+  },
+  ""cart_item"": {
+    ""fields"": {
+      ""line_number"": {
+        ""path"": ""@lineNumber""
+      },
+      ""qty"": {
+        ""path"": ""@quantity"",
+        ""transform"": [
+          ""round""
+        ]
+      },
+      ""internal_id"": {
+        ""path"": ""ItemID[1]/SupplierPartAuxiliaryID[1]""
+      },
+      ""currency"": {
+        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]/@currency""
+      },
+      ""price_amount"": {
+        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]""
+      },
+      ""name"": {
+        ""path"": ""ItemDetail[1]/Description[1]/ShortName""
+      },
+      ""description"": {
+        ""path"": ""ItemDetail[1]/Description[1]""
+      },
+      ""uom"": {
+        ""path"": ""ItemDetail[1]/UnitOfMeasure[1]""
+      },
+      ""manufacturer_part_id"": {
+        ""path"": ""ItemDetail[1]/ManufacturerPartID[1]""
+      },
+      ""manufacturer_name"": {
+        ""path"": ""ItemDetail[1]/ManufacturerName[1]""
+      },
+      ""supplier_id"": {
+        ""path"": ""ItemDetail[1]/SupplierID[1]""
+      },
+      ""comment"": {
+        ""path"": ""ItemDetail[1]/Comments[1]""
+      },
+      ""supplier_part_id"": {
+        ""path"": ""ItemID[1]/SupplierPartID[1]""
+      },
+      ""buyer_part_id"": {
+        ""path"": ""ItemDetail[1]/BuyerPartID[1]""
+      },
+      ""unspsc"": {
+        ""path"": ""ItemDetail[1]/Classification[@domain='UNSPSC']""
+      },
+      ""lang"": {
+        ""path"": ""ItemDetail[1]/Description[1]/@xml:lang""
+      }
+    }
+  }
+}"
+Client 1 - Oci - User 1,128,,"
+{
+  ""cart_item"": {
+    ""fields"": {
+      ""qty"": {
+        ""path"": ""NEW_ITEM-QUANTITY[%line_number%]""
+      },
+      ""internal_id"": {
+        ""path"": ""NEW_ITEM-EXT_PRODUCT_ID[%line_number%]""
+      },
+      ""sku"": {
+        ""path"": ""NEW_ITEM-VENDORMAT[%line_number%]""
+      },
+      ""currency"": {
+        ""path"": ""NEW_ITEM-CURRENCY[%line_number%]""
+      },
+      ""price_amount"": {
+        ""path"": ""NEW_ITEM-PRICE[%line_number%]""
+      },
+      ""name"": {
+        ""path"": ""NEW_ITEM-DESCRIPTION[%line_number%]""
+      },
+      ""description"": {
+        ""path"": ""NEW_ITEM-LONGTEXT_%line_number%:132[]""
+      },
+      ""uom"": {
+        ""path"": ""NEW_ITEM-UNIT[%line_number%]""
+      },
+      ""manufacturer_part_id"": {
+        ""path"": ""NEW_ITEM-MANUFACTMAT[%line_number%]""
+      },
+      ""manufacturer_name"": {
+        ""path"": ""NEW_ITEM-MANUFACTCODE[%line_number%]""
+      },
+      ""unspsc"": {
+        ""path"": ""NEW_ITEM-MATGROUP[%line_number%]""
+      },
+      ""supplier_id"": {
+        ""path"": ""NEW_ITEM-VENDOR[%line_number%]""
+      }
+    }
+  }
+}"
+Client 1 - cXml - User 2,,urlencoded,"{
+  ""cart"": {
+    ""fields"": {
+      ""comment"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
+      },
+      ""grand_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]""
+      },
+
+      ""tax_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]""
+      },
+      ""tax_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Description[1]""
+      },
+
+      ""shipping_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]""
+      },
+      ""shipping_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Description[1]""
+      },
+
+      ""handling_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]""
+      },
+      ""handling_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Description[1]""
+      },
+
+      ""discount_total"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]""
+      },
+      ""discount_description"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Description[1]""
+      },
+
+      ""currency"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency"",
+								""append"": true
+      },
+
+""custom_attributes"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/CustomAttributes/customOption()"",
+		""multiple"": true
+      },
+      ""custom_attributes/test1/code"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test1/Code""
+      },
+					""custom_attributes/test1"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test1/Value""
+      },
+""custom_attributes/test2/code"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test2/Code""
+      },
+""custom_attributes/test2/value"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test2/Value""
+      }
+    }
+  },
+  ""cart_item"": {
+    ""fields"": {
+      ""line_number"": {
+        ""path"": ""@lineNumber""
+      },
+      ""qty"": {
+        ""path"": ""@quantity""
+      },
+      ""internal_id"": {
+        ""path"": ""ItemID[1]/SupplierPartAuxiliaryID[1]""
+      },
+						""price_amount"": {
+        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]""
+      },
+      ""currency"": {
+        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]/@currency"",
+								""append"": true
+      },
+      ""lang"": {
+        ""path"": ""ItemDetail[1]/Description[1]/@xml:lang""
+      },
+      ""name"": {
+        ""path"": ""ItemDetail[1]/Description[1]/ShortName""
+      },
+      ""description"": {
+        ""path"": ""ItemDetail[1]/Description[1]""
+      },
+      ""uom"": {
+        ""path"": ""ItemDetail[1]/UnitOfMeasure[1]""
+      },
+      ""manufacturer_part_id"": {
+        ""path"": ""ItemDetail[1]/ManufacturerPartID[1]""
+      },
+      ""manufacturer_name"": {
+        ""path"": ""ItemDetail[1]/ManufacturerName[1]""
+      },
+      ""supplier_id"": {
+        ""path"": ""ItemDetail[1]/SupplierID[1]""
+      },
+      ""comment"": {
+        ""path"": ""ItemDetail[1]/Comments[1]""
+      },
+      ""supplier_part_id"": {
+        ""path"": ""ItemID[1]/SupplierPartID[1]""
+      },
+      ""buyer_part_id"": {
+        ""path"": ""ItemDetail[1]/BuyerPartID[1]""
+      },
+      ""unspsc"": {
+        ""path"": ""ItemDetail[1]/Classification[@domain='UNSPSC']""
+      },
+      ""options"": {
+        ""path"": ""ItemDetail[1]/Extrinsic/customOption()"",
+		""multiple"": true
+      },
+      ""custom_attributes"": {
+        ""path"": ""ItemDetail[1]/CustomAttributes/customOption()"",
+		""multiple"": true
+      },
+      ""custom_attributes/group_key/code"": {
+        ""path"": ""ItemDetail[1]/Custom/group_key/Code""
+      },
+					""custom_attributes/group_key"": {
+        ""path"": ""ItemDetail[1]/Custom/group_key/Value""
+      },
+""custom_attributes/abstract_sku/code"": {
+        ""path"": ""ItemDetail[1]/Custom/abstract_sku/Code""
+      },
+""custom_attributes/abstract_sku/value"": {
+        ""path"": ""ItemDetail[1]/Custom/abstract_sku/Value""
+      }
+    }
+  },
+  ""customOption"": {
+    ""fields"": {
+      ""code"": {
+        ""path"": ""@name""
+      },
+      ""value"": {
+        ""path"": ""./""
+      }
+    }
+  }
+}"
+Client 2 - cXml - User 1,,urlencoded,{}
+Client 3 - cXml - User 3,,base64,{}

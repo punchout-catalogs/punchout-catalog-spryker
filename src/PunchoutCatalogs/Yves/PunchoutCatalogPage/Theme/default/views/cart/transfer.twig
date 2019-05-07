@@ -1,0 +1,7 @@
+{% extends model('template') %}
+
+{% define data = {
+  content: content,
+} %}
+
+{% block template %}{{ data.content|raw }}{% endblock %}
