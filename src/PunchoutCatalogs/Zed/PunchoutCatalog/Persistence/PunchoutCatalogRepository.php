@@ -28,8 +28,8 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
         $connectionEntity = $this->getFactory()
             ->createPunchoutCatalogConnectionQuery()
             ->filterByUuid($connectionUuid)
-            ->joinWithEcoPunchoutCatalogCart()
-            ->joinWithEcoPunchoutCatalogSetup()
+            ->joinWithPgwPunchoutCatalogCart()
+            ->joinWithPgwPunchoutCatalogSetup()
             ->findOne();
 
         if (!$connectionEntity) {
@@ -56,8 +56,8 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
 
         $connectionEntity = $this->getFactory()
             ->createPunchoutCatalogConnectionQuery()
-            ->joinWithEcoPunchoutCatalogCart()
-            ->joinWithEcoPunchoutCatalogSetup()
+            ->joinWithPgwPunchoutCatalogCart()
+            ->joinWithPgwPunchoutCatalogSetup()
             ->filterByFkCompany($connectionCredentialSearch->getFkCompany())
             ->filterByFormat($connectionCredentialSearch->getFormat())
             ->filterByType($connectionCredentialSearch->getType())
@@ -81,8 +81,8 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
     public function findConnections(PunchoutCatalogConnectionCriteriaTransfer $punchoutCatalogConnectionCriteriaTransfer): PunchoutCatalogConnectionListTransfer
     {
         $query = $this->getFactory()->createPunchoutCatalogConnectionQuery()
-            ->joinWithEcoPunchoutCatalogCart()
-            ->joinWithEcoPunchoutCatalogSetup();
+            ->joinWithPgwPunchoutCatalogCart()
+            ->joinWithPgwPunchoutCatalogSetup();
 
         if ($punchoutCatalogConnectionCriteriaTransfer->getFkCompany()) {
             $query->filterByFkCompany($punchoutCatalogConnectionCriteriaTransfer->getFkCompany());

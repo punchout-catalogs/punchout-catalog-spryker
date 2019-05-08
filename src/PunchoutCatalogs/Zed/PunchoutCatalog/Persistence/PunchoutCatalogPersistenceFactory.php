@@ -7,9 +7,9 @@
 
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Persistence;
 
-use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogCartQuery;
-use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogConnectionQuery;
-use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransactionQuery;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogCartQuery;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionQuery;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Persistence\Propel\Mapper\PunchoutCatalogTransactionMapperInterface;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Persistence\Propel\Mapper\PunchoutCatalogConnectionMapper;
@@ -40,34 +40,34 @@ class PunchoutCatalogPersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransactionQuery
+     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionQuery
      */
-    public function createPunchoutCatalogTransactionQuery(): EcoPunchoutCatalogTransactionQuery
+    public function createPunchoutCatalogTransactionQuery(): PgwPunchoutCatalogTransactionQuery
     {
-        return EcoPunchoutCatalogTransactionQuery::create();
+        return PgwPunchoutCatalogTransactionQuery::create();
     }
 
     /**
-     * @return \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogConnectionQuery
+     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionQuery
      */
-    public function createPunchoutCatalogConnectionQuery(): EcoPunchoutCatalogConnectionQuery
+    public function createPunchoutCatalogConnectionQuery(): PgwPunchoutCatalogConnectionQuery
     {
-        return EcoPunchoutCatalogConnectionQuery::create();
+        return PgwPunchoutCatalogConnectionQuery::create();
     }
 
     /**
-     * @return \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogCartQuery
+     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogCartQuery
      */
-    public function createPunchoutCatalogCartQuery(): EcoPunchoutCatalogCartQuery
+    public function createPunchoutCatalogCartQuery(): PgwPunchoutCatalogCartQuery
     {
-        return EcoPunchoutCatalogCartQuery::create();
+        return PgwPunchoutCatalogCartQuery::create();
     }
 
     /**
-     * @return \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogSetupQuery
+     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogSetupQuery
      */
-    public function createPunchoutCatalogSetupQuery(): EcoPunchoutCatalogSetupQuery
+    public function createPunchoutCatalogSetupQuery(): PgwPunchoutCatalogSetupQuery
     {
-        return EcoPunchoutCatalogSetupQuery::create();
+        return PgwPunchoutCatalogSetupQuery::create();
     }
 }

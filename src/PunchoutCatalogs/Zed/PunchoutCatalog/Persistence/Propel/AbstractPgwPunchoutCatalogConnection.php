@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Persistence\Propel;
 
-use Orm\Zed\PunchoutCatalog\Persistence\Base\EcoPunchoutCatalogConnection as BaseEcoPunchoutCatalogConnection;
+use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogConnection as BasePgwPunchoutCatalogConnection;
 
 /**
  * Skeleton subclass for representing a row from the 'eco_punchout_catalog_connection' table.
@@ -19,6 +19,6 @@ use Orm\Zed\PunchoutCatalog\Persistence\Base\EcoPunchoutCatalogConnection as Bas
  * long as it does not already exist in the output directory.
  *
  */
-abstract class AbstractEcoPunchoutCatalogConnection extends BaseEcoPunchoutCatalogConnection
+abstract class AbstractPgwPunchoutCatalogConnection extends BasePgwPunchoutCatalogConnection
 {
 }

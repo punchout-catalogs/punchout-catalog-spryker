@@ -8,7 +8,7 @@
 namespace PunchoutCatalogs\Zed\PunchoutCatalogDataImport\Business\Step;
 
 use Orm\Zed\Company\Persistence\SpyCompanyQuery;
-use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogConnectionQuery;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionQuery;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
 use PunchoutCatalogs\Zed\PunchoutCatalogDataImport\Business\DataSet\PunchoutCatalogConnectionDataSet;
@@ -47,8 +47,8 @@ class PunchoutCatalogConnectionWriterStep implements DataImportStepInterface
         $companyEntity = SpyCompanyQuery::create()
             ->findOneByKey($dataSet[PunchoutCatalogConnectionDataSet::COMPANY_KEY]);
 
-        /** @var \Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogConnection $connectionEntity */
-        $connectionEntity = EcoPunchoutCatalogConnectionQuery::create()
+        /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection $connectionEntity */
+        $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
             ->filterByFkCompany($companyEntity->getIdCompany())
             ->filterByType($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_TYPE])
             ->filterByFormat($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_FORMAT])

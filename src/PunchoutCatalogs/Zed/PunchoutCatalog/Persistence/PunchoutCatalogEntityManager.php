@@ -7,12 +7,12 @@
 
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Persistence;
 
-use Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer;
+use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
-use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogConnection;
-use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransaction;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 
 /**
@@ -21,11 +21,11 @@ use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 class PunchoutCatalogEntityManager extends AbstractEntityManager implements PunchoutCatalogEntityManagerInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
+     * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */
-    public function saveTransaction(EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer): EcoPunchoutCatalogTransactionEntityTransfer
+    public function saveTransaction(PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer): PgwPunchoutCatalogTransactionEntityTransfer
     {
         $transactionEntity = $this->getFactory()
             ->createPunchoutCatalogTransactionQuery()
@@ -56,7 +56,7 @@ class PunchoutCatalogEntityManager extends AbstractEntityManager implements Punc
                 ->filterByUuid($connectionTransfer->getUuid())
                 ->findOneOrCreate();
         } else {
-            $spyConnection = new EcoPunchoutCatalogConnection();
+            $spyConnection = new PgwPunchoutCatalogConnection();
         }
 
         $spyConnection = $this->getFactory()

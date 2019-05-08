@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Business;
 
-use Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer;
+use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
@@ -30,11 +30,11 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequest
+     * @param \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequest
      *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
+     * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */
-    public function saveTransaction(EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequest): EcoPunchoutCatalogTransactionEntityTransfer
+    public function saveTransaction(PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequest): PgwPunchoutCatalogTransactionEntityTransfer
     {
         return $this->getEntityManager()
             ->saveTransaction($punchoutCatalogRequest);

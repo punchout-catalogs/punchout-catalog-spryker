@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\PunchoutCatalog\Persistence" package="src.Orm.Zed.PunchoutCatalog.Persistence">
 
-    <table name="eco_punchout_catalog_connection" phpName="EcoPunchoutCatalogConnection">
+    <table name="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
         <column name="id_punchout_catalog_connection" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
 
         <column name="fk_company" type="INTEGER" required="true"/>
 
-        <!-- moved to eco_punchout_catalog_setup -->
+        <!-- moved to pgw_punchout_catalog_setup -->
         <!--<column name="fk_business_unit" type="INTEGER" required="false"/>-->
 
-        <!-- moved to eco_punchout_catalog_setup -->
+        <!-- moved to pgw_punchout_catalog_setup -->
         <!--<column name="fk_company_user" type="INTEGER" required="false"/>-->
 
-        <!-- moved to eco_punchout_catalog_setup -->
+        <!-- moved to pgw_punchout_catalog_setup -->
         <!--<column name="login_mode" type="VARCHAR" size="64" required="true"/>-->
 
         <!-- for POSR/PO only, ASN and INV probably will use 7 separate creds-->
@@ -27,15 +27,15 @@
 
         <column name="format" type="VARCHAR" size="64" required="true"/>
 
-        <!-- moved to eco_punchout_catalog_cart -->
+        <!-- moved to pgw_punchout_catalog_cart -->
         <!--<column name="max_description_length" type="SMALLINT" required="false"/>-->
 
-        <!-- moved to eco_punchout_catalog_cart -->
+        <!-- moved to pgw_punchout_catalog_cart -->
         <!--<column name="cart_encoding" type="VARCHAR" size="16" required="false"/>-->
 
         <column name="mapping_request" type="LONGVARCHAR" required="false"/>
 
-        <!-- moved to eco_punchout_catalog_cart -->
+        <!-- moved to pgw_punchout_catalog_cart -->
         <!--<column name="mapping_cart" type="LONGVARCHAR" required="false"/>-->
 
         <column name="name" type="VARCHAR" size="255" required="true"/>
@@ -47,18 +47,18 @@
             <parameter name="key_columns" value="id_punchout_catalog_connection"/>
         </behavior>
 
-        <unique name="eco_punchout_catalog_connection-unique-uuid">
+        <unique name="pgw_punchout_catalog_connection-unique-uuid">
             <unique-column name="uuid"/>
         </unique>
 
-        <foreign-key name="eco_punchout_catalog_connection-fk_company" foreignTable="spy_company" phpName="Company">
+        <foreign-key name="pgw_punchout_catalog_connection-fk_company" foreignTable="spy_company" phpName="Company">
             <reference local="fk_company" foreign="id_company"/>
         </foreign-key>
 
-        <id-method-parameter value="eco_punchout_catalog_connection_pk_seq"/>
+        <id-method-parameter value="pgw_punchout_catalog_connection_pk_seq"/>
     </table>
 
-    <table name="eco_punchout_catalog_setup" phpName="EcoPunchoutCatalogSetup">
+    <table name="pgw_punchout_catalog_setup" phpName="PgwPunchoutCatalogSetup">
         <column name="id_punchout_catalog_connection" type="INTEGER" required="true" primaryKey="true"/>
 
         <column name="fk_business_unit" type="INTEGER" required="false"/>
@@ -68,14 +68,14 @@
         <column name="login_mode" type="VARCHAR" size="64" required="true"/>
 
 
-        <foreign-key name="eco_punchout_catalog_setup-fk_connection" foreignTable="eco_punchout_catalog_connection" phpName="EcoPunchoutCatalogConnection">
+        <foreign-key name="pgw_punchout_catalog_setup-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
             <reference local="id_punchout_catalog_connection" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
 
-        <id-method-parameter value="eco_punchout_catalog_setup_pk_seq"/>
+        <id-method-parameter value="pgw_punchout_catalog_setup_pk_seq"/>
     </table>
 
-    <table name="eco_punchout_catalog_cart" phpName="EcoPunchoutCatalogCart">
+    <table name="pgw_punchout_catalog_cart" phpName="PgwPunchoutCatalogCart">
         <column name="id_punchout_catalog_connection" type="INTEGER" required="true" primaryKey="true"/>
 
         <column name="max_description_length" type="SMALLINT" required="false"/>
@@ -85,15 +85,15 @@
         <column name="mapping_cart" type="LONGVARCHAR" required="false"/>
 
 
-        <foreign-key name="eco_punchout_catalog_cart-fk_connection" foreignTable="eco_punchout_catalog_connection" phpName="EcoPunchoutCatalogConnection">
+        <foreign-key name="pgw_punchout_catalog_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
             <reference local="id_punchout_catalog_connection" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
 
-        <id-method-parameter value="eco_punchout_catalog_cart_pk_seq"/>
+        <id-method-parameter value="pgw_punchout_catalog_cart_pk_seq"/>
     </table>
 
 
-    <table name="eco_punchout_catalog_transaction" phpName="EcoPunchoutCatalogTransaction">
+    <table name="pgw_punchout_catalog_transaction" phpName="PgwPunchoutCatalogTransaction">
         <column name="id_punchout_catalog_transaction" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
 
         <column name="fk_company" type="INTEGER" required="false"/>
@@ -119,10 +119,10 @@
             <parameter name="disable_updated_at" value="true"/>
         </behavior>
 
-        <foreign-key name="eco_punchout_catalog_transaction-fk_company" foreignTable="spy_company" phpName="Company">
+        <foreign-key name="pgw_punchout_catalog_transaction-fk_company" foreignTable="spy_company" phpName="Company">
             <reference local="fk_company" foreign="id_company"/>
         </foreign-key>
 
-        <id-method-parameter value="eco_punchout_catalog_transaction_pk_seq"/>
+        <id-method-parameter value="pgw_punchout_catalog_transaction_pk_seq"/>
     </table>
 </database>

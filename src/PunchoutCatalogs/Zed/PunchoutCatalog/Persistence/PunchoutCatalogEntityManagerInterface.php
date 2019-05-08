@@ -7,20 +7,20 @@
 
 namespace PunchoutCatalogs\Zed\PunchoutCatalog\Persistence;
 
-use Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer;
+use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
-use Orm\Zed\PunchoutCatalog\Persistence\EcoPunchoutCatalogTransaction;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransaction;
 
 interface PunchoutCatalogEntityManagerInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\EcoPunchoutCatalogTransactionEntityTransfer
+     * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */
-    public function saveTransaction(EcoPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer): EcoPunchoutCatalogTransactionEntityTransfer;
+    public function saveTransaction(PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer): PgwPunchoutCatalogTransactionEntityTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $connectionTransfer
