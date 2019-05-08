@@ -1,5 +1,5 @@
-connection_name,max_description_length,cart_encoding,mapping_cart
-Client 1 - cXml - User 1,100,base64,"{
+connection_name,default_supplier_id,max_description_length,cart_encoding,mapping_cart
+Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
   ""cart"": {
     ""fields"": {
       ""comment"": {
@@ -98,7 +98,7 @@ Client 1 - cXml - User 1,100,base64,"{
     }
   }
 }"
-Client 1 - Oci - User 1,128,,"
+Client 1 - Oci - User 1,PunchoutCatalogsInc,128,,"
 {
   ""cart_item"": {
     ""fields"": {
@@ -141,7 +141,7 @@ Client 1 - Oci - User 1,128,,"
     }
   }
 }"
-Client 1 - cXml - User 2,,urlencoded,"{
+Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
   ""cart"": {
     ""fields"": {
       ""comment"": {
@@ -286,5 +286,5 @@ Client 1 - cXml - User 2,,urlencoded,"{
     }
   }
 }"
-Client 2 - cXml - User 1,,urlencoded,{}
-Client 3 - cXml - User 3,,base64,{}
+Client 2 - cXml - User 1,PunchoutCatalogsInc,,urlencoded,{}
+Client 3 - cXml - User 3,PunchoutCatalogsInc,,base64,{}

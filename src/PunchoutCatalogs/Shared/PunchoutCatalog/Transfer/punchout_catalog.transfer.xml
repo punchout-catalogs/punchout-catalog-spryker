@@ -54,6 +54,7 @@
         <property name="idPunchoutCatalogCart" type="int" />
 
         <property name="maxDescriptionLength" type="int" />
+        <property name="defaultSupplierId" type="string" />
         <property name="cartEncoding" type="string" />
 
         <property name="mappingCart" type="string" />

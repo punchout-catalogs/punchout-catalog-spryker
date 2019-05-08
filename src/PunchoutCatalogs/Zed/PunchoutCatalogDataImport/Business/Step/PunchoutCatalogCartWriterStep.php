@@ -35,6 +35,7 @@ class PunchoutCatalogCartWriterStep implements DataImportStepInterface
 
         $cartEntity->setMappingCart($dataSet[PunchoutCatalogCartDataSet::CART_MAPPING_CART] ?? null);
         $cartEntity->setMaxDescriptionLength($dataSet[PunchoutCatalogCartDataSet::CART_MAX_DESCRIPTION_LENGTH] ?? null);
+        $cartEntity->setDefaultSupplierId($dataSet[PunchoutCatalogCartDataSet::CART_DEFAULT_SUPPLIER_ID] ?? null);
         $cartEntity->setCartEncoding($dataSet[PunchoutCatalogCartDataSet::CART_CART_ENCODING] ?? null);
 
         $cartEntity->save();

@@ -6,15 +6,6 @@
 
         <column name="fk_company" type="INTEGER" required="true"/>
 
-        <!-- moved to pgw_punchout_catalog_setup -->
-        <!--<column name="fk_business_unit" type="INTEGER" required="false"/>-->
-
-        <!-- moved to pgw_punchout_catalog_setup -->
-        <!--<column name="fk_company_user" type="INTEGER" required="false"/>-->
-
-        <!-- moved to pgw_punchout_catalog_setup -->
-        <!--<column name="login_mode" type="VARCHAR" size="64" required="true"/>-->
-
         <!-- for POSR/PO only, ASN and INV probably will use 7 separate creds-->
         <column name="username" type="VARCHAR" size="255" required="true"/>
         <!-- /for POSR/PO only, ASN and INV probably will use 7 separate creds-->
@@ -27,21 +18,11 @@
 
         <column name="format" type="VARCHAR" size="64" required="true"/>
 
-        <!-- moved to pgw_punchout_catalog_cart -->
-        <!--<column name="max_description_length" type="SMALLINT" required="false"/>-->
-
-        <!-- moved to pgw_punchout_catalog_cart -->
-        <!--<column name="cart_encoding" type="VARCHAR" size="16" required="false"/>-->
-
         <column name="mapping_request" type="LONGVARCHAR" required="false"/>
-
-        <!-- moved to pgw_punchout_catalog_cart -->
-        <!--<column name="mapping_cart" type="LONGVARCHAR" required="false"/>-->
 
         <column name="name" type="VARCHAR" size="255" required="true"/>
 
         <column name="uuid" type="VARCHAR" size="36" required="false"/>
-
 
         <behavior name="uuid">
             <parameter name="key_columns" value="id_punchout_catalog_connection"/>
@@ -78,12 +59,13 @@
     <table name="pgw_punchout_catalog_cart" phpName="PgwPunchoutCatalogCart">
         <column name="id_punchout_catalog_connection" type="INTEGER" required="true" primaryKey="true"/>
 
+        <column name="default_supplier_id" type="VARCHAR" size="64" required="false"/>
+
         <column name="max_description_length" type="SMALLINT" required="false"/>
 
         <column name="cart_encoding" type="VARCHAR" size="16" required="false"/>
 
         <column name="mapping_cart" type="LONGVARCHAR" required="false"/>
-
 
         <foreign-key name="pgw_punchout_catalog_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
             <reference local="id_punchout_catalog_connection" foreign="id_punchout_catalog_connection"/>
@@ -91,7 +73,6 @@
 
         <id-method-parameter value="pgw_punchout_catalog_cart_pk_seq"/>
     </table>
-
 
     <table name="pgw_punchout_catalog_transaction" phpName="PgwPunchoutCatalogTransaction">
         <column name="id_punchout_catalog_transaction" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
@@ -113,7 +94,6 @@
         <column name="error_message" type="LONGVARCHAR" required="false"/>
 
         <column name="created_at" type="TIMESTAMP" required="true"/>
-
 
         <behavior name="timestampable">
             <parameter name="disable_updated_at" value="true"/>
