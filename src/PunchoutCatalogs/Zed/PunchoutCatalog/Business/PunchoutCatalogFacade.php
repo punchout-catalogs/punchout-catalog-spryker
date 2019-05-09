@@ -172,23 +172,13 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      */
     public function processCart(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): PunchoutCatalogCartResponseTransfer
     {
-        $transactionMapper = $this->getFactory()->createTransactionMapper();
-
-        $requestTransaction = $transactionMapper->mapCartRequestTransferToEntityTransfer($punchoutCatalogCartRequestTransfer);
-
-        $this->getEntityManager()->saveTransaction($requestTransaction);
-
         $punchoutCatalogCartResponseTransfer = $this->getFactory()
             ->createCartProcessor()
             ->processCart($punchoutCatalogCartRequestTransfer);
-
-        $responseTransaction = $transactionMapper->mapCartResponseTransferToEntityTransfer($punchoutCatalogCartResponseTransfer);
+        $responseTransaction = $this->getFactory()->createTransactionMapper()
+            ->mapCartResponseTransferToEntityTransfer($punchoutCatalogCartResponseTransfer);
 
         $this->getEntityManager()->saveTransaction($responseTransaction);
-        if ($punchoutCatalogCartResponseTransfer->getRequest() !== null) {
-            $requestTransaction = $transactionMapper->mapCartRequestTransferToEntityTransfer($punchoutCatalogCartResponseTransfer->getRequest(), $requestTransaction);
-            $this->getEntityManager()->saveTransaction($requestTransaction);
-        }
 
         return $punchoutCatalogCartResponseTransfer;
     }

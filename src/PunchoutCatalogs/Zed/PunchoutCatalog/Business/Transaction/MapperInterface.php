@@ -33,17 +33,6 @@ interface MapperInterface
     ): PgwPunchoutCatalogTransactionEntityTransfer;
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
-     *
-     * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
-     */
-    public function mapCartRequestTransferToEntityTransfer(
-        PunchoutCatalogCartRequestTransfer $cartRequestTransfer,
-        PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer = null
-    ): PgwPunchoutCatalogTransactionEntityTransfer;
-
-    /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer
      * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
      *

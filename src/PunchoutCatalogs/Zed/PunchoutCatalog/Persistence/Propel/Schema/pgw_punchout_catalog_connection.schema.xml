@@ -83,7 +83,7 @@
 
         <column name="message" type="LONGVARCHAR" required="false"/>
 
-        <column name="status" type="VARCHAR" size="16" required="false"/>
+        <column name="status" type="BOOLEAN" required="false"/>
 
         <column name="type" type="VARCHAR" size="64" required="true"/>
 

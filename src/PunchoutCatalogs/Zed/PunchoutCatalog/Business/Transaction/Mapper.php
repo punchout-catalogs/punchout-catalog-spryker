@@ -41,11 +41,7 @@ class Mapper implements MapperInterface
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
         $entityTransfer->setMessage($content);
-        if ($responseTransfer->getIsSuccess()) {
-            $entityTransfer->setStatus(PunchoutTransactionConstsInterface::STATUS_SUCCESS);
-        } else {
-            $entityTransfer->setStatus(PunchoutTransactionConstsInterface::STATUS_FAILURE);
-        }
+        $entityTransfer->setStatus($responseTransfer->getIsSuccess());
         return $entityTransfer;
     }
 
@@ -73,31 +69,9 @@ class Mapper implements MapperInterface
             $entityTransfer->setFkCompany($requestTransfer->getCompany()->getIdCompany());
         }
         $entityTransfer->setRawData($requestTransfer->getDecodedContent());
-        if ($requestTransfer->getIsSuccess()) {
-            $entityTransfer->setStatus(PunchoutTransactionConstsInterface::STATUS_SUCCESS);
-        } else {
-            $entityTransfer->setStatus(PunchoutTransactionConstsInterface::STATUS_FAILURE);
-        }
+        $entityTransfer->setStatus($requestTransfer->getIsSuccess());
         if ($requestTransfer->getPunchoutCatalogConnection()) {
             $entityTransfer->setFkPunchoutCatalogConnection($requestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
-        }
-        return $entityTransfer;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
-     *
-     * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
-     */
-    public function mapCartRequestTransferToEntityTransfer(
-        PunchoutCatalogCartRequestTransfer $cartRequestTransfer,
-        PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer = null
-    ): PgwPunchoutCatalogTransactionEntityTransfer
-    {
-        if ($entityTransfer === null) {
-            $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
-            $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_SETUP_REQUEST);
         }
         return $entityTransfer;
     }
@@ -115,12 +89,13 @@ class Mapper implements MapperInterface
     {
         if ($entityTransfer === null) {
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
-            $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_SETUP_REQUEST);
+            $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_TRANSFER_TO_REQUISITION);
         }
         $content = $cartResponseTransfer->getContent();
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
+        $entityTransfer->setStatus($cartResponseTransfer->getIsSuccess());
         $entityTransfer->setMessage($content);
         return $entityTransfer;
     }
