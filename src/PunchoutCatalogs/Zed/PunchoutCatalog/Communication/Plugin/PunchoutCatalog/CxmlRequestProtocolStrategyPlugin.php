@@ -10,7 +10,7 @@ namespace PunchoutCatalogs\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCata
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Spryker\Service\UtilCXml\UtilCXmlService;
+use PunchoutCatalogs\Service\UtilCxml\UtilCxmlService;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
@@ -25,13 +25,13 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     /**
      * @api
      *
-     * @var \Spryker\Service\UtilCXml\UtilCXmlServiceInterface
+     * @var \PunchoutCatalogs\Service\UtilCxml\UtilCxmlServiceInterface
      */
     protected $utilCxmlService;
 
     public function __construct()
     {
-        $this->utilCxmlService = new UtilCXmlService();
+        $this->utilCxmlService = new UtilCxmlService();
     }
 
     /**

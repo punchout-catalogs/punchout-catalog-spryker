@@ -10,7 +10,7 @@ namespace PunchoutCatalogs\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCata
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Spryker\Service\UtilOci\UtilOciService;
+use PunchoutCatalogs\Service\UtilOci\UtilOciService;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalogs\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
@@ -25,7 +25,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
     /**
      * @api
      *
-     * @var \Spryker\Service\UtilOci\UtilOciServiceInterface
+     * @var \PunchoutCatalogs\Service\UtilOci\UtilOciServiceInterface
      */
     protected $utilOciService;
 
