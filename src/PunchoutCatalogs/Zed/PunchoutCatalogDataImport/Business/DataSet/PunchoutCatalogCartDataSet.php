@@ -9,10 +9,9 @@ namespace PunchoutCatalogs\Zed\PunchoutCatalogDataImport\Business\DataSet;
 
 interface PunchoutCatalogCartDataSet
 {
-    public const CONNECTION_NAME = 'connection_name';
-
-    public const CART_MAPPING_CART = 'mapping_cart';
-    public const CART_DEFAULT_SUPPLIER_ID = 'default_supplier_id';
-    public const CART_MAX_DESCRIPTION_LENGTH = 'max_description_length';
-    public const CART_CART_ENCODING = 'cart_encoding';
+    public const NAME = 'connection_name';
+    public const MAPPING = 'mapping_cart';
+    public const DEFAULT_SUPPLIER_ID = 'default_supplier_id';
+    public const MAX_DESCRIPTION_LENGTH = 'max_description_length';
+    public const ENCODING = 'cart_encoding';
 }

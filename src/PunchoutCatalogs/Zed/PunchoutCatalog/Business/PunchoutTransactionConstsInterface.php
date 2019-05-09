@@ -9,12 +9,10 @@ namespace PunchoutCatalogs\Zed\PunchoutCatalog\Business;
 
 interface PunchoutTransactionConstsInterface
 {
-    public const TRANSACTION_TYPE_SETUP_REQUEST = 'SETUP_REQUEST';
-    public const TRANSACTION_TYPE_SETUP_RESPONSE = 'SETUP_RESPONSE';
-    public const TRANSACTION_TYPE_ORDER_REQUEST  = 'ORDER_REQUEST';
-    public const TRANSACTION_TYPE_ORDER_RESPONSE  = 'ORDER_RESPONSE';
-    public const TRANSACTION_TYPE_TRANSFER_TO_REQUISITION  = 'TRANSFER_TO_REQUISITION';
+    public const TRANSACTION_TYPE_SETUP_REQUEST  = 'setup_request';
+    public const TRANSACTION_TYPE_SETUP_RESPONSE = 'setup_response';
+    public const TRANSACTION_TYPE_TRANSFER_TO_REQUISITION = 'transfer_to_requisition';
 
-    public const STATUS_SUCCESS = 'SUCCESS';
-    public const STATUS_FAILURE = 'FAILURE';
+    public const STATUS_SUCCESS = 'success';
+    public const STATUS_FAILURE = 'failure';
 }

@@ -26,17 +26,17 @@ class PunchoutCatalogCartWriterStep implements DataImportStepInterface
     public function execute(DataSetInterface $dataSet): void
     {
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
-            ->findOneByName($dataSet[PunchoutCatalogCartDataSet::CONNECTION_NAME]);
+            ->findOneByName($dataSet[PunchoutCatalogCartDataSet::NAME]);
 
         /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogCart $cartEntity */
         $cartEntity = PgwPunchoutCatalogCartQuery::create()
             ->filterByIdPunchoutCatalogConnection($connectionEntity->getIdPunchoutCatalogConnection())
             ->findOneOrCreate();
 
-        $cartEntity->setMappingCart($dataSet[PunchoutCatalogCartDataSet::CART_MAPPING_CART] ?? null);
-        $cartEntity->setMaxDescriptionLength($dataSet[PunchoutCatalogCartDataSet::CART_MAX_DESCRIPTION_LENGTH] ?? null);
-        $cartEntity->setDefaultSupplierId($dataSet[PunchoutCatalogCartDataSet::CART_DEFAULT_SUPPLIER_ID] ?? null);
-        $cartEntity->setCartEncoding($dataSet[PunchoutCatalogCartDataSet::CART_CART_ENCODING] ?? null);
+        $cartEntity->setMappingCart($dataSet[PunchoutCatalogCartDataSet::MAPPING] ?? null);
+        $cartEntity->setMaxDescriptionLength($dataSet[PunchoutCatalogCartDataSet::MAX_DESCRIPTION_LENGTH] ?? null);
+        $cartEntity->setDefaultSupplierId($dataSet[PunchoutCatalogCartDataSet::DEFAULT_SUPPLIER_ID] ?? null);
+        $cartEntity->setCartEncoding($dataSet[PunchoutCatalogCartDataSet::ENCODING] ?? null);
 
         $cartEntity->save();
     }
