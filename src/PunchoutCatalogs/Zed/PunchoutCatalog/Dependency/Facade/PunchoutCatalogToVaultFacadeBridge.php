@@ -19,6 +19,18 @@ class PunchoutCatalogToVaultFacadeBridge implements PunchoutCatalogToVaultFacade
             3 => 'user_2_pass',
             4 => 'user_1_pass',
             5 => 'user_3_pass',
+    
+            6 => 'user_1_pass',
+            7 => 'user_1_pass',
+            8 => 'user_2_pass',
+            9 => 'user_1_pass',
+            10 => 'user_3_pass',
+    
+            11 => 'user_1_pass',
+            12 => 'user_1_pass',
+            13 => 'user_2_pass',
+            14 => 'user_1_pass',
+            15 => 'user_3_pass',
         ],
     ];
 

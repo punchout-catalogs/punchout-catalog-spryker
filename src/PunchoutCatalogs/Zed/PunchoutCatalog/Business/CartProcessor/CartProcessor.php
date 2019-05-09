@@ -118,9 +118,9 @@ class CartProcessor implements CartProcessorInterface
     protected function getCurrentConnection(): ?PunchoutCatalogConnectionTransfer
     {
         //@todo: get data from session
-        $uuidCxmlBase64 = '0c035706-3a89-5697-a508-51a663d51027';
-        $uuidCxmlUrlEncoded = 'f743946d-ba78-57fc-b051-0738bfc211bd';
-        $uuidOci = 'f9d47282-e1ad-5f1a-8396-36cb1b55b0f7';
+        $uuidCxmlBase64 = 'b7e93147-fda6-575b-98ec-cc9d7bb11fbd';
+        $uuidCxmlUrlEncoded = '84b48b3f-d2d5-5819-898d-a204589b6a60';
+        $uuidOci = '8fc18f5c-50c7-5ee9-a25b-58f6783cadbf';
 
         //$uuid = $uuidOci;
         $uuid = $uuidCxmlBase64;

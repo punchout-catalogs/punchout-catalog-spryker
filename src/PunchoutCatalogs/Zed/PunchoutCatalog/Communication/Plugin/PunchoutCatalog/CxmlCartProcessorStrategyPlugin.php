@@ -179,27 +179,4 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
 </cXML>
 EOF;
     }
-
-    /**
-     * @api
-     *
-     * @param $xml
-     *
-     * @return array|string
-     */
-    public function getFormattedFields($xml)
-    {
-        $xml = $this->getDocumentEncodedXml($xml);
-        if ($this->envHelper->getOption('poom_encoding') == ConnectionMetadataInterface::ID_POOM_ENCODING_RAW) {
-            return $xml;
-        }
-
-        $fields = ['cxml-original' => $xml];
-        if ($this->envHelper->getOption('poom_encoding') == ConnectionMetadataInterface::ID_POOM_ENCODING_URLENCODED) {
-            $fields[static::FIELD_URLENCODED] = $this->getUrlEncodedXml($xml);
-        } else {
-            $fields[static::FIELD_BASE64] = $this->getBase64EncodedXml($xml);
-        }
-        return $fields;
-    }
 }
