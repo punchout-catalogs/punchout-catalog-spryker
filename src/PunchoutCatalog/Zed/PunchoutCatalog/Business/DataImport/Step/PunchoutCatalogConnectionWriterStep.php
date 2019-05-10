@@ -44,7 +44,9 @@ class PunchoutCatalogConnectionWriterStep implements DataImportStepInterface
      */
     public function execute(DataSetInterface $dataSet): void
     {
-        $businessUnit = SpyCompanyBusinessUnitQuery::create()->findOneByKey($dataSet[PunchoutCatalogConnectionSetupDataSet::BUSINESS_UNIT_KEY]);
+        $businessUnit = SpyCompanyBusinessUnitQuery::create()->findOneByKey(
+            $dataSet[PunchoutCatalogConnectionDataSet::COMPANY_BUSINESS_UNIT_KEY]
+        );
 
         /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection $connectionEntity */
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()

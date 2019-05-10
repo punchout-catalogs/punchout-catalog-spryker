@@ -28,9 +28,9 @@ class PunchoutCatalogConnectionCartWriterStep implements DataImportStepInterface
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
             ->findOneByName($dataSet[PunchoutCatalogConnectionCartDataSet::NAME]);
 
-        /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogCart $cartEntity */
+        /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart $cartEntity */
         $cartEntity = PgwPunchoutCatalogConnectionCartQuery::create()
-            ->filterByIdPunchoutCatalogConnection($connectionEntity->getIdPunchoutCatalogConnection())
+            ->filterByIdPunchoutCatalogConnectionCart($connectionEntity->getIdPunchoutCatalogConnection())
             ->findOneOrCreate();
 
         $cartEntity->setMapping($dataSet[PunchoutCatalogConnectionCartDataSet::MAPPING] ?? null);

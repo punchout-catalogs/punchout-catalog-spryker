@@ -30,17 +30,24 @@ class PunchoutCatalogConnectionSetupWriterStep implements DataImportStepInterfac
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
             ->findOneByName($dataSet[PunchoutCatalogConnectionSetupDataSet::CONNECTION_NAME]);
 
-        /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogSetup $setupEntity */
+        /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup $setupEntity */
         $setupEntity = PgwPunchoutCatalogConnectionSetupQuery::create()
-            ->filterByIdPunchoutCatalogConnection($connectionEntity->getIdPunchoutCatalogConnection())
+            ->filterByIdPunchoutCatalogConnectionSetup(
+                (int)$connectionEntity->getIdPunchoutCatalogConnection()
+            )
             ->findOneOrCreate();
 
-        $businessUnit = SpyCompanyBusinessUnitQuery::create()->findOneByKey($dataSet[PunchoutCatalogConnectionSetupDataSet::BUSINESS_UNIT_KEY]);
+        $businessUnit = SpyCompanyBusinessUnitQuery::create()->findOneByKey(
+            $dataSet[PunchoutCatalogConnectionSetupDataSet::COMPANY_BUSINESS_UNIT_KEY]
+        );
+        
         if ($businessUnit && $businessUnit->getIdCompanyBusinessUnit()) {
             $setupEntity->setFkCompanyBusinessUnit($businessUnit->getIdCompanyBusinessUnit());
         }
 
-        $companyUser = SpyCompanyUserQuery::create()->findOneByKey($dataSet[PunchoutCatalogConnectionSetupDataSet::COMPANY_USER_KEY]);
+        $companyUser = SpyCompanyUserQuery::create()->findOneByKey(
+            $dataSet[PunchoutCatalogConnectionSetupDataSet::COMPANY_USER_KEY]
+        );
         if ($companyUser && $companyUser->getIdCompanyUser()) {
             $setupEntity->setFkCompanyUser($companyUser->getIdCompanyUser());
         }
