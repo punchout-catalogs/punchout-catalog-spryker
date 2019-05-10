@@ -33,7 +33,7 @@
         <property name="idPunchoutCatalogConnection" type="int" />
 
         <property name="uuid" type="string" />
-        <property name="fkCompany" type="int" />
+        <property name="fkCompanyBusinessUnit" type="int" />
         <property name="isActive" type="bool"/>
 
         <property name="name" type="string" />
@@ -42,7 +42,8 @@
 
         <property name="username" type="string" />
         <property name="password" type="string" />
-        <property name="mappingRequest" type="string" />
+
+        <property name="mapping" type="string" />
 
         <property name="createdAt" type="string" />
 
@@ -52,18 +53,16 @@
 
     <transfer name="PunchoutCatalogConnectionCart">
         <property name="idPunchoutCatalogCart" type="int" />
-
         <property name="maxDescriptionLength" type="int" />
         <property name="defaultSupplierId" type="string" />
-        <property name="cartEncoding" type="string" />
-
-        <property name="mappingCart" type="string" />
+        <property name="encoding" type="string" />
+        <property name="mapping" type="string" />
     </transfer>
 
     <transfer name="PunchoutCatalogConnectionSetup">
         <property name="idPunchoutCatalogSetup" type="int" />
 
-        <property name="fkbusinessUnit" type="int"/>
+        <property name="fkCompanyBusinessUnit" type="int"/>
         <property name="fkCompanyUser" type="int" />
 
         <property name="loginMode" type="string" />

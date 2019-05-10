@@ -1,4 +1,4 @@
-connection_name,default_supplier_id,max_description_length,cart_encoding,mapping_cart
+connection_name,default_supplier_id,max_description_length,encoding,mapping
 Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
   ""cart"": {
     ""fields"": {

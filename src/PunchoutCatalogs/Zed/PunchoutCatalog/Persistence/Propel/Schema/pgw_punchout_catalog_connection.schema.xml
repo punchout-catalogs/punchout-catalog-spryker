@@ -4,7 +4,7 @@
     <table name="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
         <column name="id_punchout_catalog_connection" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
 
-        <column name="fk_company" type="INTEGER" required="true"/>
+        <column name="fk_company_business_unit" type="INTEGER" required="true"/>
 
         <!-- for POSR/PO only, ASN and INV probably will use 7 separate creds-->
         <column name="username" type="VARCHAR" size="255" required="true"/>
@@ -18,7 +18,7 @@
 
         <column name="format" type="VARCHAR" size="64" required="true"/>
 
-        <column name="mapping_request" type="LONGVARCHAR" required="false"/>
+        <column name="mapping" type="LONGVARCHAR" required="false"/>
 
         <column name="name" type="VARCHAR" size="255" required="true"/>
 
@@ -32,52 +32,51 @@
             <unique-column name="uuid"/>
         </unique>
 
-        <foreign-key name="pgw_punchout_catalog_connection-fk_company" foreignTable="spy_company" phpName="Company">
-            <reference local="fk_company" foreign="id_company"/>
+        <foreign-key name="pgw_punchout_catalog_connection-fk_company_business_unit" foreignTable="spy_company_business_unit" phpName="CompanyBusinessUnit">
+            <reference local="fk_company_business_unit" foreign="id_company_business_unit"/>
         </foreign-key>
 
         <id-method-parameter value="pgw_punchout_catalog_connection_pk_seq"/>
     </table>
 
-    <table name="pgw_punchout_catalog_setup" phpName="PgwPunchoutCatalogSetup">
-        <column name="id_punchout_catalog_connection" type="INTEGER" required="true" primaryKey="true"/>
+    <table name="pgw_punchout_catalog_connection_setup" phpName="PgwPunchoutCatalogConnectionSetup">
+        <column name="id_punchout_catalog_connection_setup" type="INTEGER" required="true" primaryKey="true"/>
 
-        <column name="fk_business_unit" type="INTEGER" required="false"/>
+        <column name="fk_company_business_unit" type="INTEGER" required="false"/>
 
         <column name="fk_company_user" type="INTEGER" required="false"/>
 
         <column name="login_mode" type="VARCHAR" size="64" required="true"/>
 
-
-        <foreign-key name="pgw_punchout_catalog_setup-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
-            <reference local="id_punchout_catalog_connection" foreign="id_punchout_catalog_connection"/>
+        <foreign-key name="pgw_punchout_catalog_connection_setup-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
+            <reference local="id_punchout_catalog_connection_setup" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
 
-        <id-method-parameter value="pgw_punchout_catalog_setup_pk_seq"/>
+        <id-method-parameter value="pgw_punchout_catalog_connection_setup_pk_seq"/>
     </table>
 
-    <table name="pgw_punchout_catalog_cart" phpName="PgwPunchoutCatalogCart">
-        <column name="id_punchout_catalog_connection" type="INTEGER" required="true" primaryKey="true"/>
+    <table name="pgw_punchout_catalog_connection_cart" phpName="PgwPunchoutCatalogConnectionCart">
+        <column name="id_punchout_catalog_connection_cart" type="INTEGER" required="true" primaryKey="true"/>
 
         <column name="default_supplier_id" type="VARCHAR" size="64" required="false"/>
 
         <column name="max_description_length" type="SMALLINT" required="false"/>
 
-        <column name="cart_encoding" type="VARCHAR" size="16" required="false"/>
+        <column name="encoding" type="VARCHAR" size="16" required="false"/>
 
-        <column name="mapping_cart" type="LONGVARCHAR" required="false"/>
+        <column name="mapping" type="LONGVARCHAR" required="false"/>
 
-        <foreign-key name="pgw_punchout_catalog_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
-            <reference local="id_punchout_catalog_connection" foreign="id_punchout_catalog_connection"/>
+        <foreign-key name="pgw_punchout_catalog_connection_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
+            <reference local="id_punchout_catalog_connection_cart" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
 
-        <id-method-parameter value="pgw_punchout_catalog_cart_pk_seq"/>
+        <id-method-parameter value="pgw_punchout_catalog_connection_cart_pk_seq"/>
     </table>
 
     <table name="pgw_punchout_catalog_transaction" phpName="PgwPunchoutCatalogTransaction">
         <column name="id_punchout_catalog_transaction" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
 
-        <column name="fk_company" type="INTEGER" required="false"/>
+        <column name="fk_company_business_unit" type="INTEGER" required="false"/>
 
         <column name="fk_punchout_catalog_connection" type="INTEGER" required="false"/>
 
@@ -99,8 +98,8 @@
             <parameter name="disable_updated_at" value="true"/>
         </behavior>
 
-        <foreign-key name="pgw_punchout_catalog_transaction-fk_company" foreignTable="spy_company" phpName="Company">
-            <reference local="fk_company" foreign="id_company"/>
+        <foreign-key name="pgw_punchout_catalog_connection-fk_company_business_unit" foreignTable="spy_company_business_unit" phpName="CompanyBusinessUnit">
+            <reference local="fk_company_business_unit" foreign="id_company_business_unit"/>
         </foreign-key>
 
         <id-method-parameter value="pgw_punchout_catalog_transaction_pk_seq"/>
