@@ -149,7 +149,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
 <cXML payloadID="{$this->getPayloadId()}"
     timestamp="{$this->getTimestamp()}"
-    xml:lang="{$punchoutCatalogCartRequestTransfer->getCart()->getLang()}"
+    xml:lang="{$punchoutCatalogCartRequestTransfer->getLang()}"
     version="{$ver}"
 >
     <Header>

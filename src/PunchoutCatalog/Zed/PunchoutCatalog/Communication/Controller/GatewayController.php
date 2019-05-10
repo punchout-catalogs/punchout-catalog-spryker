@@ -57,7 +57,6 @@ class GatewayController extends AbstractGatewayController
     }
 
     /**
-     * @todo: LANG need to move to PunchoutCatalogCartRequestTransfer
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCartCancelAction(): PunchoutCatalogCartResponseTransfer
@@ -67,6 +66,7 @@ class GatewayController extends AbstractGatewayController
 //            ->setContentType('text/html')
 //            ->setContent('SAMPLE CANCEL');
         $punchoutCatalogCartRequestTransfer = new PunchoutCatalogCartRequestTransfer();
+        $punchoutCatalogCartRequestTransfer->setLang('en-US');
         return $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer);
     }
 
@@ -173,7 +173,7 @@ class GatewayController extends AbstractGatewayController
     {
         $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/cart2.json');
         $transferJson = json_decode($testFile, true);
-        $cartTransfer = new PunchoutCatalogCartRequestTransfer();
-        return $cartTransfer->fromArray($transferJson);
+        $documentCartTransfer = new PunchoutCatalogCartRequestTransfer();
+        return $documentCartTransfer->fromArray($transferJson);
     }
 }

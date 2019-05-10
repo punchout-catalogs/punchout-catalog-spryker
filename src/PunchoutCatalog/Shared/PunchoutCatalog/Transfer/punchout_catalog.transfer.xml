@@ -142,9 +142,11 @@
     </transfer>
 
     <transfer name="PunchoutCatalogCartRequest">
-        <property name="cart" type="PunchoutCatalogCart" />
-        <property name="cartItem" type="PunchoutCatalogCartItem[]"  singular="cartItem"/>
-        <property name="customer" type="PunchoutCatalogCartCustomer"/>
+        <property name="lang" type="string"/>
+
+        <property name="cart" type="PunchoutCatalogDocumentCart" />
+        <property name="cartItem" type="PunchoutCatalogDocumentCartItem[]"  singular="cartItem"/>
+        <property name="customer" type="PunchoutCatalogDocumentCartCustomer"/>
     </transfer>
 
     <transfer name="PunchoutCatalogCartRequestOptions">
@@ -162,7 +164,7 @@
         <property name="request" type="PunchoutCatalogCartRequest"/>
     </transfer>
 
-    <transfer name="PunchoutCatalogCart">
+    <transfer name="PunchoutCatalogDocumentCart">
         <property name="internalId" type="string"/>
         <property name="supplierId" type="string"/>
         <property name="lang" type="string"/>
@@ -195,7 +197,7 @@
         <property name="customAttributes" type="PunchoutCatalogCustomAttribute[]" singular="customAttribute"/>
     </transfer>
 
-    <transfer name="PunchoutCatalogCartItem">
+    <transfer name="PunchoutCatalogDocumentCartItem">
         <property name="internalId" type="string"/>
         <property name="supplierId" type="string"/>
         <property name="lineNumber" type="int"/>
@@ -235,7 +237,7 @@
         <property name="customAttributes" type="PunchoutCatalogCustomAttribute[]" singular="customAttribute"/>
     </transfer>
 
-    <transfer name="PunchoutCatalogCartCustomer">
+    <transfer name="PunchoutCatalogDocumentCartCustomer">
         <property name="internalId" type="string"/>
         <property name="firstName" type="string"/>
         <property name="lastName" type="string"/>

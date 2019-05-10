@@ -8,7 +8,7 @@
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Mapper;
 
 use Generated\Shared\Transfer\ItemTransfer as QuoteItemTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartItemTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
@@ -27,12 +27,12 @@ interface CartTransferMapperInterface
 
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartItemTransfer $cartItemTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogCartItemTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
      */
-    public function mapQuoteItemTransferToPunchoutCatalogCartItemTransfer(
+    public function mapQuoteItemTransferToPunchoutCatalogDocumentCartItemTransfer(
         QuoteItemTransfer $quoteItemTransfer,
-        PunchoutCatalogCartItemTransfer $cartItemTransfer
-    ): PunchoutCatalogCartItemTransfer;
+        PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
+    ): PunchoutCatalogDocumentCartItemTransfer;
 }

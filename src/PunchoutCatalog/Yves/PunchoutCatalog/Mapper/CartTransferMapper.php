@@ -9,10 +9,10 @@ namespace PunchoutCatalog\Yves\PunchoutCatalog\Mapper;
 
 use ArrayObject;
 use Generated\Shared\Transfer\ItemTransfer as QuoteItemTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartCustomerTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogDocumentCartCustomerTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface;
@@ -61,12 +61,16 @@ class CartTransferMapper implements CartTransferMapperInterface
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer {
-        if (!$quoteTransfer) {
+        
+        $cartRequestTransfer->setLang($this->toLang($this->currentLocale));
+        
+        //Empty Cart Transfer
+        if (!$quoteTransfer || !$quoteTransfer->getItems()) {
             return $cartRequestTransfer;
         }
 
-        $cartTransfer = new PunchoutCatalogCartTransfer();
-        $cartRequestTransfer->setCart($cartTransfer);
+        $documentCartTransfer = new PunchoutCatalogDocumentCartTransfer();
+        $cartRequestTransfer->setCart($documentCartTransfer);
 
         $this->prepareHeader($quoteTransfer, $cartRequestTransfer);
         $this->prepareCustomer($quoteTransfer, $cartRequestTransfer);
@@ -77,37 +81,37 @@ class CartTransferMapper implements CartTransferMapperInterface
 
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartItemTransfer $cartItemTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogCartItemTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
      */
-    public function mapQuoteItemTransferToPunchoutCatalogCartItemTransfer(
+    public function mapQuoteItemTransferToPunchoutCatalogDocumentCartItemTransfer(
         QuoteItemTransfer $quoteItemTransfer,
-        PunchoutCatalogCartItemTransfer $cartItemTransfer
-    ): PunchoutCatalogCartItemTransfer {
-        $cartItemTransfer->setInternalId($quoteItemTransfer->getId());//@todo: generate spaid
+        PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
+    ): PunchoutCatalogDocumentCartItemTransfer {
+        $documentCartItemTransfer->setInternalId($quoteItemTransfer->getId());//@todo: generate spaid
 
-        $cartItemTransfer->setQty($quoteItemTransfer->getQuantity());
-        $cartItemTransfer->setSku($quoteItemTransfer->getSku());
-        $cartItemTransfer->setName($quoteItemTransfer->getName());
-        $cartItemTransfer->setDescription($quoteItemTransfer->getName());
-        $cartItemTransfer->setComment($quoteItemTransfer->getCartNote());
-        $cartItemTransfer->setUom($quoteItemTransfer->getProductPackagingUnit());
-        $cartItemTransfer->setLang($this->toLang($this->currentLocale));
+        $documentCartItemTransfer->setQty($quoteItemTransfer->getQuantity());
+        $documentCartItemTransfer->setSku($quoteItemTransfer->getSku());
+        $documentCartItemTransfer->setName($quoteItemTransfer->getName());
+        $documentCartItemTransfer->setDescription($quoteItemTransfer->getName());
+        $documentCartItemTransfer->setComment($quoteItemTransfer->getCartNote());
+        $documentCartItemTransfer->setUom($quoteItemTransfer->getProductPackagingUnit());
+        $documentCartItemTransfer->setLang($this->toLang($this->currentLocale));
 
-        $cartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
+        $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
 
-        $cartItemTransfer->setPriceAmount(
-            $this->toAmount($quoteItemTransfer->getUnitPrice(), $cartItemTransfer->getCurrency())
+        $documentCartItemTransfer->setPriceAmount(
+            $this->toAmount($quoteItemTransfer->getUnitPrice(), $documentCartItemTransfer->getCurrency())
         );
-        $cartItemTransfer->setTotalAmount(
-            $this->toAmount($quoteItemTransfer->getSumPrice(), $cartItemTransfer->getCurrency())
+        $documentCartItemTransfer->setTotalAmount(
+            $this->toAmount($quoteItemTransfer->getSumPrice(), $documentCartItemTransfer->getCurrency())
         );
-        $cartItemTransfer->setTaxAmount(
-            $this->toAmount($quoteItemTransfer->getSumTaxAmount(), $cartItemTransfer->getCurrency())
+        $documentCartItemTransfer->setTaxAmount(
+            $this->toAmount($quoteItemTransfer->getSumTaxAmount(), $documentCartItemTransfer->getCurrency())
         );
-        $cartItemTransfer->setDiscountAmount(
-            $this->toAmount($quoteItemTransfer->getSumDiscountAmountAggregation(), $cartItemTransfer->getCurrency())
+        $documentCartItemTransfer->setDiscountAmount(
+            $this->toAmount($quoteItemTransfer->getSumDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
         );
 
         if ($quoteItemTransfer->getProductOptions()) {
@@ -121,7 +125,7 @@ class CartTransferMapper implements CartTransferMapperInterface
                     $this->translateCustomAttribute($option)
                 );
             }
-            $cartItemTransfer->setOptions($options);
+            $documentCartItemTransfer->setOptions($options);
         }
 
         $customAttributes = new ArrayObject();
@@ -140,9 +144,9 @@ class CartTransferMapper implements CartTransferMapperInterface
             $customAttributes->append($customAttribute);
         }
 
-        $cartItemTransfer->setCustomAttributes($customAttributes);
+        $documentCartItemTransfer->setCustomAttributes($customAttributes);
 
-        return $cartItemTransfer;
+        return $documentCartItemTransfer;
     }
 
     /**
@@ -155,28 +159,28 @@ class CartTransferMapper implements CartTransferMapperInterface
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer {
-        $cartTransfer = $cartRequestTransfer->getCart();
+        $documentCartTransfer = $cartRequestTransfer->getCart();
 
-        $cartTransfer->setInternalId($quoteTransfer->getIdQuote());
-        $cartTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
-        $cartTransfer->setComment($quoteTransfer->getCartNote());
-        $cartTransfer->setLang($this->toLang($this->currentLocale));
+        $documentCartTransfer->setInternalId($quoteTransfer->getIdQuote());
+        $documentCartTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
+        $documentCartTransfer->setComment($quoteTransfer->getCartNote());
+        $documentCartTransfer->setLang($this->toLang($this->currentLocale));
 
         if ($quoteTransfer->getTotals()) {
-            $cartTransfer->setSubtotal(
-                $this->toAmount($quoteTransfer->getTotals()->getSubtotal(), $cartTransfer->getCurrency())
+            $documentCartTransfer->setSubtotal(
+                $this->toAmount($quoteTransfer->getTotals()->getSubtotal(), $documentCartTransfer->getCurrency())
             );
-            $cartTransfer->setGrandTotal(
-                $this->toAmount($quoteTransfer->getTotals()->getGrandTotal(), $cartTransfer->getCurrency())
+            $documentCartTransfer->setGrandTotal(
+                $this->toAmount($quoteTransfer->getTotals()->getGrandTotal(), $documentCartTransfer->getCurrency())
             );
-            $cartTransfer->setNetTotal(
-                $this->toAmount($quoteTransfer->getTotals()->getNetTotal(), $cartTransfer->getCurrency())
+            $documentCartTransfer->setNetTotal(
+                $this->toAmount($quoteTransfer->getTotals()->getNetTotal(), $documentCartTransfer->getCurrency())
             );
-            $cartTransfer->setTaxTotal(
-                $this->toAmount($quoteTransfer->getTotals()->getTaxTotal()->getAmount(), $cartTransfer->getCurrency())
+            $documentCartTransfer->setTaxTotal(
+                $this->toAmount($quoteTransfer->getTotals()->getTaxTotal()->getAmount(), $documentCartTransfer->getCurrency())
             );
-            $cartTransfer->setDiscountTotal(
-                $this->toAmount($quoteTransfer->getTotals()->getDiscountTotal(), $cartTransfer->getCurrency())
+            $documentCartTransfer->setDiscountTotal(
+                $this->toAmount($quoteTransfer->getTotals()->getDiscountTotal(), $documentCartTransfer->getCurrency())
             );
         }
 
@@ -190,19 +194,19 @@ class CartTransferMapper implements CartTransferMapperInterface
         }
 
         if ($quoteTransfer->getCartRuleDiscounts()) {
-            foreach ($quoteTransfer->getCartRuleDiscounts() as $cartTransferRuleDiscount) {
-                $discountDescription[] = $cartTransferRuleDiscount->getDisplayName();
+            foreach ($quoteTransfer->getCartRuleDiscounts() as $documentCartTransferRuleDiscount) {
+                $discountDescription[] = $documentCartTransferRuleDiscount->getDisplayName();
             }
         }
 
         $coupons = array_filter($coupons);
         if ($coupons) {
-            $cartTransfer->setCoupon(implode(',', $coupons));
+            $documentCartTransfer->setCoupon(implode(',', $coupons));
         }
 
         $discountDescription = array_filter($discountDescription);
         if ($discountDescription) {
-            $cartTransfer->setDiscountDescription(implode("\n", $discountDescription));
+            $documentCartTransfer->setDiscountDescription(implode("\n", $discountDescription));
         }
 
         return $cartRequestTransfer;
@@ -219,7 +223,7 @@ class CartTransferMapper implements CartTransferMapperInterface
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer {
         if ($quoteTransfer->getCustomer()) {
-            $customer = new PunchoutCatalogCartCustomerTransfer();
+            $customer = new PunchoutCatalogDocumentCartCustomerTransfer();
             $customer->setEmail($quoteTransfer->getCustomer()->getEmail());
             $customer->setFirstName($quoteTransfer->getCustomer()->getFirstName());
             $customer->setLastName($quoteTransfer->getCustomer()->getLastName());
@@ -243,16 +247,16 @@ class CartTransferMapper implements CartTransferMapperInterface
         $totalQty = 0;
         if ($quoteTransfer->getItems()) {
             foreach ($quoteTransfer->getItems() as $idx => $quoteItemTransfer) {
-                $cartItemTransfer = new PunchoutCatalogCartItemTransfer();
-                $cartItemTransfer->setLineNumber($idx + 1);
-                $cartItemTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
+                $documentCartItemTransfer = new PunchoutCatalogDocumentCartItemTransfer();
+                $documentCartItemTransfer->setLineNumber($idx + 1);
+                $documentCartItemTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
 
-                $cartItemTransfer = $this->mapQuoteItemTransferToPunchoutCatalogCartItemTransfer(
+                $documentCartItemTransfer = $this->mapQuoteItemTransferToPunchoutCatalogDocumentCartItemTransfer(
                     $quoteItemTransfer,
-                    $cartItemTransfer
+                    $documentCartItemTransfer
                 );
 
-                $cartRequestTransfer->addCartItem($cartItemTransfer);
+                $cartRequestTransfer->addCartItem($documentCartItemTransfer);
 
                 $totalQty += (int)$quoteItemTransfer->getQuantity();
             }
