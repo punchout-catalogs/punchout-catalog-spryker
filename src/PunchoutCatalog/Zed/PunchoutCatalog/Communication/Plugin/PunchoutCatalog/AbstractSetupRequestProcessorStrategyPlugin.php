@@ -50,7 +50,9 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $request = (new PunchoutCatalogSetupRequestTransfer())
             ->setCompanyUser(
                 (new CompanyUserTransfer())
-                    ->setFkCompany($punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getFkCompany())
+                    ->setFkCompanyBusinessUnit(
+                        $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
+                    )
                     ->setCustomer($customerTransfer)
             );
 

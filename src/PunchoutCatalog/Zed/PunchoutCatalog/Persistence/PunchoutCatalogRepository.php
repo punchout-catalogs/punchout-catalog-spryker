@@ -49,7 +49,7 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
     public function findConnectionByCredential(PunchoutCatalogConnectionCredentialSearchTransfer $connectionCredentialSearch): ?PunchoutCatalogConnectionTransfer
     {
         $connectionCredentialSearch
-            ->requireFkCompany()
+            ->requireFkCompanyBusinessUnit()
             ->requireFormat()
             ->requireType()
             ->requireUsername();
@@ -58,7 +58,7 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
             ->createPunchoutCatalogConnectionQuery()
             ->joinWithPgwPunchoutCatalogConnectionCart()
             ->joinWithPgwPunchoutCatalogConnectionSetup()
-            ->filterByFkCompany($connectionCredentialSearch->getFkCompany())
+            ->filterByFkCompanyBusinessUnit($connectionCredentialSearch->getFkCompanyBusinessUnit())
             ->filterByFormat($connectionCredentialSearch->getFormat())
             ->filterByType($connectionCredentialSearch->getType())
             ->filterByUsername($connectionCredentialSearch->getUsername())

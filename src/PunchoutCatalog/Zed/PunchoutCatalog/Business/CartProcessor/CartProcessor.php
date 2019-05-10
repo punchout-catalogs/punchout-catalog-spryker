@@ -117,10 +117,10 @@ class CartProcessor implements CartProcessorInterface
      */
     protected function getCurrentConnection(): ?PunchoutCatalogConnectionTransfer
     {
-        //@todo: get data from session
-        $uuidCxmlBase64 = 'b7e93147-fda6-575b-98ec-cc9d7bb11fbd';
-        $uuidCxmlUrlEncoded = '84b48b3f-d2d5-5819-898d-a204589b6a60';
-        $uuidOci = '8fc18f5c-50c7-5ee9-a25b-58f6783cadbf';
+        //@todo: get data from session | for test add your uuid
+        $uuidCxmlBase64 = '638fe408-e6ed-56ae-b52c-983488bcd4c1';
+        $uuidCxmlUrlEncoded = 'becc5d59-94d4-5498-95d2-ee12c37c57b5';
+        $uuidOci = '97915852-9cd5-5425-a568-fe1232d4e27c';
 
         //$uuid = $uuidOci;
         $uuid = $uuidCxmlBase64;

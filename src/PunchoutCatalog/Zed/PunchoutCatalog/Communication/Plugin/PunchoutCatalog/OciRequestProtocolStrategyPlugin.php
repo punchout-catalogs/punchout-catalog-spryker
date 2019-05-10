@@ -94,7 +94,9 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
         $type = $this->mapProtocolOperationToConnectionType($punchoutCatalogRequestTransfer->getProtocolOperation());
 
         $credentialSearchTransfer = new PunchoutCatalogConnectionCredentialSearchTransfer();
-        $credentialSearchTransfer->setFkCompany($punchoutCatalogRequestTransfer->getCompany()->getIdCompany());
+        $credentialSearchTransfer->setFkCompanyBusinessUnit(
+            $punchoutCatalogRequestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
+        );
         $credentialSearchTransfer->setFormat($punchoutCatalogRequestTransfer->getProtocolType());
         $credentialSearchTransfer->setType($type);
 

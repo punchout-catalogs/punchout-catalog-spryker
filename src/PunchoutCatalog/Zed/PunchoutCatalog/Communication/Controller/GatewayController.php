@@ -29,7 +29,7 @@ class GatewayController extends AbstractGatewayController
         //---------------------------------------------------------------------//
         if ($punchoutCatalogRequestTransfer === null) {
             $punchoutCatalogRequestTransfer = new PunchoutCatalogRequestTransfer();
-            $punchoutCatalogRequestTransfer->setCompanyUuid('729758f4-59c9-5d6a-97cf-806af1eb7e82');
+            $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit(16);
             $punchoutCatalogRequestTransfer->setContentType('text/xml');
             $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
 

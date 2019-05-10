@@ -15,7 +15,7 @@ use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConfig;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlRequestProtocolStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciRequestProtocolStrategyPlugin;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
@@ -28,9 +28,9 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
     protected $protocolStrategyPlugins;
 
     /**
-     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyFacadeInterface
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
      */
-    protected $companyFacade;
+    protected $companyBusinessUnitFacade;
 
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface
@@ -43,7 +43,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
     protected $punchoutCatalogRepository;
 
     public function __construct(
-        PunchoutCatalogToCompanyFacadeInterface $companyFacade,
+        PunchoutCatalogToCompanyBusinessUnitFacadeInterface $companyBusinessUnitFacade,
         PunchoutCatalogToVaultFacadeInterface $vaultFacade,
         PunchoutCatalogRepositoryInterface $punchoutCatalogRepository
     ) {
@@ -51,7 +51,8 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
             new CxmlRequestProtocolStrategyPlugin(),
             new OciRequestProtocolStrategyPlugin(),
         ];
-        $this->companyFacade = $companyFacade;
+        
+        $this->companyBusinessUnitFacade = $companyBusinessUnitFacade;
         $this->vaultFacade = $vaultFacade;
         $this->punchoutCatalogRepository = $punchoutCatalogRepository;
     }
@@ -66,10 +67,12 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
         $punchoutCatalogRequestTransfer
             ->requireContent()
             ->requireContentType()
-            ->requireCompanyUuid();
+            ->requireFkCompanyBusinessUnit();
 
-        $companyTransfer = $this->companyFacade->findCompanyByUuid($punchoutCatalogRequestTransfer->getCompanyUuid());
-        if (!$companyTransfer || !$companyTransfer->getIsActive()) {
+        $companyBusinessUnitTransfer = $this->companyBusinessUnitFacade->findCompanyBusinessUnitById(
+            $punchoutCatalogRequestTransfer->getFkCompanyBusinessUnit()
+        );
+        if (!$companyBusinessUnitTransfer) {
             return $punchoutCatalogRequestTransfer
                 ->setIsSuccess(false)
                 ->addMessage(
@@ -78,7 +81,8 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
                 );
         }
 
-        $punchoutCatalogRequestTransfer->setCompany($companyTransfer);
+        $punchoutCatalogRequestTransfer->setCompanyBusinessUnit($companyBusinessUnitTransfer);
+        
         foreach ($this->protocolStrategyPlugins as $protocolStrategyPlugin) {
             if ($protocolStrategyPlugin->isApplicable($punchoutCatalogRequestTransfer)) {
                 return $punchoutCatalogRequestTransfer = $this->applyProtocolStrategy($protocolStrategyPlugin, $punchoutCatalogRequestTransfer);

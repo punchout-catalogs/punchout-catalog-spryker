@@ -11,10 +11,10 @@
         <property name="protocolType" type="string" />
         <property name="protocolData" type="PunchoutCatalogProtocolData" />
         <property name="protocolOperation" type="string" />
-        <property name="companyUuid" type="string" /><!-- it will be an another custom company field -->
+        <property name="fkCompanyBusinessUnit" type="int" />
 
         <property name="punchoutCatalogConnection" type="PunchoutCatalogConnection" />
-        <property name="company" type="Company" />
+        <property name="companyBusinessUnit" type="CompanyBusinessUnit" />
 
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
@@ -98,7 +98,7 @@
     </transfer>
 
     <transfer name="PunchoutCatalogConnectionCredentialSearch">
-        <property name="fkCompany" type="int" />
+        <property name="fkCompanyBusinessUnit" type="int" />
         <property name="type" type="string" />
         <property name="format" type="string" />
         <property name="username" type="string" />

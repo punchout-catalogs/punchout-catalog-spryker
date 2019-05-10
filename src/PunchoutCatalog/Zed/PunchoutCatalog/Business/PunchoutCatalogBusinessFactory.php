@@ -22,7 +22,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessorInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
 
@@ -59,7 +59,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createConnectionAuthenticator(): ConnectionAuthenticatorInterface
     {
         return new ConnectionAuthenticator(
-            $this->getCompanyFacade(),
+            $this->getCompanyBusinessUnitFacade(),
             $this->getVaultFacade(),
             $this->getRepository()
         );
@@ -82,11 +82,11 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyFacadeInterface
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
      */
-    public function getCompanyFacade(): PunchoutCatalogToCompanyFacadeInterface
+    public function getCompanyBusinessUnitFacade(): PunchoutCatalogToCompanyBusinessUnitFacadeInterface
     {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY);
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_BUSINESS_UNIT);
     }
 
     /**

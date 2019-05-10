@@ -28,11 +28,15 @@ class Mapper implements MapperInterface
         }
         $requestTransfer = $responseTransfer->getRequest();
         if ($requestTransfer) {
-            if ($requestTransfer->getCompany()) {
-                $entityTransfer->setFkCompany($requestTransfer->getCompany()->getIdCompany());
+            if ($requestTransfer->getCompanyBusinessUnit()) {
+                $entityTransfer->setFkCompanyBusinessUnit(
+                    $requestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
+                );
             }
             if ($requestTransfer->getPunchoutCatalogConnection()) {
-                $entityTransfer->setFkPunchoutCatalogConnection($requestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
+                $entityTransfer->setFkPunchoutCatalogConnection(
+                    $requestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection()
+                );
             }
         }
 
@@ -40,6 +44,7 @@ class Mapper implements MapperInterface
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
+        
         $entityTransfer->setMessage($content);
         $entityTransfer->setStatus($responseTransfer->getIsSuccess());
         return $entityTransfer;
@@ -64,12 +69,18 @@ class Mapper implements MapperInterface
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
+        
         $entityTransfer->setMessage($content);
-        if ($requestTransfer->getCompany()) {
-            $entityTransfer->setFkCompany($requestTransfer->getCompany()->getIdCompany());
+    
+        if ($requestTransfer->getCompanyBusinessUnit()) {
+            $entityTransfer->setFkCompanyBusinessUnit(
+                $requestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
+            );
         }
+
         $entityTransfer->setRawData($requestTransfer->getDecodedContent());
         $entityTransfer->setStatus($requestTransfer->getIsSuccess());
+        
         if ($requestTransfer->getPunchoutCatalogConnection()) {
             $entityTransfer->setFkPunchoutCatalogConnection($requestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
         }

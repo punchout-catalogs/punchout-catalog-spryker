@@ -9,7 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
 use Spryker\Zed\DataImport\DataImportDependencyProvider;
 use Spryker\Zed\Kernel\Container;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyFacadeBridge;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOAuthCustomerFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeBridge;
 
@@ -18,7 +18,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVault
  */
 class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
 {
-    public const FACADE_COMPANY = 'FACADE_COMPANY';
+    public const FACADE_COMPANY_BUSINESS_UNIT = 'COMPANY_BUSINESS_UNIT';
     public const FACADE_VAULT = 'FACADE_VAULT';
     public const FACADE_OAUTH_CUSTOMER = 'FACADE_OAUTH_CUSTOMER';
 
@@ -30,7 +30,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     public function provideBusinessLayerDependencies(Container $container): Container
     {
         $container = parent::provideBusinessLayerDependencies($container);
-        $container = $this->addCompanyFacade($container);
+        $container = $this->addCompanyBusinessUnitFacade($container);
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCustomerFacade($container);
 
@@ -42,10 +42,10 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    protected function addCompanyFacade(Container $container): Container
+    protected function addCompanyBusinessUnitFacade(Container $container): Container
     {
-        $container[static::FACADE_COMPANY] = function (Container $container) {
-            return new PunchoutCatalogToCompanyFacadeBridge($container->getLocator()->company()->facade());
+        $container[static::FACADE_COMPANY_BUSINESS_UNIT] = function (Container $container) {
+            return new PunchoutCatalogToCompanyBusinessUnitFacadeBridge($container->getLocator()->companyBusinessUnit()->facade());
         };
 
         return $container;
