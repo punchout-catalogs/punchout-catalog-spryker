@@ -7,12 +7,12 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog;
 
-use Spryker\Shared\Kernel\Store;
-use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
-use Spryker\Yves\Kernel\Container;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientBridge;
+use Spryker\Shared\Kernel\Store;
+use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
+use Spryker\Yves\Kernel\Container;
 
 /**
  * @method \PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig getConfig()
