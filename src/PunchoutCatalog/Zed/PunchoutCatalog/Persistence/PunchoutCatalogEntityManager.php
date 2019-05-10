@@ -51,21 +51,21 @@ class PunchoutCatalogEntityManager extends AbstractEntityManager implements Punc
     public function saveConnection(PunchoutCatalogConnectionTransfer $connectionTransfer): PunchoutCatalogConnectionTransfer
     {
         if ($connectionTransfer->getUuid()) {
-            $spyConnection = $this->getFactory()
+            $pgwConnection = $this->getFactory()
                 ->createPunchoutCatalogConnectionQuery()
                 ->filterByUuid($connectionTransfer->getUuid())
                 ->findOneOrCreate();
         } else {
-            $spyConnection = new PgwPunchoutCatalogConnection();
+            $pgwConnection = new PgwPunchoutCatalogConnection();
         }
-
-        $spyConnection = $this->getFactory()
+        
+        $pgwConnection = $this->getFactory()
             ->createPunchoutCatalogConnectionMapper()
-            ->mapConnectionTransferToEntity($connectionTransfer, $spyConnection);
+            ->mapConnectionTransferToEntity($connectionTransfer, $pgwConnection);
 
-        $spyConnection->save();
+        $pgwConnection->save();
 
-        $connectionTransfer->setUuid($spyConnection->getUuid());
+        $connectionTransfer->setUuid($pgwConnection->getUuid());
 
         return $connectionTransfer;
     }

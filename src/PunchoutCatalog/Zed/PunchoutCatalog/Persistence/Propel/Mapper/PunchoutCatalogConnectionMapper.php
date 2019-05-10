@@ -18,44 +18,46 @@ class PunchoutCatalogConnectionMapper implements PunchoutCatalogConnectionMapper
 {
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection $spyPunchoutCatalogConnection
+     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection $pgwPunchoutCatalogConnection
      *
      * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection
      */
     public function mapConnectionTransferToEntity(
         PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer,
-        PgwPunchoutCatalogConnection $spyPunchoutCatalogConnection
+        PgwPunchoutCatalogConnection $pgwPunchoutCatalogConnection
     ): PgwPunchoutCatalogConnection {
-        $spyPunchoutCatalogConnection->fromArray(
+        
+        $pgwPunchoutCatalogConnection->fromArray(
             $punchoutCatalogConnectionTransfer->modifiedToArray(false)
         );
-        return $spyPunchoutCatalogConnection;
+        
+        return $pgwPunchoutCatalogConnection;
     }
 
     /**
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection $spyPunchoutCatalogConnection
+     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection $pgwPunchoutCatalogConnection
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer
      */
     public function mapEntityToConnectionTransfer(
-        PgwPunchoutCatalogConnection $spyPunchoutCatalogConnection,
+        PgwPunchoutCatalogConnection $pgwPunchoutCatalogConnection,
         PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
     ): PunchoutCatalogConnectionTransfer {
         $punchoutCatalogConnectionTransfer = $punchoutCatalogConnectionTransfer->fromArray(
-            $spyPunchoutCatalogConnection->toArray(),
+            $pgwPunchoutCatalogConnection->toArray(),
             true
         );
 
         $punchoutCatalogConnectionTransfer->setCart($this
             ->mapConnectionCartEntityToConnectionCartTransfer(
-                $spyPunchoutCatalogConnection->getPgwPunchoutCatalogConnectionCart(),
+                $pgwPunchoutCatalogConnection->getPgwPunchoutCatalogConnectionCart(),
                 new PunchoutCatalogConnectionCartTransfer()
             ));
 
         $punchoutCatalogConnectionTransfer->setSetup($this
             ->mapConnectionSetupEntityToConnectionSetupTransfer(
-                $spyPunchoutCatalogConnection->getPgwPunchoutCatalogConnectionSetup(),
+                $pgwPunchoutCatalogConnection->getPgwPunchoutCatalogConnectionSetup(),
                 new PunchoutCatalogConnectionSetupTransfer()
             ));
 
@@ -63,66 +65,66 @@ class PunchoutCatalogConnectionMapper implements PunchoutCatalogConnectionMapper
     }
 
     /**
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart $spyPunchoutCatalogCart
+     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart $pgwPunchoutCatalogCart
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionCartTransfer $punchoutCatalogConnectionCartTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionCartTransfer
      */
     public function mapConnectionCartEntityToConnectionCartTransfer(
-        PgwPunchoutCatalogConnectionCart $spyPunchoutCatalogCart,
+        PgwPunchoutCatalogConnectionCart $pgwPunchoutCatalogCart,
         PunchoutCatalogConnectionCartTransfer $punchoutCatalogConnectionCartTransfer
     ): PunchoutCatalogConnectionCartTransfer {
         return $punchoutCatalogConnectionCartTransfer->fromArray(
-            $spyPunchoutCatalogCart->toArray(),
+            $pgwPunchoutCatalogCart->toArray(),
             true
         );
     }
 
     /**
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup $spyPunchoutCatalogSetup
+     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup $pgwPunchoutCatalogSetup
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionSetupTransfer $punchoutCatalogConnectionSetupTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionSetupTransfer
      */
     public function mapConnectionSetupEntityToConnectionSetupTransfer(
-        PgwPunchoutCatalogConnectionSetup $spyPunchoutCatalogSetup,
+        PgwPunchoutCatalogConnectionSetup $pgwPunchoutCatalogSetup,
         PunchoutCatalogConnectionSetupTransfer $punchoutCatalogConnectionSetupTransfer
     ): PunchoutCatalogConnectionSetupTransfer {
         return $punchoutCatalogConnectionSetupTransfer->fromArray(
-            $spyPunchoutCatalogSetup->toArray(),
+            $pgwPunchoutCatalogSetup->toArray(),
             true
         );
     }
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionCartTransfer $punchoutCatalogConnectionCartTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart $spyPunchoutCatalogCart
+     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart $pgwPunchoutCatalogCart
      *
      * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart
      */
     public function mapConnectionCartTransferToCartEntity(
         PunchoutCatalogConnectionCartTransfer $punchoutCatalogConnectionCartTransfer,
-        PgwPunchoutCatalogConnectionCart $spyPunchoutCatalogCart
+        PgwPunchoutCatalogConnectionCart $pgwPunchoutCatalogCart
     ): PgwPunchoutCatalogConnectionCart {
-        $spyPunchoutCatalogCart->fromArray(
+        $pgwPunchoutCatalogCart->fromArray(
             $punchoutCatalogConnectionCartTransfer->modifiedToArray(false)
         );
-        return $spyPunchoutCatalogCart;
+        return $pgwPunchoutCatalogCart;
     }
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionSetupTransfer $punchoutCatalogConnectionSetupTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup $spyPunchoutCatalogSetup
+     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup $pgwPunchoutCatalogSetup
      *
      * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup
      */
     public function mapConnectionSetupTransferToSetupEntity(
         PunchoutCatalogConnectionSetupTransfer $punchoutCatalogConnectionSetupTransfer,
-        PgwPunchoutCatalogConnectionSetup $spyPunchoutCatalogSetup
+        PgwPunchoutCatalogConnectionSetup $pgwPunchoutCatalogSetup
     ): PgwPunchoutCatalogConnectionSetup {
-        $spyPunchoutCatalogSetup->fromArray(
+        $pgwPunchoutCatalogSetup->fromArray(
             $punchoutCatalogConnectionSetupTransfer->modifiedToArray(false)
         );
-        return $spyPunchoutCatalogSetup;
+        return $pgwPunchoutCatalogSetup;
     }
 }

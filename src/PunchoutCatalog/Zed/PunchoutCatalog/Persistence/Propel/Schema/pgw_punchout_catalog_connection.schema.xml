@@ -22,8 +22,11 @@
 
         <column name="name" type="VARCHAR" size="255" required="true"/>
 
-        <column name="uuid" type="VARCHAR" size="36" required="false"/>
+        <column name="created_at" type="TIMESTAMP" required="true"/>
+        <column name="updated_at" type="TIMESTAMP" required="true" />
+        <behavior name="timestampable"/>
 
+        <column name="uuid" type="VARCHAR" size="36" required="false"/>
         <behavior name="uuid">
             <parameter name="key_columns" value="id_punchout_catalog_connection"/>
         </behavior>
@@ -35,6 +38,13 @@
         <foreign-key name="pgw_punchout_catalog_connection-fk_company_business_unit" foreignTable="spy_company_business_unit" phpName="CompanyBusinessUnit">
             <reference local="fk_company_business_unit" foreign="id_company_business_unit"/>
         </foreign-key>
+
+        <index>
+            <index-column name="fk_company_business_unit"/>
+            <index-column name="type"/>
+            <index-column name="format"/>
+            <index-column name="username"/>
+        </index>
 
         <id-method-parameter value="pgw_punchout_catalog_connection_pk_seq"/>
     </table>
