@@ -298,8 +298,6 @@ class CartTransferMapper implements CartTransferMapperInterface
     }
 
     /**
-     * @todo: fix toAmount method, it does not return float
-     *
      * @param int $amount
      * @param string|null $isoCode
      *
@@ -307,6 +305,16 @@ class CartTransferMapper implements CartTransferMapperInterface
      */
     protected function toAmount(int $amount, ?string $isoCode)
     {
-        return $this->moneyClient->fromInteger($amount, $isoCode)->getAmount();
+        $currency = $this->moneyClient->fromInteger($amount, $isoCode);
+        
+        $fraction = 10;
+        
+        if ($currency->getCurrency()->getFractionDigits() > 1) {
+            $fraction = pow(10, $currency->getCurrency()->getFractionDigits());
+        }
+
+        $floatAmount = $currency->getAmount() / $fraction;
+        
+        return round($floatAmount, (int)$currency->getCurrency()->getFractionDigits());
     }
 }

@@ -35,10 +35,7 @@ Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
         ""path"": ""@lineNumber""
       },
       ""quantity"": {
-        ""path"": ""@quantity"",
-        ""transform"": [
-          ""round""
-        ]
+        ""path"": ""@quantity""
       },
       ""internal_id"": {
         ""path"": ""ItemID[1]/SupplierPartAuxiliaryID[1]""
@@ -172,10 +169,7 @@ Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
         ""path"": ""@lineNumber""
       },
       ""quantity"": {
-        ""path"": ""@quantity"",
-        ""transform"": [
-          ""round""
-        ]
+        ""path"": ""@quantity""
       },
       ""internal_id"": {
         ""path"": ""ItemID[1]/SupplierPartAuxiliaryID[1]""

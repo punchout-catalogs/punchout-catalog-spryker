@@ -25,9 +25,8 @@ class CartController extends AbstractController
     public function transferAction()
     {
         $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
-
         //-------------------------------------------//
-        //$quoteTransfer = $this->getFakeQuoteTransfer();
+        $quoteTransfer = $this->getFakeQuoteTransfer();
         //-------------------------------------------//
 
         $punchoutCatalogCartRequestTransfer = $this->getFactory()
@@ -85,9 +84,9 @@ class CartController extends AbstractController
 
     protected function getFakeQuoteTransfer()
     {
-        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/quote2.json');
+        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/quote.json');
         $quoteTransferJson = json_decode($testFile, true);
-        $quoteTransfer = new QuoteTransfer();
+        $quoteTransfer = new \Generated\Shared\Transfer\QuoteTransfer();
         return $quoteTransfer->fromArray($quoteTransferJson);
     }
 }
