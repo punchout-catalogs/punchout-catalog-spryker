@@ -17,7 +17,7 @@
   },
   "autoload": {
     "psr-4": {
-      "PunchoutCatalogs\\": "src/PunchoutCatalogs/"
+      "PunchoutCatalog\\": "src/PunchoutCatalog/"
     }
   },
   "minimum-stability": "dev",
