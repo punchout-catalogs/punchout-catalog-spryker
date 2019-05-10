@@ -90,19 +90,9 @@ class CartTransferMapper implements CartTransferMapperInterface
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer {
         $internalId = md5($quoteItemTransfer->getId());
-        $documentCartItemTransfer->setInternalId($internalId);//@todo: generate spaid
-        $documentCartItemTransfer->setSupplierId('@todo: replace it');
         
-        //@todo: update fields:
-        //`uom` to `productPackagingUnit`
-        //`setQuantity` to `setQuantity`
-        //`setComment` to `setCartNote`
-        //`setPriceAmount` to `setUnitPrice`
-        //`setPriceAmount` to `setSumPrice`
-        //`setPriceAmount` to `setSumTaxAmount`
-        //`setPriceAmount` to `setSumDiscountAmount`
-        // to `setAbstractSku`
-        // to `setGroupKey`
+        $documentCartItemTransfer->setInternalId('todo-generate-spaid-' . $internalId);//@todo: generate spaid
+        $documentCartItemTransfer->setSupplierId('todo-replace-sup-id');//@todo:
         
         $documentCartItemTransfer->setQuantity($quoteItemTransfer->getQuantity());
         $documentCartItemTransfer->setProductPackagingUnit($quoteItemTransfer->getProductPackagingUnit());
