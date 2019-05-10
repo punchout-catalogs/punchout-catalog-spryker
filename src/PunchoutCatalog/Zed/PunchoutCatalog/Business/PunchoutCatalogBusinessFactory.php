@@ -7,9 +7,9 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogCartWriterStep;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogSetupWriterStep;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\MapperInterface;
 use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
@@ -134,7 +134,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
 
         $dataSetStepBroker = $this->createTransactionAwareDataSetStepBroker();
         $dataSetStepBroker
-            ->addStep($this->createPunchoutCatalogSetupWriterStep());
+            ->addStep($this->createPunchoutCatalogConnectionSetupWriterStep());
 
         $dataImporter->addDataSetStepBroker($dataSetStepBroker);
 
@@ -152,7 +152,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
 
         $dataSetStepBroker = $this->createTransactionAwareDataSetStepBroker();
         $dataSetStepBroker
-            ->addStep($this->createPunchoutCatalogCartWriterStep());
+            ->addStep($this->createPunchoutCatalogConnectionCartWriterStep());
 
         $dataImporter->addDataSetStepBroker($dataSetStepBroker);
 
@@ -160,7 +160,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalogDataImport\Business\Step\PunchoutCatalogConnectionWriterStep
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Step\PunchoutCatalogConnectionWriterStep
      */
     public function createPunchoutCatalogConnectionWriterStep(): PunchoutCatalogConnectionWriterStep
     {
@@ -168,18 +168,18 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalogDataImport\Business\Step\PunchoutCatalogSetupWriterStep
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Step\PunchoutCatalogConnectionSetupWriterStep
      */
-    public function createPunchoutCatalogSetupWriterStep()
+    public function createPunchoutCatalogConnectionSetupWriterStep()
     {
-        return new PunchoutCatalogSetupWriterStep();
+        return new PunchoutCatalogConnectionSetupWriterStep();
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalogDataImport\Business\Step\PunchoutCatalogSetupWriterStep
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Step\PunchoutCatalogConnectionSetupWriterStep
      */
-    public function createPunchoutCatalogCartWriterStep()
+    public function createPunchoutCatalogConnectionCartWriterStep()
     {
-        return new PunchoutCatalogCartWriterStep();
+        return new PunchoutCatalogConnectionCartWriterStep();
     }
 }

@@ -15,7 +15,7 @@ use SimpleXMLElement;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
-use PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -69,7 +69,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
         $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
 
         $mappingTransfer = $this->convertToMappingTransfer(
-            (string)$connection->getCart()->getMappingCart()
+            (string)$connection->getCart()->getMapping()
         );
 
         $cXML = $this->getReturnHeader(
@@ -80,7 +80,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
         $cXML = new SimpleXMLElement($cXML);
         $cXML = (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer, $cXML);
 
-        if ($connection->getCart()->getCartEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
+        if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
             $cxmlFields = [
                 'cxml-urlencoded' => $cXML->asXML(), //@todo: fix it
             ];

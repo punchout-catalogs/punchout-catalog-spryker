@@ -27,7 +27,7 @@ class RequestProcessor implements RequestProcessorInterface
     protected const DEFAULT_FORMAT = PunchoutConnectionConstsInterface::FORMAT_CXML;
 
     /**
-     * @var \PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface[]
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface[]
      */
     protected $requestProcessorPlugins;
 

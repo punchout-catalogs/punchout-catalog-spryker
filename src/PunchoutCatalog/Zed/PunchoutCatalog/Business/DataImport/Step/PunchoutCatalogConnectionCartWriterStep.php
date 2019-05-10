@@ -7,13 +7,13 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step;
 
-use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogCartQuery;
+use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogConnectionCartQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogConnectionQuery;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet\PunchoutCatalogCartDataSet;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet\PunchoutCatalogConnectionCartDataSet;
 
-class PunchoutCatalogCartWriterStep implements DataImportStepInterface
+class PunchoutCatalogConnectionCartWriterStep implements DataImportStepInterface
 {
     /**
      * @module PunchoutCatalog
@@ -26,17 +26,17 @@ class PunchoutCatalogCartWriterStep implements DataImportStepInterface
     public function execute(DataSetInterface $dataSet): void
     {
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
-            ->findOneByName($dataSet[PunchoutCatalogCartDataSet::NAME]);
+            ->findOneByName($dataSet[PunchoutCatalogConnectionCartDataSet::NAME]);
 
         /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogCart $cartEntity */
-        $cartEntity = PgwPunchoutCatalogCartQuery::create()
+        $cartEntity = PgwPunchoutCatalogConnectionCartQuery::create()
             ->filterByIdPunchoutCatalogConnection($connectionEntity->getIdPunchoutCatalogConnection())
             ->findOneOrCreate();
 
-        $cartEntity->setMappingCart($dataSet[PunchoutCatalogCartDataSet::MAPPING] ?? null);
-        $cartEntity->setMaxDescriptionLength($dataSet[PunchoutCatalogCartDataSet::MAX_DESCRIPTION_LENGTH] ?? null);
-        $cartEntity->setDefaultSupplierId($dataSet[PunchoutCatalogCartDataSet::DEFAULT_SUPPLIER_ID] ?? null);
-        $cartEntity->setCartEncoding($dataSet[PunchoutCatalogCartDataSet::ENCODING] ?? null);
+        $cartEntity->setMapping($dataSet[PunchoutCatalogConnectionCartDataSet::MAPPING] ?? null);
+        $cartEntity->setMaxDescriptionLength($dataSet[PunchoutCatalogConnectionCartDataSet::MAX_DESCRIPTION_LENGTH] ?? null);
+        $cartEntity->setDefaultSupplierId($dataSet[PunchoutCatalogConnectionCartDataSet::DEFAULT_SUPPLIER_ID] ?? null);
+        $cartEntity->setEncoding($dataSet[PunchoutCatalogConnectionCartDataSet::ENCODING] ?? null);
 
         $cartEntity->save();
     }

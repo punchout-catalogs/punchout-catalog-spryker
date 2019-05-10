@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Persistence;
 
-use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogCartQuery;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCartQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionQuery;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
@@ -56,18 +56,18 @@ class PunchoutCatalogPersistenceFactory extends AbstractPersistenceFactory
     }
 
     /**
-     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogCartQuery
+     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCartQuery
      */
-    public function createPunchoutCatalogCartQuery(): PgwPunchoutCatalogCartQuery
+    public function createPunchoutCatalogCartQuery(): PgwPunchoutCatalogConnectionCartQuery
     {
-        return PgwPunchoutCatalogCartQuery::create();
+        return PgwPunchoutCatalogConnectionCartQuery::create();
     }
 
     /**
-     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogSetupQuery
+     * @return \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetupQuery
      */
-    public function createPunchoutCatalogSetupQuery(): PgwPunchoutCatalogSetupQuery
+    public function createPunchoutCatalogSetupQuery(): PgwPunchoutCatalogConnectionSetupQuery
     {
-        return PgwPunchoutCatalogSetupQuery::create();
+        return PgwPunchoutCatalogConnectionSetupQuery::create();
     }
 }

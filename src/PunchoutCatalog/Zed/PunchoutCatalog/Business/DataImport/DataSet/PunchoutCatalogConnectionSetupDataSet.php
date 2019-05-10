@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet;
 
-interface PunchoutCatalogSetupDataSet
+interface PunchoutCatalogConnectionSetupDataSet
 {
     public const CONNECTION_NAME = 'connection_name';
 

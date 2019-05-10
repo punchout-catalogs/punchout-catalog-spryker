@@ -14,8 +14,8 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesLoginUrlConfigurati
 class PunchoutCatalogConfig extends DataImportConfig
 {
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_CONNECTION = 'punchout-catalog-connection';
-    public const IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP = 'punchout-catalog-setup';
-    public const IMPORT_TYPE_PUNCHOUT_CATALOG_CART = 'punchout-catalog-cart';
+    public const IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP = 'punchout-catalog-connection-setup';
+    public const IMPORT_TYPE_PUNCHOUT_CATALOG_CART = 'punchout-catalog-connection-cart';
 
     /**
      * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
@@ -34,7 +34,7 @@ class PunchoutCatalogConfig extends DataImportConfig
     public function getPunchoutCatalogSetupDataImporterConfiguration(): DataImporterConfigurationTransfer
     {
         return $this->buildImporterConfiguration(
-            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_setup.csv']),
+            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_setup.csv']),
             static::IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP
         );
     }
@@ -45,7 +45,7 @@ class PunchoutCatalogConfig extends DataImportConfig
     public function getPunchoutCatalogCartDataImporterConfiguration(): DataImporterConfigurationTransfer
     {
         return $this->buildImporterConfiguration(
-            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_cart.csv']),
+            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_cart.csv']),
             static::IMPORT_TYPE_PUNCHOUT_CATALOG_CART
         );
     }

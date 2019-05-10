@@ -7,11 +7,11 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet;
 
-interface PunchoutCatalogCartDataSet
+interface PunchoutCatalogConnectionCartDataSet
 {
     public const NAME = 'connection_name';
-    public const MAPPING = 'mapping_cart';
     public const DEFAULT_SUPPLIER_ID = 'default_supplier_id';
     public const MAX_DESCRIPTION_LENGTH = 'max_description_length';
-    public const ENCODING = 'cart_encoding';
+    public const ENCODING = 'encoding';
+    public const MAPPING = 'mapping';
 }

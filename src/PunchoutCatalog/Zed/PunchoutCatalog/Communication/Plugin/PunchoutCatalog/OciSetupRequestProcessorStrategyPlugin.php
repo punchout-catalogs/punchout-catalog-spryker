@@ -12,7 +12,7 @@ use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -75,7 +75,7 @@ class OciSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcess
         }
 
         $mappingTransfer = $this->convertToMappingTransfer(
-            (string)$punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getMappingRequest()
+            (string)$punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getMapping()
         );
 
         return (new Decoder())->execute($mappingTransfer, $ociContent);

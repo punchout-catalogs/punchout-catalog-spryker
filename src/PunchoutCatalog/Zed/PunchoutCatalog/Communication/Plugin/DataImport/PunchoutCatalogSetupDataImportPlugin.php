@@ -11,11 +11,11 @@ use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReportTransfer;
 use Spryker\Zed\DataImport\Dependency\Plugin\DataImportPluginInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
-use PunchoutCatalog\Zed\PunchoutCatalogDataImport\PunchoutCatalogDataImportConfig;
+use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacadeInterface getFacade()
- * @method \PunchoutCatalog\Zed\PunchoutCatalogDataImport\PunchoutCatalogDataImportConfig getConfig()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
 class PunchoutCatalogSetupDataImportPlugin extends AbstractPlugin implements DataImportPluginInterface
 {
@@ -42,6 +42,6 @@ class PunchoutCatalogSetupDataImportPlugin extends AbstractPlugin implements Dat
      */
     public function getImportType(): string
     {
-        return PunchoutCatalogDataImportConfig::IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP;
+        return PunchoutCatalogConfig::IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP;
     }
 }

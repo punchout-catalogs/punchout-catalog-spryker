@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step;
 
-use Orm\Zed\Company\Persistence\SpyCompanyQuery;
+use Orm\Zed\CompanyBusinessUnit\Persistence\SpyCompanyBusinessUnitQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionQuery;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
@@ -44,12 +44,11 @@ class PunchoutCatalogConnectionWriterStep implements DataImportStepInterface
      */
     public function execute(DataSetInterface $dataSet): void
     {
-        $companyEntity = SpyCompanyQuery::create()
-            ->findOneByKey($dataSet[PunchoutCatalogConnectionDataSet::COMPANY_KEY]);
+        $businessUnit = SpyCompanyBusinessUnitQuery::create()->findOneByKey($dataSet[PunchoutCatalogConnectionSetupDataSet::BUSINESS_UNIT_KEY]);
 
         /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection $connectionEntity */
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
-            ->filterByFkCompany($companyEntity->getIdCompany())
+            ->filterByFkCompanyBusinessUnit($businessUnit->getIdCompanyBusinessUnit())
             ->filterByType($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_TYPE])
             ->filterByFormat($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_FORMAT])
             ->filterByUsername($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_USERNAME])
@@ -58,7 +57,7 @@ class PunchoutCatalogConnectionWriterStep implements DataImportStepInterface
 
         $connectionEntity
             ->setIsActive($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_IS_ACTIVE])
-            ->setMappingRequest($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_MAPPING_REQUEST] ?? null)
+            ->setMapping($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_MAPPING] ?? null)
             ->setCredentials($dataSet[PunchoutCatalogConnectionDataSet::CONNECTION_CREDENTIALS] ?? null);
 
         $connectionEntity->save();

@@ -32,7 +32,7 @@ class CartProcessor implements CartProcessorInterface
     protected const ERROR_GENERAL = 'punchout-catalog.error.general';
 
     /**
-     * @var \PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface[]
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface[]
      */
     protected $cartProcessorPlugins;
 
