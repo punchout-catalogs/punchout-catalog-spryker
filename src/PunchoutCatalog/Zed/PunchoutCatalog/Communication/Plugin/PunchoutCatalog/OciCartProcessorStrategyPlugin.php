@@ -14,7 +14,7 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Encoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
-use PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()

@@ -15,7 +15,7 @@ use SimpleXMLElement;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
-use PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()

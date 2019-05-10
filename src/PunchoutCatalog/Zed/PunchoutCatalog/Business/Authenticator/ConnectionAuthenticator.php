@@ -18,12 +18,12 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\Oci
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
-use PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
 
 class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
 {
     /**
-     * @var \PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface[]
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface[]
      */
     protected $protocolStrategyPlugins;
 
@@ -94,7 +94,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
     }
 
     /**
-     * @param \PunchoutCatalog\Zed\PunchoutCatalogExtension\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface $protocolStrategyPlugin
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface $protocolStrategyPlugin
      * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
