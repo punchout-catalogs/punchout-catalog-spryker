@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogResponseContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
@@ -37,8 +38,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     {
         $map = $this->decode($punchoutCatalogRequestTransfer);
 
-        //@todo: fix this name
-        $punchoutCatalogRequestTransfer->setDecodedContent(json_encode($map, JSON_PRETTY_PRINT));
+        $punchoutCatalogRequestTransfer->setRawData($map);
 
         /**
          * @todo: move to a separate class like Persistence/Mapper/ConnectionMapper
@@ -74,7 +74,8 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         /** /TEST STUB */
 
         $punchoutCatalogResponseTransfer = new PunchoutCatalogResponseTransfer();
-        $punchoutCatalogResponseTransfer->setRequest($punchoutCatalogRequestTransfer);
+        $punchoutCatalogResponseTransfer->setContext(new PunchoutCatalogResponseContextTransfer());
+        $punchoutCatalogResponseTransfer->getContext()->setRequest($punchoutCatalogRequestTransfer);
         return $punchoutCatalogResponseTransfer
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(true)

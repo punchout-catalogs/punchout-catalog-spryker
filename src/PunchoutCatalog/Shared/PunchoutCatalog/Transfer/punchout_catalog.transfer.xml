@@ -6,7 +6,7 @@
     <transfer name="PunchoutCatalogRequest">
         <property name="contentType" type="string" />
         <property name="content" type="string" /><!-- it can be an string or array -->
-        <property name="decodedContent" type="string" /><!-- @tod: review it's name : rawData -->
+        <property name="rawData" type="array" />
 
         <property name="protocolType" type="string" />
         <property name="protocolData" type="PunchoutCatalogProtocolData" />
@@ -26,6 +26,12 @@
 
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
+
+        <property name="context" type="PunchoutCatalogResponseContext"/>
+    </transfer>
+
+    <transfer name="PunchoutCatalogResponseContext">
+        <property name="rawData" type="array" />
         <property name="request" type="PunchoutCatalogRequest"/>
     </transfer>
 
@@ -170,7 +176,7 @@
 
     <!-- @todo: use it in code, and do not return in CURL -->
     <transfer name="PunchoutCatalogCartResponseContext">
-        <property name="rawContent" type="string" />
+        <property name="rawData" type="string" />
         <property name="request" type="PunchoutCatalogCartRequest"/>
     </transfer>
 

@@ -155,8 +155,9 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         $responseTransaction = $transactionMapper->mapResponseTransferToEntityTransfer($punchoutCatalogResponseTransfer);
 
         $this->getEntityManager()->saveTransaction($responseTransaction);
-        if ($punchoutCatalogResponseTransfer->getRequest() !== null) {
-            $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer($punchoutCatalogResponseTransfer->getRequest(), $requestTransaction);
+        if ($punchoutCatalogResponseTransfer->getContext() !== null
+            && $punchoutCatalogResponseTransfer->getContext()->getRequest() !== null) {
+            $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer($punchoutCatalogResponseTransfer->getContext()->getRequest(), $requestTransaction);
             $this->getEntityManager()->saveTransaction($requestTransaction);
         }
 

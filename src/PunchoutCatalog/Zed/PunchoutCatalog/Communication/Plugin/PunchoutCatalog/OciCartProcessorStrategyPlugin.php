@@ -10,6 +10,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartResponseContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
@@ -39,7 +40,8 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
     ): PunchoutCatalogCartResponseTransfer
     {
         $response = (new PunchoutCatalogCartResponseTransfer())
-            ->setIsSuccess(true);
+            ->setIsSuccess(true)
+            ->setContext(new PunchoutCatalogCartResponseContextTransfer());
     
         try {
             $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();
@@ -62,8 +64,8 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
                         ->setValue($fieldValue)//@todo: fix `fieldValue`
                 );
             }
-            
-            return $response->setRawContent($fields);
+            $response->getContext()->setRawData($fields);
+            return $response;
         } catch (\Exception $e) {
             $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
         
