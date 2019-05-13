@@ -123,8 +123,8 @@ class CartProcessor implements CartProcessorInterface
         $uuidOci = '97915852-9cd5-5425-a568-fe1232d4e27c';
 
         //$uuid = $uuidOci;
-        $uuid = $uuidCxmlBase64;
-        //$uuid = $uuidCxmlUrlEncoded;
+        //$uuid = $uuidCxmlBase64;
+        $uuid = $uuidCxmlUrlEncoded;
 
         return $this->punchoutCatalogRepository->findConnectionByUuid($uuid);
     }

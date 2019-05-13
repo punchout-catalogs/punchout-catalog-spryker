@@ -10,12 +10,12 @@
 <form id="punchoutCartForm"
       method="POST"
       action="{{data.submit_url}}"
-      enctype="application/x-www-form-urlencoded; charset=utf-8"
+      enctype="application/x-www-form-urlencoded"
       style="height: 0; width: 0; border: 0;"
 >
 {% if data.fields %}
     {% for field in data.fields %}
-        <input type="hidden" name="{{field.name}}" value="{{field.value}}" />
+        <input type="hidden" name="{{field.name}}" value="{{field.value|raw}}" />
     {% endfor %}
 {% endif %}
 </form>

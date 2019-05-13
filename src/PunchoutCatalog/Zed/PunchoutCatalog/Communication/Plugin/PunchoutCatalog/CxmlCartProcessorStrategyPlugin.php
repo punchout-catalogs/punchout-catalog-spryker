@@ -70,6 +70,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
             
             $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
             
+            //The names cXML-urlencoded and cXML-base64 are case insensitive.
             if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
                 $response->addResponseField(
                     (new PunchoutCatalogCartResponseFieldTransfer())
@@ -106,7 +107,20 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
      */
     protected function fixUrlencodedValue(string $value): string
     {
-        return htmlspecialchars($value, ENT_QUOTES);
+        $value = str_replace(
+            ['"', "'"],
+            ['&quot;', "&apos;"],
+            $value
+        );
+        
+        //In SimpleXml symbol `&#37;` replaces with %, need this trick with `&percnt;`
+        //$value = str_replace('&percnt;', '&#37;', $value);
+        //$value = str_replace('&amp;#39;', '&#39;', $value);
+        //$value = str_replace('&amp;quot;', '&quot;', $value);
+        $value = iconv('utf-8', 'us-ascii//TRANSLIT', $value);
+        
+        return $value;
+        //return htmlspecialchars($value, ENT_QUOTES);
         //$value = htmlentities($value, ENT_QUOTES);
     }
     
