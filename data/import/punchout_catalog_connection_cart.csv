@@ -104,9 +104,6 @@ Client 1 - Oci - User 1,PunchoutCatalogsInc,128,,"
       ""product_packaging_unit"": {
         ""path"": ""NEW_ITEM-UNIT[%line_number%]""
       },
-      ""manufacturer_name"": {
-        ""path"": ""NEW_ITEM-MANUFACTCODE[%line_number%]""
-      },
       ""unspsc"": {
         ""path"": ""NEW_ITEM-MATGROUP[%line_number%]""
       },

@@ -127,7 +127,9 @@ class CartController extends AbstractController
      */
     protected function getFormSubmitUrl(): string
     {
-        return 'https://demo.punchoutexpress.com/gateway/testconn/';
+        return 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/cxmlresponse/conn_id/12/';
+        //return 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/ociresponse/conn_id/18/';
+        //return 'https://demo.punchoutexpress.com/gateway/testconn/';
     }
     
     /**

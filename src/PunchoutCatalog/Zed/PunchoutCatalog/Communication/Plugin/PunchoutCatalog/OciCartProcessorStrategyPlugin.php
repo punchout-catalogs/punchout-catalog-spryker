@@ -127,8 +127,8 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
      */
     protected function fixOciValue(string $value): string
     {
-        $value = htmlspecialchars($value, ENT_QUOTES);
-        //$value = preg_replace('/\s\s+|\t|\r|\n/', ' ', $value);
-        return $value;
+        $value = preg_replace('/\s\s+|\t/', ' ', $value);
+        //return htmlentities($value, ENT_QUOTES);
+        return htmlspecialchars($value, ENT_QUOTES);
     }
 }

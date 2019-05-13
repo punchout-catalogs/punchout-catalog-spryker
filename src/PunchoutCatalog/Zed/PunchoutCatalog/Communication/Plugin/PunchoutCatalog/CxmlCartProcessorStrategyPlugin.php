@@ -74,13 +74,13 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
                 $response->addResponseField(
                     (new PunchoutCatalogCartResponseFieldTransfer())
                         ->setName('cxml-urlencoded')
-                        ->setValue($xml)//@todo: fix `urlencoded`
+                        ->setValue($this->fixUrlencodedValue($xml))
                 );
             } else {
                 $response->addResponseField(
                     (new PunchoutCatalogCartResponseFieldTransfer())
                         ->setName('cxml-base64')
-                        ->setValue(base64_encode($xml))
+                        ->setValue($this->fixBase64Value($xml))
                 );
             }
             
@@ -98,7 +98,28 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
             );
         }
     }
-
+    
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixUrlencodedValue(string $value): string
+    {
+        return htmlspecialchars($value, ENT_QUOTES);
+        //$value = htmlentities($value, ENT_QUOTES);
+    }
+    
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixBase64Value(string $value): string
+    {
+        return base64_encode($value);
+    }
+    
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
@@ -140,7 +161,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
         foreach ($mappingTransfer->getObjects() as $object) {
             if ($object->getName() == 'cart_item') {
                 $object->setIsMultiple(true);
-                $object->setPath(['/cXML/Message[1]/PunchoutOrderMessage[1]/ItemIn']);
+                $object->setPath(['/cXML/Message[1]/PunchOutOrderMessage[1]/ItemIn']);
             }
         }
 
@@ -203,10 +224,10 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
         </Sender>
     </Header>
     <Message deploymentMode="{$deploymentMode}">
-        <PunchoutOrderMessage>
+        <PunchOutOrderMessage>
             <BuyerCookie>{$buyerCookie}</BuyerCookie>
-            <PunchoutOrderMessageHeader operationAllowed="{$operationAllowed}" />
-        </PunchoutOrderMessage>
+            <PunchOutOrderMessageHeader operationAllowed="{$operationAllowed}" />
+        </PunchOutOrderMessage>
     </Message>
 </cXML>
 EOF;

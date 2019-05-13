@@ -102,8 +102,8 @@ class CartProcessor implements CartProcessorInterface
     {
         return (new PunchoutCatalogCartRequestOptionsTransfer())
             ->fromArray([
-                'protocol_data' => $this->getFakeOciSessionProtocolData(),
-                //'protocol_data' => $this->getFakeCxmlSessionProtocolData(),
+                //'protocol_data' => $this->getFakeOciSessionProtocolData(),
+                'protocol_data' => $this->getFakeCxmlSessionProtocolData(),
                 'punchout_catalog_connection' => $this->getCurrentConnection()->toArray(),
             ]);
     }
@@ -122,8 +122,8 @@ class CartProcessor implements CartProcessorInterface
         $uuidCxmlUrlEncoded = 'becc5d59-94d4-5498-95d2-ee12c37c57b5';
         $uuidOci = '97915852-9cd5-5425-a568-fe1232d4e27c';
 
-        $uuid = $uuidOci;
-        //$uuid = $uuidCxmlBase64;
+        //$uuid = $uuidOci;
+        $uuid = $uuidCxmlBase64;
         //$uuid = $uuidCxmlUrlEncoded;
 
         return $this->punchoutCatalogRepository->findConnectionByUuid($uuid);
@@ -140,7 +140,7 @@ class CartProcessor implements CartProcessorInterface
     {
         //Demo PEX cXML
         $url_cxml = 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/cxmlresponse/conn_id/12/';
-        $buyer_cookie = 'adf052dc8d5c2ad6c06dcc592eab3809';//value copied from Demo PEX cookie TRX list
+        $buyer_cookie = '9d5687e92e09c69f670bd0cfb9040b97';//value copied from Demo PEX cookie TRX list
         $data = [
             'cxml_to_credentials' => [
                 'identity' => 'DemoCS3',
