@@ -171,7 +171,7 @@ class GatewayController extends AbstractGatewayController
 
     protected function getFakeCartTransfer()
     {
-        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/cart2.json');
+        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/cart.json');
         $transferJson = json_decode($testFile, true);
         $documentCartTransfer = new PunchoutCatalogCartRequestTransfer();
         return $documentCartTransfer->fromArray($transferJson);

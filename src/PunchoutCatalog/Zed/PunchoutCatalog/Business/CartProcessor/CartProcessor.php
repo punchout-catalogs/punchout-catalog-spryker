@@ -29,7 +29,6 @@ class CartProcessor implements CartProcessorInterface
 {
     protected const ERROR_MISSING_CONNECTION = 'punchout-catalog.error.missing-connection';
     protected const ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR = 'punchout-catalog.error.missing-cart-format-strategy-processor';
-    protected const ERROR_GENERAL = 'punchout-catalog.error.general';
 
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface[]
@@ -87,7 +86,7 @@ class CartProcessor implements CartProcessorInterface
                 );
             } else {
                 $punchoutCatalogResponseTransfer->addMessage(
-                    (new MessageTransfer())->setValue(static::ERROR_GENERAL)
+                    (new MessageTransfer())->setValue(PunchoutConnectionConstsInterface::ERROR_GENERAL)
                 );
             }
 
@@ -102,8 +101,8 @@ class CartProcessor implements CartProcessorInterface
     {
         return (new PunchoutCatalogCartRequestOptionsTransfer())
             ->fromArray([
-                //'protocol_data' => $this->getFakeOciSessionProtocolData(),
-                'protocol_data' => $this->getFakeCxmlSessionProtocolData(),
+                'protocol_data' => $this->getFakeOciSessionProtocolData(),
+                //'protocol_data' => $this->getFakeCxmlSessionProtocolData(),
                 'punchout_catalog_connection' => $this->getCurrentConnection()->toArray(),
             ]);
     }
@@ -122,8 +121,8 @@ class CartProcessor implements CartProcessorInterface
         $uuidCxmlUrlEncoded = 'becc5d59-94d4-5498-95d2-ee12c37c57b5';
         $uuidOci = '97915852-9cd5-5425-a568-fe1232d4e27c';
 
-        //$uuid = $uuidOci;
-        $uuid = $uuidCxmlBase64;
+        $uuid = $uuidOci;
+        //$uuid = $uuidCxmlBase64;
         //$uuid = $uuidCxmlUrlEncoded;
 
         return $this->punchoutCatalogRepository->findConnectionByUuid($uuid);

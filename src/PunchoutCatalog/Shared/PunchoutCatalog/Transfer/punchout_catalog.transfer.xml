@@ -155,13 +155,17 @@
     </transfer>
 
     <transfer name="PunchoutCatalogCartResponse">
-        <property name="contentType" type="string" />
-        <property name="content" type="string" />
-
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
+        <property name="fields" type="PunchoutCatalogCartResponseField[]" singular="responseField" />
+        <property name="rawContent" type="string" />
 
         <property name="request" type="PunchoutCatalogCartRequest"/>
+    </transfer>
+
+    <transfer name="PunchoutCatalogCartResponseField">
+        <property name="name" type="string"/>
+        <property name="value" type="string"/>
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCart">

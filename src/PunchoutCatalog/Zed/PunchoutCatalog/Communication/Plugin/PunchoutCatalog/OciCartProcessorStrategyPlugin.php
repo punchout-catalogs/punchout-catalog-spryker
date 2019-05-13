@@ -7,10 +7,13 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
+use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Encoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
@@ -20,7 +23,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartPro
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
-class OciCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugin implements PunchoutCatalogCartProcessorStrategyPluginInterface
+class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutCatalogCartProcessorStrategyPluginInterface
 {
     /**
      * @api
@@ -33,45 +36,65 @@ class OciCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugin
     public function processCart(
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
         PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
-    ): PunchoutCatalogCartResponseTransfer {
-        $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();
-        $punchoutCatalogCartRequestOptionsTransfer->requirePunchoutCatalogConnection();
-
-        (new ProtocolDataValidator())->validate(
-            $punchoutCatalogCartRequestOptionsTransfer->getProtocolData()
-        );
-
-        $content = $this->prepareOciContent(
-            $punchoutCatalogCartRequestTransfer,
-            $punchoutCatalogCartRequestOptionsTransfer
-        );
-
-        return (new PunchoutCatalogCartResponseTransfer())
-            ->setIsSuccess(true)
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_HTML)
-            ->setContent($content);
+    ): PunchoutCatalogCartResponseTransfer
+    {
+        $response = (new PunchoutCatalogCartResponseTransfer())
+            ->setIsSuccess(true);
+    
+        try {
+            $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();
+            $punchoutCatalogCartRequestOptionsTransfer->requirePunchoutCatalogConnection();
+        
+            (new ProtocolDataValidator())->validate(
+                $punchoutCatalogCartRequestOptionsTransfer->getProtocolData(),
+                false
+            );
+    
+            $fields = $this->prepareOciContent(
+                $punchoutCatalogCartRequestTransfer,
+                $punchoutCatalogCartRequestOptionsTransfer
+            );
+    
+            foreach ($fields as $fieldName => $fieldValue) {
+                $response->addResponseField(
+                    (new PunchoutCatalogCartResponseFieldTransfer())
+                        ->setName($fieldName)
+                        ->setValue($fieldValue)//@todo: fix `fieldValue`
+                );
+            }
+            
+            return $response->setRawContent($fields);
+        } catch (\Exception $e) {
+            $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
+        
+            if (($e instanceof RequiredTransferPropertyException) || ($e instanceof InvalidArgumentException)) {
+                $msg = $e->getMessage();
+            }
+            $msg = $e->getMessage();
+            return $response->addMessage(
+                (new MessageTransfer())->setValue($msg)
+            );
+        }
     }
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
      *
-     * @return string
+     * @return array
      */
     protected function prepareOciContent(
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
         PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
-    ): string {
+    ): array
+    {
+        $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
+        
         $mappingTransfer = $this->convertToMappingTransfer(
-            (string)$punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection()->getCart()->getMapping()
+            (string)$connection->getCart()->getMapping()
         );
 
-        $ociFields = (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer);
-
-        return $this->renderHtmlForm(
-            $ociFields ?? [], //can be empty when we cancel cart
-            $punchoutCatalogCartRequestOptionsTransfer->getProtocolData()->getCart()->getUrl()
-        );
+        return (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer);
     }
 
     /**

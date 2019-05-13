@@ -102,13 +102,23 @@ class Mapper implements MapperInterface
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
             $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_TRANSFER_TO_REQUISITION);
         }
-        $content = $cartResponseTransfer->getContent();
-        if (!is_string($content)) {
+    
+        $content = $cartResponseTransfer->getRawContent();
+        if ($content && !is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
+        
+        $rawData = $cartResponseTransfer->getRequest();
+        $rawData = $rawData ? $rawData->toArray() : [];
+        
+        if ($rawData && !is_string($rawData)) {
+            $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
+        }
+        
         $entityTransfer->setStatus($cartResponseTransfer->getIsSuccess());
         $entityTransfer->setMessage($content);
+        $entityTransfer->setRawData($rawData);
+        
         return $entityTransfer;
     }
-
 }

@@ -28,7 +28,8 @@ interface PunchoutConnectionConstsInterface
     public const CONNECTION_TYPE_SETUP_REQUEST = 'setup_request';
 
     public const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
-
+    public const ERROR_GENERAL = 'punchout-catalog.error.general';
+    
     public const CXML_ENCODING_BASE64 = 'base64';
     public const CXML_ENCODING_URLENCODED = 'urlencoded';
 }
