@@ -3,6 +3,10 @@
 {% define data = {
   content: content,
 } %}
+
+'fields' => $punchoutCatalogCartResponseTransfer->getFields(),
+'submit_url' => $this->getFormSubmitUrl(),
+
 <form id="cartReturnBody" method="POST" action="%s" style="height: 0; width: 0; border: 0;">
   <input type="hidden" name="%s" value="%s" />
 </form>

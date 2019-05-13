@@ -81,8 +81,9 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
                         ->setValue(base64_encode($xml))
                 );
             }
-
-            return $response->getContext()->setRawData($fields);
+            
+            $response->getContext()->setRawData($xml);
+            return $response;
         } catch (\Exception $e) {
             $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
             
@@ -90,7 +91,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
                 $msg = $e->getMessage();
             }
             
-            return $response->addMessage(
+            return $response->setIsSuccess(false)->addMessage(
                 (new MessageTransfer())->setValue($msg)
             );
         }

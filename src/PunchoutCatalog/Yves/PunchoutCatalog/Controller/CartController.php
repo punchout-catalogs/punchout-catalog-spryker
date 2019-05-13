@@ -9,6 +9,8 @@ namespace PunchoutCatalog\Yves\PunchoutCatalog\Controller;
 
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,6 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CartController extends AbstractController
 {
+    protected const REDIRECT_URL = 'cart';
+    
     /**
      * @todo: fix: product description + product description in options
      *
@@ -36,17 +40,16 @@ class CartController extends AbstractController
                 new PunchoutCatalogCartRequestTransfer()
             );
 
-        /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $punchoutCatalogCartResponseTransfer */
-        $punchoutCatalogCartResponseTransfer = $this->getFactory()
+        /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer */
+        $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartTransfer($punchoutCatalogCartRequestTransfer);
 
-        $response = $this->createResponse($punchoutCatalogCartResponseTransfer->getContentType());
-        $viewData = [
-            'content' => $punchoutCatalogCartResponseTransfer->getContent(),
-        ];
-
-        return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
+        if ($cartResponseTransfer->getIsSuccess()) {
+            return $this->handleSuccessResponse($cartResponseTransfer);
+        } else {
+            return $this->handleErrorResponse($cartResponseTransfer);
+        }
     }
 
     /**
@@ -55,18 +58,17 @@ class CartController extends AbstractController
     public function cancelAction()
     {
         $punchoutCatalogCancelRequestTransfer = new PunchoutCatalogCancelRequestTransfer();
-
-        /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $punchoutCatalogCartResponseTransfer */
-        $punchoutCatalogCartResponseTransfer = $this->getFactory()
+    
+        /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer */
+        $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartCancel($punchoutCatalogCancelRequestTransfer);
-
-        $response = $this->createResponse($punchoutCatalogCartResponseTransfer->getContentType());
-        $viewData = [
-            'content' => $punchoutCatalogCartResponseTransfer->getContent(),
-        ];
-
-        return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
+    
+        if ($cartResponseTransfer->getIsSuccess()) {
+            return $this->handleSuccessResponse($cartResponseTransfer);
+        } else {
+            return $this->handleErrorResponse($cartResponseTransfer);
+        }
     }
 
     /**
@@ -81,7 +83,68 @@ class CartController extends AbstractController
 
         return $response;
     }
-
+    
+    /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer
+     *
+     * @return Response
+     */
+    protected function handleSuccessResponse(PunchoutCatalogCartResponseTransfer $cartResponseTransfer): Response
+    {
+        $response = $this->createResponse('text/html');
+    
+        $viewData = [
+            'fields' => $cartResponseTransfer->getFields(),
+            'submit_url' => $this->getFormSubmitUrl(),
+        ];
+    
+        return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
+    }
+    
+    /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer
+     *
+     * @return Response
+     */
+    protected function handleErrorResponse(PunchoutCatalogCartResponseTransfer $cartResponseTransfer): Response
+    {
+        $messages = [];
+        
+        if ($cartResponseTransfer->getMessages()) {
+            foreach ($cartResponseTransfer->getMessages() as $message) {
+                $messages[] = $message->getValue();
+            }
+        }
+        
+        return $this->addErrorMessage(implode("\n", $messages))
+            ->redirectResponseInternal(static::REDIRECT_URL);
+    }
+    
+    /**
+     * @todo: fix it
+     *
+     * @return string
+     */
+    protected function getFormSubmitUrl(): string
+    {
+        return 'https://demo.punchoutexpress.com/gateway/testconn/';
+    }
+    
+    /**
+     * @todo: fix it
+     *
+     * @return string
+     */
+    protected function getRedirectUrl(): string
+    {
+        return 'http://www.de.suite-nonsplit.local/cart';
+    }
+    
+    /**
+     * @todo: remove it
+     *
+     * @return \Generated\Shared\Transfer\QuoteTransfer
+     */
     protected function getFakeQuoteTransfer()
     {
         $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/quote.json');

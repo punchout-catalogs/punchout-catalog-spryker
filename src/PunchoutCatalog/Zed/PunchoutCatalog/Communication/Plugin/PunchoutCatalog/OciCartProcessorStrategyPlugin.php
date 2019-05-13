@@ -64,16 +64,17 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
                         ->setValue($fieldValue)//@todo: fix `fieldValue`
                 );
             }
+    
             $response->getContext()->setRawData($fields);
             return $response;
         } catch (\Exception $e) {
             $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
-        
+    
             if (($e instanceof RequiredTransferPropertyException) || ($e instanceof InvalidArgumentException)) {
                 $msg = $e->getMessage();
             }
-            $msg = $e->getMessage();
-            return $response->addMessage(
+    
+            return $response->setIsSuccess(false)->addMessage(
                 (new MessageTransfer())->setValue($msg)
             );
         }
