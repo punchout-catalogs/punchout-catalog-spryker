@@ -46,9 +46,11 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
         PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
     ): PunchoutCatalogCartResponseTransfer
     {
+        $context = new PunchoutCatalogCartResponseContextTransfer();
+        $context->setConnectionSessionId('fake_session_id');
         $response = (new PunchoutCatalogCartResponseTransfer())
             ->setIsSuccess(true)
-            ->setContext(new PunchoutCatalogCartResponseContextTransfer());
+            ->setContext($context);
 
         try {
             $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();

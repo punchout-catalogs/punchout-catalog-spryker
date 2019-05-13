@@ -195,6 +195,10 @@ abstract class AbstractCoder
             return [$val];
         }
 
+        if ($val === null) {
+            return [];
+        }
+
         if (!is_array($val)) {
             return [$val];
         }
