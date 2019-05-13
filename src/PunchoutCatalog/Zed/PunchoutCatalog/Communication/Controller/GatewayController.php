@@ -9,6 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Controller;
 
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;

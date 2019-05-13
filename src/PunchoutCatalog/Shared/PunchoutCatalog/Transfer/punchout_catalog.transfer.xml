@@ -6,7 +6,6 @@
     <transfer name="PunchoutCatalogRequest">
         <property name="contentType" type="string" />
         <property name="content" type="string" /><!-- it can be an string or array -->
-        <property name="rawData" type="array" />
 
         <property name="protocolType" type="string" />
         <property name="protocolData" type="PunchoutCatalogProtocolData" />
@@ -18,6 +17,8 @@
 
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
+
+        <property name="context" type="PunchoutCatalogResponseContext"/>
     </transfer>
 
     <transfer name="PunchoutCatalogResponse">
@@ -33,6 +34,7 @@
     <transfer name="PunchoutCatalogResponseContext">
         <property name="rawData" type="array" />
         <property name="request" type="PunchoutCatalogRequest"/>
+        <property name="connectionSessionId" type="string"/>
     </transfer>
 
     <transfer name="PunchoutCatalogConnection">
@@ -153,6 +155,8 @@
         <property name="cart" type="PunchoutCatalogDocumentCart" />
         <property name="cartItem" type="PunchoutCatalogDocumentCartItem[]"  singular="cartItem"/>
         <property name="customer" type="PunchoutCatalogDocumentCartCustomer"/>
+
+        <property name="punchoutCatalogConnection" type="PunchoutCatalogConnection" />
     </transfer>
 
     <transfer name="PunchoutCatalogCartRequestOptions">
@@ -178,6 +182,7 @@
     <transfer name="PunchoutCatalogCartResponseContext">
         <property name="rawData" type="string" />
         <property name="request" type="PunchoutCatalogCartRequest"/>
+        <property name="connectionSessionId" type="string"/>
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCart">

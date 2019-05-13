@@ -3,10 +3,10 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction;
 
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutTransactionConstsInterface;
 
 class Mapper implements MapperInterface
@@ -39,12 +39,13 @@ class Mapper implements MapperInterface
                 );
             }
         }
+        $entityTransfer->setConnectionSessionId($responseTransfer->getContext()->getConnectionSessionId());
 
         $content = $responseTransfer->getContent();
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
-        
+
         $entityTransfer->setMessage($content);
         $entityTransfer->setStatus($responseTransfer->getIsSuccess());
         return $entityTransfer;
@@ -69,24 +70,27 @@ class Mapper implements MapperInterface
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
-        
+
         $entityTransfer->setMessage($content);
-    
+
         if ($requestTransfer->getCompanyBusinessUnit()) {
             $entityTransfer->setFkCompanyBusinessUnit(
                 $requestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
             );
         }
 
-        $rawData = $requestTransfer->getRawData();
+        if ($requestTransfer->getContext()) {
+            $rawData = $requestTransfer->getContext()->getRawData();
 
-        if (!is_string($rawData)) {
-            $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
+            if (!is_string($rawData)) {
+                $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
+            }
+
+            $entityTransfer->setRawData($rawData);
+            $entityTransfer->setConnectionSessionId($requestTransfer->getContext()->getConnectionSessionId());
         }
-
-        $entityTransfer->setRawData($rawData);
         $entityTransfer->setStatus($requestTransfer->getIsSuccess());
-        
+
         if ($requestTransfer->getPunchoutCatalogConnection()) {
             $entityTransfer->setFkPunchoutCatalogConnection($requestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
         }
@@ -108,22 +112,29 @@ class Mapper implements MapperInterface
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
             $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_TRANSFER_TO_REQUISITION);
         }
-    
+
         $content = $cartResponseTransfer->getContext()->getRawData();
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
-        
+
         $rawData = $cartResponseTransfer->getContext()->getRequest();
         $rawData = $rawData ? $rawData->toArray() : [];
-        
+
         if (!is_string($rawData)) {
             $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
         }
+
+        if ($cartResponseTransfer->getContext()->getRequest()->getPunchoutCatalogConnection()) {
+            $entityTransfer->setFkPunchoutCatalogConnection($cartResponseTransfer->getContext()->getRequest()->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
+            $entityTransfer->setFkCompanyBusinessUnit($cartResponseTransfer->getContext()->getRequest()->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit());
+        }
+
+        $entityTransfer->setConnectionSessionId($cartResponseTransfer->getContext()->getConnectionSessionId());
         $entityTransfer->setStatus($cartResponseTransfer->getIsSuccess());
         $entityTransfer->setMessage($content);
         $entityTransfer->setRawData($rawData);
-        
+
         return $entityTransfer;
     }
 }

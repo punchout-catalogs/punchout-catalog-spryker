@@ -37,8 +37,11 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer
     {
         $map = $this->decode($punchoutCatalogRequestTransfer);
+        $context = new PunchoutCatalogResponseContextTransfer();
+        $context->setConnectionSessionId('fake_session_id');
+        $punchoutCatalogRequestTransfer->setContext($context);
 
-        $punchoutCatalogRequestTransfer->setRawData($map);
+        $punchoutCatalogRequestTransfer->getContext()->setRawData($map);
 
         /**
          * @todo: move to a separate class like Persistence/Mapper/ConnectionMapper
@@ -74,7 +77,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         /** /TEST STUB */
 
         $punchoutCatalogResponseTransfer = new PunchoutCatalogResponseTransfer();
-        $punchoutCatalogResponseTransfer->setContext(new PunchoutCatalogResponseContextTransfer());
+        $punchoutCatalogResponseTransfer->setContext($context);
         $punchoutCatalogResponseTransfer->getContext()->setRequest($punchoutCatalogRequestTransfer);
         return $punchoutCatalogResponseTransfer
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
