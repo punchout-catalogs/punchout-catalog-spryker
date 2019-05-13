@@ -158,8 +158,9 @@
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
         <property name="fields" type="PunchoutCatalogCartResponseField[]" singular="responseField" />
-        <property name="rawContent" type="string" />
 
+        <!-- @todo: improve these fields to not return in response -->
+        <property name="rawContent" type="string" />
         <property name="request" type="PunchoutCatalogCartRequest"/>
     </transfer>
 
