@@ -37,6 +37,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     {
         $map = $this->decode($punchoutCatalogRequestTransfer);
 
+        //@todo: fix this name
         $punchoutCatalogRequestTransfer->setDecodedContent(json_encode($map, JSON_PRETTY_PRINT));
 
         /**
