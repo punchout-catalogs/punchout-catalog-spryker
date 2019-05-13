@@ -7,12 +7,17 @@
 
 {% block template %}
 <h3>{{ 'punchout-catalog.cart.return.msg' | trans }}</h3>
-<form id="cartReturnBody" method="POST" action="{{data.submit_url}}" style="height: 0; width: 0; border: 0;">
+<form id="cartReturnBody"
+      method="POST"
+      action="{{data.submit_url}}"
+      enctype="application/x-www-form-urlencoded; charset=utf-8"
+      style="height: 0; width: 0; border: 0;"
+>
 {% if data.fields %}
     {% for field in data.fields %}
-        <input type="hidden" name="{{field.name}}" value="{{field.value}}" />
+        <input type="hidden" name="{{field.name}}" value="{{field.value|raw}}" />
     {% endfor %}
 {% endif %}
 </form>
-<script type="text/javascript">document.getElementById("cartReturnBody").submit();</script>
+<script type="text/javascript">document.getElementById("cartReturnBody2").submit();</script>
 {% endblock %}

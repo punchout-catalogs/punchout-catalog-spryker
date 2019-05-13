@@ -61,7 +61,7 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
                 $response->addResponseField(
                     (new PunchoutCatalogCartResponseFieldTransfer())
                         ->setName($fieldName)
-                        ->setValue($fieldValue)//@todo: fix `fieldValue`
+                        ->setValue($this->fixOciValue((string)$fieldValue))
                 );
             }
     
@@ -116,5 +116,17 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
         }
 
         return $mappingTransfer;
+    }
+    
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixOciValue(string $value): string
+    {
+        $value = htmlspecialchars($value, ENT_QUOTES);
+        //$value = preg_replace('/\s\s+|\t|\r|\n/', ' ', $value);
+        return $value;
     }
 }

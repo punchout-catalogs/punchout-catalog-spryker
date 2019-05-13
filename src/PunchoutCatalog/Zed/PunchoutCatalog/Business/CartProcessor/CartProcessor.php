@@ -101,8 +101,8 @@ class CartProcessor implements CartProcessorInterface
     {
         return (new PunchoutCatalogCartRequestOptionsTransfer())
             ->fromArray([
-                //'protocol_data' => $this->getFakeOciSessionProtocolData(),
-                'protocol_data' => $this->getFakeCxmlSessionProtocolData(),
+                'protocol_data' => $this->getFakeOciSessionProtocolData(),
+                //'protocol_data' => $this->getFakeCxmlSessionProtocolData(),
                 'punchout_catalog_connection' => $this->getCurrentConnection()->toArray(),
             ]);
     }
@@ -123,7 +123,7 @@ class CartProcessor implements CartProcessorInterface
 
         $uuid = $uuidOci;
         //$uuid = $uuidCxmlBase64;
-        $uuid = $uuidCxmlUrlEncoded;
+        //$uuid = $uuidCxmlUrlEncoded;
 
         return $this->punchoutCatalogRepository->findConnectionByUuid($uuid);
     }
