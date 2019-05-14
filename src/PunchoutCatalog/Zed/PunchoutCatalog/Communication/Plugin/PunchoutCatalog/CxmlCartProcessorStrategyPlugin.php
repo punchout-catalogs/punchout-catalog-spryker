@@ -107,9 +107,9 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
      */
     protected function fixUrlencodedValue(string $value): string
     {
-        $value = htmlspecialchars($value, ENT_QUOTES, "UTF-8");
-        $value = iconv('utf-8', 'us-ascii//TRANSLIT', $value);
-        return $value;
+        $value = htmlentities($value, ENT_QUOTES, "utf-8");
+        //$value = htmlspecialchars($value, ENT_QUOTES, "utf-8");
+        return iconv('utf-8', 'us-ascii//TRANSLIT', $value);
     }
     
     /**

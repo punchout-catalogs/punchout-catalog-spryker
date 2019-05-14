@@ -22,16 +22,13 @@ class CartController extends AbstractController
     protected const REDIRECT_URL = 'cart';
     
     /**
-     * @todo: fix: product description + product description in options
-     *
      * Return transferred cart
      */
     public function transferAction()
     {
         $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
-        //-------------------------------------------//
-        $quoteTransfer = $this->getFakeQuoteTransfer();
-        //-------------------------------------------//
+        
+        //$quoteTransfer = $this->getFakeQuoteTransfer();
 
         $punchoutCatalogCartRequestTransfer = $this->getFactory()
             ->getTransferCartMapper()
@@ -80,7 +77,6 @@ class CartController extends AbstractController
     {
         $response = new Response();
         $response->headers->set('Content-Type', $contentType);
-
         return $response;
     }
     
