@@ -31,6 +31,7 @@ class GatewayController extends AbstractGatewayController
             $punchoutCatalogRequestTransfer = new PunchoutCatalogRequestTransfer();
             $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit(16);
             $punchoutCatalogRequestTransfer->setContentType('text/xml');
+            $punchoutCatalogRequestTransfer->setIsSuccess(true);
             $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
 
             //$punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
