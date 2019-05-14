@@ -15,6 +15,10 @@ use Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
+
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientInterface;
 
@@ -89,10 +93,23 @@ class CartTransferMapper implements CartTransferMapperInterface
         QuoteItemTransfer $quoteItemTransfer,
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer {
-        $internalId = md5($quoteItemTransfer->getId());
+        $internalId = md5(json_encode($quoteItemTransfer->toArray()) . '_' . rand(0, 100000) . '_'  . microtime());
+        $internalId = $this->getUtilUuidGeneratorService()->generateUuid5FromObjectId($internalId);
         
-        $documentCartItemTransfer->setInternalId('todo-generate-spaid-' . $internalId);//@todo: generate spaid
-        $documentCartItemTransfer->setSupplierId('todo-replace-sup-id');//@todo:
+        //@todo: fix Product Description
+        //@todo: fix Product Long Description = Product Description + \n + OptionCode1=OptionValue1; + \n + OptionCode2=OptionValue2; + \n
+        //@todo: CUT Product Description + Product Long Description use connection `max_description_length` (from session)
+        //@todo: fix Supplier ID, if not exists use connection `default_suppleir_id` (from session)
+        //@todo: fix UNSPSC/EAN/UPC
+        //@todo: fix Product Image
+        
+        $supplierId = 'fake-supp-id';
+        $productDescription = $quoteItemTransfer->getName();
+        $productLongDescription = $quoteItemTransfer->getName();
+
+        $documentCartItemTransfer->setInternalId($internalId);//@todo: generate spaid
+        $documentCartItemTransfer->setSupplierId($supplierId);//@todo:
+        $documentCartItemTransfer->setLocale($this->toLang($this->currentLocale));
         
         $documentCartItemTransfer->setQuantity($quoteItemTransfer->getQuantity());
         $documentCartItemTransfer->setProductPackagingUnit($quoteItemTransfer->getProductPackagingUnit());
@@ -101,11 +118,12 @@ class CartTransferMapper implements CartTransferMapperInterface
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
         
         $documentCartItemTransfer->setName($quoteItemTransfer->getName());
-        $documentCartItemTransfer->setDescription($quoteItemTransfer->getName());
+        $documentCartItemTransfer->setDescription($productDescription);
+        $documentCartItemTransfer->setLongDescription($productLongDescription);
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
-        $documentCartItemTransfer->setLongDescription($quoteItemTransfer->getName());
-        $documentCartItemTransfer->setLocale($this->toLang($this->currentLocale));
         
+        //
+        //PRICING & RATES
         $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
 
         $documentCartItemTransfer->setUnitPrice(
@@ -153,13 +171,40 @@ class CartTransferMapper implements CartTransferMapperInterface
     protected function prepareHeader(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer {
+    ): PunchoutCatalogCartRequestTransfer
+    {
         $documentCartTransfer = $cartRequestTransfer->getCart();
         
         $documentCartTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
         $documentCartTransfer->setCartNote($quoteTransfer->getCartNote());
         $documentCartTransfer->setLocale($this->toLang($this->currentLocale));
-
+    
+        $coupons = [];
+        $discountDescription = [];
+        if ($quoteTransfer->getVoucherDiscounts()) {
+            foreach ($quoteTransfer->getVoucherDiscounts() as $voucherDiscount) {
+                $discountDescription[] = $voucherDiscount->getDisplayName();
+                $coupons[] = $voucherDiscount->getVoucherCode();
+            }
+        }
+    
+        if ($quoteTransfer->getCartRuleDiscounts()) {
+            foreach ($quoteTransfer->getCartRuleDiscounts() as $documentCartTransferRuleDiscount) {
+                $discountDescription[] = $documentCartTransferRuleDiscount->getDisplayName();
+            }
+        }
+    
+        $coupons = array_filter($coupons);
+        if ($coupons) {
+            $documentCartTransfer->setCoupon(implode(',', $coupons));
+        }
+    
+        $discountDescription = array_filter($discountDescription);
+        if ($discountDescription) {
+            $documentCartTransfer->setDiscountDescription(implode("\n", $discountDescription));
+        }
+        
+        //PRICING & RATES
         if ($quoteTransfer->getTotals()) {
             $documentCartTransfer->setSubtotal(
                 $this->toAmount($quoteTransfer->getTotals()->getSubtotal(), $documentCartTransfer->getCurrency())
@@ -177,32 +222,7 @@ class CartTransferMapper implements CartTransferMapperInterface
                 $this->toAmount($quoteTransfer->getTotals()->getDiscountTotal(), $documentCartTransfer->getCurrency())
             );
         }
-
-        $coupons = [];
-        $discountDescription = [];
-        if ($quoteTransfer->getVoucherDiscounts()) {
-            foreach ($quoteTransfer->getVoucherDiscounts() as $voucherDiscount) {
-                $discountDescription[] = $voucherDiscount->getDisplayName();
-                $coupons[] = $voucherDiscount->getVoucherCode();
-            }
-        }
-
-        if ($quoteTransfer->getCartRuleDiscounts()) {
-            foreach ($quoteTransfer->getCartRuleDiscounts() as $documentCartTransferRuleDiscount) {
-                $discountDescription[] = $documentCartTransferRuleDiscount->getDisplayName();
-            }
-        }
-
-        $coupons = array_filter($coupons);
-        if ($coupons) {
-            $documentCartTransfer->setCoupon(implode(',', $coupons));
-        }
-
-        $discountDescription = array_filter($discountDescription);
-        if ($discountDescription) {
-            $documentCartTransfer->setDiscountDescription(implode("\n", $discountDescription));
-        }
-
+        
         return $cartRequestTransfer;
     }
 
@@ -215,7 +235,8 @@ class CartTransferMapper implements CartTransferMapperInterface
     protected function prepareCustomer(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer {
+    ): PunchoutCatalogCartRequestTransfer
+    {
         if ($quoteTransfer->getCustomer()) {
             $customer = new PunchoutCatalogDocumentCartCustomerTransfer();
             $customer->setEmail($quoteTransfer->getCustomer()->getEmail());
@@ -316,5 +337,13 @@ class CartTransferMapper implements CartTransferMapperInterface
         $floatAmount = $currency->getAmount() / $fraction;
         
         return round($floatAmount, (int)$currency->getCurrency()->getFractionDigits());
+    }
+    
+    /**
+     * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
+     */
+    protected function getUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
+    {
+        return new UtilUuidGeneratorService();
     }
 }
