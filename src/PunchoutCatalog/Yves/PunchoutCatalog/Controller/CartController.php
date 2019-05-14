@@ -91,11 +91,17 @@ class CartController extends AbstractController
      */
     protected function handleSuccessResponse(PunchoutCatalogCartResponseTransfer $cartResponseTransfer): Response
     {
+        //@todo: use $url in widget, not here as Widget has access to session object
+        $url = 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/cxmlresponse/conn_id/12/';
+        //$url = 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/ociresponse/conn_id/18/';
+        //$url = 'https://demo.punchoutexpress.com/gateway/testconn/';
+        //$url = 'http://www.de.suite-nonsplit.local/punchout-catalog/?punchout-poom=1';
+        
         $response = $this->createResponse('text/html');
     
         $viewData = [
             'fields' => $cartResponseTransfer->getFields(),
-            'submit_url' => $this->getFormSubmitUrl(),
+            'submit_url' => $url,
         ];
     
         return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
@@ -118,28 +124,6 @@ class CartController extends AbstractController
         
         return $this->addErrorMessage(implode("\n", $messages))
             ->redirectResponseInternal(static::REDIRECT_URL);
-    }
-    
-    /**
-     * @todo: fix it
-     *
-     * @return string
-     */
-    protected function getFormSubmitUrl(): string
-    {
-        return 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/cxmlresponse/conn_id/12/';
-        //return 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/ociresponse/conn_id/18/';
-        //return 'https://demo.punchoutexpress.com/gateway/testconn/';
-    }
-    
-    /**
-     * @todo: fix it
-     *
-     * @return string
-     */
-    protected function getRedirectUrl(): string
-    {
-        return 'http://www.de.suite-nonsplit.local/cart';
     }
     
     /**
