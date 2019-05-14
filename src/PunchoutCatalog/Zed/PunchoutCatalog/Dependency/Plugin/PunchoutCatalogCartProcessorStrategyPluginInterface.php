@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin;
 
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 
@@ -22,12 +22,10 @@ interface PunchoutCatalogCartProcessorStrategyPluginInterface
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCart(
-        PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
-        PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+        PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
     ): PunchoutCatalogCartResponseTransfer;
 }

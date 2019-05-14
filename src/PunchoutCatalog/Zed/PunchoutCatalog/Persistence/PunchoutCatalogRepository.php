@@ -19,15 +19,15 @@ use Spryker\Zed\Kernel\Persistence\AbstractRepository;
 class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCatalogRepositoryInterface
 {
     /**
-     * @param string $connectionUuid
+     * @param int $connectionId
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer|null
      */
-    public function findConnectionByUuid(string $connectionUuid): ?PunchoutCatalogConnectionTransfer
+    public function findConnectionById(int $connectionId): ?PunchoutCatalogConnectionTransfer
     {
         $connectionEntity = $this->getFactory()
             ->createPunchoutCatalogConnectionQuery()
-            ->filterByUuid($connectionUuid)
+            ->filterByIdPunchoutCatalogConnection($connectionId)
             ->joinWithPgwPunchoutCatalogConnectionCart()
             ->joinWithPgwPunchoutCatalogConnectionSetup()
             ->findOne();

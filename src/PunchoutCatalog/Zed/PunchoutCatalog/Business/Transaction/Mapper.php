@@ -112,29 +112,33 @@ class Mapper implements MapperInterface
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
             $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_TRANSFER_TO_REQUISITION);
         }
-
-        $content = $cartResponseTransfer->getContext()->getRawData();
-        if (!is_string($content)) {
-            $content = json_encode($content, JSON_PRETTY_PRINT);
-        }
-
-        $rawData = $cartResponseTransfer->getContext()->getRequest();
-        $rawData = $rawData ? $rawData->toArray() : [];
-
-        if (!is_string($rawData)) {
-            $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
-        }
-
-        if ($cartResponseTransfer->getContext()->getRequest()->getPunchoutCatalogConnection()) {
-            $entityTransfer->setFkPunchoutCatalogConnection($cartResponseTransfer->getContext()->getRequest()->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
-            $entityTransfer->setFkCompanyBusinessUnit($cartResponseTransfer->getContext()->getRequest()->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit());
-        }
-
-        $entityTransfer->setConnectionSessionId($cartResponseTransfer->getContext()->getConnectionSessionId());
+    
         $entityTransfer->setStatus($cartResponseTransfer->getIsSuccess());
-        $entityTransfer->setMessage($content);
-        $entityTransfer->setRawData($rawData);
-
+        
+        if ($cartResponseTransfer->getContext()) {
+            $content = $cartResponseTransfer->getContext()->getRawData();
+            if (!is_string($content)) {
+                $content = json_encode($content, JSON_PRETTY_PRINT);
+            }
+            $entityTransfer->setMessage($content);
+            
+            $rawData = $cartResponseTransfer->getContext()->getRequest();
+            $rawData = $rawData ? $rawData->toArray() : [];
+    
+            if (!is_string($rawData)) {
+                $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
+            }
+            $entityTransfer->setRawData($rawData);
+            
+            //@todo: @Dima improve method how to bypass connection - better use an own property in context, don't set request
+            if ($cartResponseTransfer->getContext()->getRequest() && $cartResponseTransfer->getContext()->getRequest()->getContext()->getPunchoutCatalogConnection()) {
+                $entityTransfer->setFkPunchoutCatalogConnection($cartResponseTransfer->getContext()->getRequest()->getContext()->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
+                $entityTransfer->setFkCompanyBusinessUnit($cartResponseTransfer->getContext()->getRequest()->getContext()->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit());
+            }
+    
+            $entityTransfer->setConnectionSessionId($cartResponseTransfer->getContext()->getConnectionSessionId());
+        }
+        
         return $entityTransfer;
     }
 }

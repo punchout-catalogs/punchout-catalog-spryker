@@ -29,4 +29,12 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_ZED_REQUEST);
     }
+    
+    /**
+     * @return \PunchoutCatalog\Client\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface
+     */
+    public function getCustomerClient(): PunchoutCatalogToCustomerClientInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_CUSTOMER);
+    }
 }

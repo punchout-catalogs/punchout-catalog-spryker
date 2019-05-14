@@ -9,12 +9,15 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor;
 
 use Exception;
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
+
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlCartProcessorStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciCartProcessorStrategyPlugin;
@@ -49,7 +52,20 @@ class CartProcessor implements CartProcessorInterface
             PunchoutConnectionConstsInterface::FORMAT_OCI => new OciCartProcessorStrategyPlugin(),
         ];
     }
-
+    
+    /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
+     */
+    public function processCancel(PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer): PunchoutCatalogCartResponseTransfer
+    {
+        $punchoutCatalogCartRequestTransfer = new PunchoutCatalogCartRequestTransfer();
+        $punchoutCatalogCartRequestTransfer->fromArray($punchoutCatalogCancelRequestTransfer->toArray(), true);
+        
+        return $this->processCart($punchoutCatalogCartRequestTransfer);
+    }
+    
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
@@ -60,24 +76,33 @@ class CartProcessor implements CartProcessorInterface
     public function processCart(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): PunchoutCatalogCartResponseTransfer
     {
         try {
-            $connection = $this->getCurrentConnection();
+            $punchoutCatalogCartRequestTransfer->requireContext();
+            $punchoutCatalogCartRequestTransfer->getContext()->requireLocale();
+            $punchoutCatalogCartRequestTransfer->getContext()->requirePunchoutCatalogConnectionId();
+            
+            $connection = $this->punchoutCatalogRepository->findConnectionById(
+                $punchoutCatalogCartRequestTransfer->getContext()->getPunchoutCatalogConnectionId()
+            );
+            
             if ($connection === null) {
                 throw new InvalidArgumentException(static::ERROR_MISSING_CONNECTION);
             }
-
+            $punchoutCatalogCartRequestTransfer->getContext()->setPunchoutCatalogConnection($connection);
+            
             $format = $connection->getFormat();
             if (!$format || !isset($this->cartProcessorPlugins[$format])) {
                 throw new InvalidArgumentException(static::ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR);
             }
-
+            
             $punchoutCatalogCartResponseTransfer = $this->cartProcessorPlugins[$format]->processCart(
-                $punchoutCatalogCartRequestTransfer,
-                $this->getCurrentCartOptions()
+                $punchoutCatalogCartRequestTransfer
             );
-            $punchoutCatalogCartRequestTransfer->setPunchoutCatalogConnection($this->getCurrentConnection());
+            
+            //@todo: review this piece of code
             $punchoutCatalogCartResponseTransfer->getContext()->setRequest($punchoutCatalogCartRequestTransfer);
             return $punchoutCatalogCartResponseTransfer;
         } catch (Exception $e) {
+            die($e->getMessage());
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
             $punchoutCatalogResponseTransfer->setIsSuccess(false);
 
@@ -93,39 +118,5 @@ class CartProcessor implements CartProcessorInterface
 
             return $punchoutCatalogResponseTransfer;
         }
-    }
-
-    /**
-     * @return \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer
-     */
-    protected function getCurrentCartOptions(): PunchoutCatalogCartRequestOptionsTransfer
-    {
-        return (new PunchoutCatalogCartRequestOptionsTransfer())
-            ->fromArray([
-                //'protocol_data' => $this->getFakeOciSessionProtocolData(),
-                'protocol_data' => $this->getFakeCxmlSessionProtocolData(),
-                'punchout_catalog_connection' => $this->getCurrentConnection()->toArray(),
-            ]);
-    }
-
-    /**
-     * @todo: find connection id/uuid in session data
-     *
-     * @Karoly how can i get connection id from session?
-     *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer|null
-     */
-    protected function getCurrentConnection(): ?PunchoutCatalogConnectionTransfer
-    {
-        //@todo: get data from session | for test add your uuid
-        $uuidCxmlBase64 = '638fe408-e6ed-56ae-b52c-983488bcd4c1';
-        $uuidCxmlUrlEncoded = 'becc5d59-94d4-5498-95d2-ee12c37c57b5';
-        $uuidOci = '97915852-9cd5-5425-a568-fe1232d4e27c';
-
-        //$uuid = $uuidOci;
-        //$uuid = $uuidCxmlBase64;
-        $uuid = $uuidCxmlUrlEncoded;
-
-        return $this->punchoutCatalogRepository->findConnectionByUuid($uuid);
     }
 }

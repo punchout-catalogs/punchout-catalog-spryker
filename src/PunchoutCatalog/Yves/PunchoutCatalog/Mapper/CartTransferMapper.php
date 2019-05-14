@@ -65,9 +65,7 @@ class CartTransferMapper implements CartTransferMapperInterface
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer {
-        
-        $cartRequestTransfer->setLocale($this->toLang($this->currentLocale));
-        
+        //$cartRequestTransfer->setLocale($this->toLang($this->currentLocale));
         //Empty Cart Transfer
         if (!$quoteTransfer || !$quoteTransfer->getItems()) {
             return $cartRequestTransfer;

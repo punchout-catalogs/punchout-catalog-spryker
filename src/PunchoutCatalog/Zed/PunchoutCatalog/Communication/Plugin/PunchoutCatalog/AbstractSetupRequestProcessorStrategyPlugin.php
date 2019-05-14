@@ -38,6 +38,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     {
         $context = new PunchoutCatalogResponseContextTransfer();
         $context->setConnectionSessionId('fake_session_id');
+        
         $punchoutCatalogRequestTransfer->setContext($context);
         
         $request = $this->preparePunchoutCatalogSetupRequestTransfer($punchoutCatalogRequestTransfer);
@@ -106,7 +107,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         //List of PunchoutPatams - necessary to store in customer session
         $customerTransfer->setPunchoutCatalogImpersonationDetails([
             'is_punchout' => true,
-            'connection_id' => $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection(),
+            'punchout_catalog_connection_id' => $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection(),
             'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData(),
         ]);
     

@@ -16,14 +16,14 @@ interface PunchoutCatalogRepositoryInterface
 {
     /**
      * Specification:
-     * - Finds a connection by uuid.
+     * - Finds a connection by punchout id.
      * - Returns null if connection does not exist.
      *
-     * @param string $connectionUuid
+     * @param int $connectionId
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer|null
      */
-    public function findConnectionByUuid(string $connectionUuid): ?PunchoutCatalogConnectionTransfer;
+    public function findConnectionById(int $connectionId): ?PunchoutCatalogConnectionTransfer;
 
     /**
      * Specification:

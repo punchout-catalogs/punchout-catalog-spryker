@@ -8,7 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
@@ -37,13 +37,11 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCart(
-        PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
-        PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+        PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
     ): PunchoutCatalogCartResponseTransfer
     {
         $context = new PunchoutCatalogCartResponseContextTransfer();
@@ -53,22 +51,25 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
             ->setContext($context);
 
         try {
-            $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();
-            $punchoutCatalogCartRequestOptionsTransfer->requirePunchoutCatalogConnection();
+            $punchoutCatalogCartRequestTransfer->requireContext();
+    
+            $punchoutCatalogCartRequestContextTransfer = $punchoutCatalogCartRequestTransfer->getContext();
+            $punchoutCatalogCartRequestContextTransfer->requireProtocolData();
+            $punchoutCatalogCartRequestContextTransfer->requirePunchoutCatalogConnection();
     
             (new ProtocolDataValidator())->validate(
-                $punchoutCatalogCartRequestOptionsTransfer->getProtocolData(),
+                $punchoutCatalogCartRequestContextTransfer->getProtocolData(),
                 false
             );
     
             $xml = $this->prepareXmlContent(
                 $punchoutCatalogCartRequestTransfer,
-                $punchoutCatalogCartRequestOptionsTransfer
+                $punchoutCatalogCartRequestContextTransfer
             );
     
             $xml = $xml->asXML();
             
-            $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
+            $connection = $punchoutCatalogCartRequestContextTransfer->getPunchoutCatalogConnection();
             
             //The names cXML-urlencoded and cXML-base64 are case insensitive.
             if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
@@ -124,16 +125,16 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer $punchoutCatalogCartRequestContextTransfer
      *
      * @return SimpleXMLElement
      */
     protected function prepareXmlContent(
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
-        PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+        PunchoutCatalogCartRequestContextTransfer $punchoutCatalogCartRequestContextTransfer
     ): SimpleXMLElement
     {
-        $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
+        $connection = $punchoutCatalogCartRequestContextTransfer->getPunchoutCatalogConnection();
         
         $mappingTransfer = $this->convertToMappingTransfer(
             (string)$connection->getCart()->getMapping()
@@ -141,7 +142,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
 
         $xml = $this->getReturnHeader(
             $punchoutCatalogCartRequestTransfer,
-            $punchoutCatalogCartRequestOptionsTransfer
+            $punchoutCatalogCartRequestContextTransfer
         );
 
         $xml = new SimpleXMLElement($xml);
@@ -174,19 +175,19 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer $punchoutCatalogCartRequestContextTransfer
      *
      * @return string
      */
     public function getReturnHeader(
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
-        PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+        PunchoutCatalogCartRequestContextTransfer $punchoutCatalogCartRequestContextTransfer
     ): string {
         $ver = static::CXML_VERSION;
 
-        $toCxml = $punchoutCatalogCartRequestOptionsTransfer->getProtocolData()->getCxmlToCredentials();
-        $senderCxml = $punchoutCatalogCartRequestOptionsTransfer->getProtocolData()->getCxmlSenderCredentials();
-        $cart = $punchoutCatalogCartRequestOptionsTransfer->getProtocolData()->getCart();
+        $toCxml = $punchoutCatalogCartRequestContextTransfer->getProtocolData()->getCxmlToCredentials();
+        $senderCxml = $punchoutCatalogCartRequestContextTransfer->getProtocolData()->getCxmlSenderCredentials();
+        $cart = $punchoutCatalogCartRequestContextTransfer->getProtocolData()->getCart();
 
         $supDomain = htmlentities($toCxml->getDomain());
         $supId = htmlentities($toCxml->getIdentity());
@@ -204,7 +205,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
 <cXML payloadID="{$this->getPayloadId()}"
     timestamp="{$this->getTimestamp()}"
-    xml:lang="{$punchoutCatalogCartRequestTransfer->getLocale()}"
+    xml:lang="{$punchoutCatalogCartRequestTransfer->getContext()->getLocale()}"
     version="{$ver}"
 >
     <Header>

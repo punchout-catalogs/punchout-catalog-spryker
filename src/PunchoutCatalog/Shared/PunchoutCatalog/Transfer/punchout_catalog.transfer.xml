@@ -147,16 +147,23 @@
     </transfer>
 
     <transfer name="PunchoutCatalogCancelRequest">
+        <property name="context" type="PunchoutCatalogCartRequestContext"/>
     </transfer>
 
     <transfer name="PunchoutCatalogCartRequest">
-        <property name="locale" type="string"/>
+        <property name="context" type="PunchoutCatalogCartRequestContext"/>
 
         <property name="cart" type="PunchoutCatalogDocumentCart" />
         <property name="cartItem" type="PunchoutCatalogDocumentCartItem[]"  singular="cartItem"/>
         <property name="customer" type="PunchoutCatalogDocumentCartCustomer"/>
+    </transfer>
 
-        <property name="punchoutCatalogConnection" type="PunchoutCatalogConnection" />
+    <transfer name="PunchoutCatalogCartRequestContext">
+        <property name="locale" type="string"/>
+
+        <property name="protocolData" type="PunchoutCatalogProtocolData" />
+        <property name="punchoutCatalogConnectionId" type="string" />
+        <property name="punchoutCatalogConnection" type="PunchoutCatalogConnection" /><!-- move to context -->
     </transfer>
 
     <transfer name="PunchoutCatalogCartRequestOptions">

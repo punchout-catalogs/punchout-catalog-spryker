@@ -8,7 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
@@ -30,13 +30,11 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCart(
-        PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
-        PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+        PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
     ): PunchoutCatalogCartResponseTransfer
     {
         $context = new PunchoutCatalogCartResponseContextTransfer();
@@ -46,17 +44,20 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
             ->setContext($context);
     
         try {
-            $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();
-            $punchoutCatalogCartRequestOptionsTransfer->requirePunchoutCatalogConnection();
+            $punchoutCatalogCartRequestTransfer->requireContext();
+            
+            $punchoutCatalogCartRequestContextTransfer = $punchoutCatalogCartRequestTransfer->getContext();
+            $punchoutCatalogCartRequestContextTransfer->requireProtocolData();
+            $punchoutCatalogCartRequestContextTransfer->requirePunchoutCatalogConnection();
         
             (new ProtocolDataValidator())->validate(
-                $punchoutCatalogCartRequestOptionsTransfer->getProtocolData(),
+                $punchoutCatalogCartRequestContextTransfer->getProtocolData(),
                 false
             );
     
             $fields = $this->prepareOciContent(
                 $punchoutCatalogCartRequestTransfer,
-                $punchoutCatalogCartRequestOptionsTransfer
+                $punchoutCatalogCartRequestContextTransfer
             );
     
             foreach ($fields as $fieldName => $fieldValue) {
@@ -84,16 +85,16 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer $punchoutCatalogCartRequestContextTransfer
      *
      * @return array
      */
     protected function prepareOciContent(
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
-        PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
+        PunchoutCatalogCartRequestContextTransfer $punchoutCatalogCartRequestContextTransfer
     ): array
     {
-        $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
+        $connection = $punchoutCatalogCartRequestContextTransfer->getPunchoutCatalogConnection();
         
         $mappingTransfer = $this->convertToMappingTransfer(
             (string)$connection->getCart()->getMapping()

@@ -9,6 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
@@ -92,13 +93,13 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      *
      * @api
      *
-     * @param string $uuidConnection
+     * @param int $connectionId
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer|null
      */
-    public function findConnectionByUuid(string $uuidConnection): ?PunchoutCatalogConnectionTransfer
+    public function findConnectionById(int $connectionId): ?PunchoutCatalogConnectionTransfer
     {
-        return $this->getRepository()->findConnectionByUuid($uuidConnection);
+        return $this->getRepository()->findConnectionById($connectionId);
     }
 
     /**
@@ -178,6 +179,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         $punchoutCatalogCartResponseTransfer = $this->getFactory()
             ->createCartProcessor()
             ->processCart($punchoutCatalogCartRequestTransfer);
+        
         $responseTransaction = $this->getFactory()->createTransactionMapper()
             ->mapCartResponseTransferToEntityTransfer($punchoutCatalogCartResponseTransfer);
 
@@ -185,7 +187,31 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
 
         return $punchoutCatalogCartResponseTransfer;
     }
-
+    
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
+     */
+    public function processCancel(PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer): PunchoutCatalogCartResponseTransfer
+    {
+        $punchoutCatalogCartResponseTransfer = $this->getFactory()
+            ->createCartProcessor()
+            ->processCancel($punchoutCatalogCancelRequestTransfer);
+        
+        $responseTransaction = $this->getFactory()->createTransactionMapper()
+            ->mapCartResponseTransferToEntityTransfer($punchoutCatalogCartResponseTransfer);
+        
+        $this->getEntityManager()->saveTransaction($responseTransaction);
+        
+        return $punchoutCatalogCartResponseTransfer;
+    }
+    
+    
     /**
      * {@inheritdoc}
      *

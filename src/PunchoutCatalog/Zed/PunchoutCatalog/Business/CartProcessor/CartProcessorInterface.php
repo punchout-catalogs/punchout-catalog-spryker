@@ -9,6 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor;
 
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 
 interface CartProcessorInterface
 {
@@ -18,4 +19,11 @@ interface CartProcessorInterface
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCart(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): PunchoutCatalogCartResponseTransfer;
+    
+    /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
+     */
+    public function processCancel(PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer): PunchoutCatalogCartResponseTransfer;
 }

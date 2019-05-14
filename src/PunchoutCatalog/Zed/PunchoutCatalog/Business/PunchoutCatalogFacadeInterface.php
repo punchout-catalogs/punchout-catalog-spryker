@@ -8,7 +8,9 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
+
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
@@ -16,6 +18,7 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReportTransfer;
 
@@ -80,11 +83,11 @@ interface PunchoutCatalogFacadeInterface
      *
      * @api
      *
-     * @param string $uuidConnection
+     * @param int $connectionId
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer|null
      */
-    public function findConnectionByUuid(string $uuidConnection): ?PunchoutCatalogConnectionTransfer;
+    public function findConnectionById(int $connectionId): ?PunchoutCatalogConnectionTransfer;
 
     /**
      * Specification:
@@ -122,7 +125,19 @@ interface PunchoutCatalogFacadeInterface
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCart(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): PunchoutCatalogCartResponseTransfer;
-
+    
+    /**
+     * Specification:
+     * -
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
+     */
+    public function processCancel(PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer): PunchoutCatalogCartResponseTransfer;
+    
     /**
      * Specification:
      * -

@@ -8,8 +8,10 @@
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Controller;
 
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestContext;
 
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,14 +22,18 @@ use Symfony\Component\HttpFoundation\Response;
 class CartController extends AbstractController
 {
     protected const REDIRECT_URL = 'cart';
-    
+    protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is_not_punchout';
     /**
      * Return transferred cart
      */
     public function transferAction()
     {
-        $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
+        if (!$this->isPunchout()) {
+            return $this->addErrorMessage(static::ERROR_MESSAGE_IS_NOT_PUNCHOUT)
+                ->redirectResponseInternal(static::REDIRECT_URL);
+        }
         
+        $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
         //$quoteTransfer = $this->getFakeQuoteTransfer();
 
         $punchoutCatalogCartRequestTransfer = $this->getFactory()
@@ -36,7 +42,9 @@ class CartController extends AbstractController
                 $quoteTransfer,
                 new PunchoutCatalogCartRequestTransfer()
             );
-
+        
+        $punchoutCatalogCartRequestTransfer->setContext($this->getPunchoutCatalogCartRequestContext());
+        
         /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer */
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
@@ -54,13 +62,19 @@ class CartController extends AbstractController
      */
     public function cancelAction()
     {
+        if (!$this->isPunchout()) {
+            return $this->addErrorMessage(static::ERROR_MESSAGE_IS_NOT_PUNCHOUT)
+                ->redirectResponseInternal(static::REDIRECT_URL);
+        }
+        
         $punchoutCatalogCancelRequestTransfer = new PunchoutCatalogCancelRequestTransfer();
-    
+        $punchoutCatalogCancelRequestTransfer->setContext($this->getPunchoutCatalogCartRequestContext());
+        
         /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer */
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartCancel($punchoutCatalogCancelRequestTransfer);
-    
+        
         if ($cartResponseTransfer->getIsSuccess()) {
             return $this->handleSuccessResponse($cartResponseTransfer);
         } else {
@@ -121,6 +135,36 @@ class CartController extends AbstractController
         
         return $this->addErrorMessage(implode("\n", $messages))
             ->redirectResponseInternal(static::REDIRECT_URL);
+    }
+    
+    /**
+     * @return PunchoutCatalogCartRequestContextTransfer
+     */
+    protected function getPunchoutCatalogCartRequestContext()
+    {
+        $impersonalDetails = $this->getFactory()->getCustomerClient()
+            ->getCustomer()
+            ->getPunchoutCatalogImpersonationDetails();
+        
+        $context = new PunchoutCatalogCartRequestContextTransfer();
+        $context->fromArray([
+            'locale' => 'en-US-Fake',
+            'punchout_catalog_connection_id' => $impersonalDetails['punchout_catalog_connection_id'],
+            'protocol_data' => $impersonalDetails['protocol_data'],
+        ]);
+        
+        return $context;
+    }
+    
+    /**
+     * @return bool
+     */
+    protected function isPunchout()
+    {
+        return ($this->getFactory()->getCustomerClient()->getCustomer()
+            && $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails()
+            && $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails()['is_punchout']
+        );
     }
     
     /**
