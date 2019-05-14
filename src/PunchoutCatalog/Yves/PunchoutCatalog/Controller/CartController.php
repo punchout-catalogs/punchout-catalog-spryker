@@ -77,6 +77,7 @@ class CartController extends AbstractController
     {
         $response = new Response();
         $response->headers->set('Content-Type', $contentType);
+        $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
         return $response;
     }
     

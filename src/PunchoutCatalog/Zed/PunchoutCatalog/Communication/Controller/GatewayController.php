@@ -49,13 +49,9 @@ class GatewayController extends AbstractGatewayController
      */
     public function processCartTransferAction(?PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer = null): PunchoutCatalogCartResponseTransfer
     {
-        //@todo: remove it - it is fake data to test connection auth using ZED route directly in browser
-        //---------------------------------------------------------------------//
-        //if (null === $punchoutCatalogCartRequestTransfer) {
-            $punchoutCatalogCartRequestTransfer = $this->getFakeCartTransfer();
-        //}
-        //---------------------------------------------------------------------//
-        return  $this->filterCartResponseContext($this->getFacade()->processCart($punchoutCatalogCartRequestTransfer));
+        return  $this->filterCartResponseContext(
+            $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer)
+        );
     }
 
     /**
@@ -63,13 +59,12 @@ class GatewayController extends AbstractGatewayController
      */
     public function processCartCancelAction(): PunchoutCatalogCartResponseTransfer
     {
-//        return (new PunchoutCatalogCartResponseTransfer())
-//            ->setIsSuccess(true)
-//            ->setContentType('text/html')
-//            ->setContent('SAMPLE CANCEL');
         $punchoutCatalogCartRequestTransfer = new PunchoutCatalogCartRequestTransfer();
         $punchoutCatalogCartRequestTransfer->setLocale('en-US');
-        return $this->filterCartResponseContext($this->getFacade()->processCart($punchoutCatalogCartRequestTransfer));
+        
+        return $this->filterCartResponseContext(
+            $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer)
+        );
     }
 
     /**
@@ -170,23 +165,14 @@ class GatewayController extends AbstractGatewayController
             'email' => 'teste@example.com',
         ];
     }
-
-    protected function getFakeCartTransfer()
-    {
-        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/cart.json');
-        $transferJson = json_decode($testFile, true);
-        $documentCartTransfer = new PunchoutCatalogCartRequestTransfer();
-        return $documentCartTransfer->fromArray($transferJson, true);
-    }
-
+    
     /**
      * @param PunchoutCatalogCartResponseTransfer $response
      * @return PunchoutCatalogCartResponseTransfer
      */
     protected function filterCartResponseContext(PunchoutCatalogCartResponseTransfer $response)
     {
-        $response->setContext(null);
-        return $response;
+        return $response->setContext(null);
     }
     /**
      * @param PunchoutCatalogResponseTransfer $response
@@ -194,7 +180,6 @@ class GatewayController extends AbstractGatewayController
      */
     protected function filterResponseContext(PunchoutCatalogResponseTransfer $response)
     {
-        $response->setContext(null);
-        return $response;
+        return $response->setContext(null);
     }
 }

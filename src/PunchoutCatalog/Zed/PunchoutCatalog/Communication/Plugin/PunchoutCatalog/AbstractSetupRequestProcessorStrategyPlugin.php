@@ -36,40 +36,20 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      */
     public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer
     {
-        $map = $this->decode($punchoutCatalogRequestTransfer);
         $context = new PunchoutCatalogResponseContextTransfer();
         $context->setConnectionSessionId('fake_session_id');
         $punchoutCatalogRequestTransfer->setContext($context);
-
-        $punchoutCatalogRequestTransfer->getContext()->setRawData($map);
-
-        /**
-         * @todo: move to a separate class like Persistence/Mapper/ConnectionMapper
-         */
-        $customerTransfer = new CustomerTransfer();
-        if (!empty($map['customer']) && is_array($map['customer'])) {
-            $customerTransfer->fromArray($map['customer'], true);
-        }
-
-        $request = (new PunchoutCatalogSetupRequestTransfer())
-            ->setCompanyUser(
-                (new CompanyUserTransfer())
-                    ->setFkCompanyBusinessUnit(
-                        $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
-                    )
-                    ->setCustomer($customerTransfer)
-            );
+        
+        $request = $this->preparePunchoutCatalogSetupRequestTransfer($punchoutCatalogRequestTransfer);
 
         /**
          * @Karoly here is some info for you
          *
          * @todo: #1. CREATE/UPDATE/FIND comany user
          * @todo: #2. Login user and generate token, provide Landing URL with Token
-         * @todo: #3. SAVE to session $punchoutCatalogRequestTransfer->getProtocolData() (we need to re-use it when submit cart to ERP)
-         * @todo: #4. SAVE To session $punchoutCatalogRequestTransfer->getProtocolOperation()
-         * @todo: #5. SAVE To session $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getId()
-        */
+         */
 
+        //@todo: use Token Stub to generate urls
         /** TEST STUB */
         $companyUser = $request->getCompanyUser();
         $accessToken = ""; // ResourceShare->generateToken(); (idCustomer, idCompany, idConnection, ErpRequestParams)
@@ -79,6 +59,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $punchoutCatalogResponseTransfer = new PunchoutCatalogResponseTransfer();
         $punchoutCatalogResponseTransfer->setContext($context);
         $punchoutCatalogResponseTransfer->getContext()->setRequest($punchoutCatalogRequestTransfer);
+        
         return $punchoutCatalogResponseTransfer
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(true)
@@ -104,7 +85,43 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
             ->setIsSuccess(false)
             ->setContent($this->createErrorResponse($messageTransfer));
     }
-
+    
+    /**
+     * @param PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     *
+     * @return PunchoutCatalogSetupRequestTransfer
+     */
+    protected function preparePunchoutCatalogSetupRequestTransfer(
+        PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupRequestTransfer
+    {
+        $map = $this->decode($punchoutCatalogRequestTransfer);
+        $punchoutCatalogRequestTransfer->getContext()->setRawData($map);
+    
+        $customerTransfer = new CustomerTransfer();
+        if (!empty($map['customer']) && is_array($map['customer'])) {
+            $customerTransfer->fromArray($map['customer'], true);
+        }
+    
+        //List of PunchoutPatams - necessary to store in customer session
+        $customerTransfer->setPunchoutCatalogImpersonationDetails([
+            'is_punchout' => true,
+            'connection_id' => $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection(),
+            'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData(),
+        ]);
+    
+        $request = (new PunchoutCatalogSetupRequestTransfer())
+            ->setCompanyUser(
+                (new CompanyUserTransfer())
+                    ->setFkCompanyBusinessUnit(
+                        $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
+                    )
+                    ->setCustomer($customerTransfer)
+            );
+        
+        return $request;
+    }
+    
     /**
      * @param string $landingUrl
      *
