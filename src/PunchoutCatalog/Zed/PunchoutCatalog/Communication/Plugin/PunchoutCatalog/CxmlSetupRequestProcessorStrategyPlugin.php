@@ -110,7 +110,7 @@ class CxmlSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProces
         $landingUrl = htmlspecialchars($landingUrl);
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getLang() . '" version="' . static::CXML_VERSION . '">
+<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getLocale() . '" version="' . static::CXML_VERSION . '">
     <Response>
         <Status code="200" text="OK"/>
         <PunchoutSetupResponse>
@@ -146,7 +146,7 @@ class CxmlSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProces
         $statusMessage = htmlspecialchars($statusMessage);
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getLang() . '" version="' . static::CXML_VERSION . '">
+<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getLocale() . '" version="' . static::CXML_VERSION . '">
     <Response>
         <Status code="' . $status . '" text="' . $statusText . '">' . $statusMessage . '</Status>
     </Response>
@@ -158,7 +158,7 @@ class CxmlSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProces
      *
      * @return string
      */
-    protected function getLang(): string
+    protected function getLocale(): string
     {
         return 'en-US';
     }

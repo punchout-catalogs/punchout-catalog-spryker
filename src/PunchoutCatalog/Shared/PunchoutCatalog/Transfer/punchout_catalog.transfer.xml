@@ -6,7 +6,6 @@
     <transfer name="PunchoutCatalogRequest">
         <property name="contentType" type="string" />
         <property name="content" type="string" /><!-- it can be an string or array -->
-        <property name="decodedContent" type="string" />
 
         <property name="protocolType" type="string" />
         <property name="protocolData" type="PunchoutCatalogProtocolData" />
@@ -18,6 +17,8 @@
 
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
+
+        <property name="context" type="PunchoutCatalogResponseContext"/>
     </transfer>
 
     <transfer name="PunchoutCatalogResponse">
@@ -26,7 +27,14 @@
 
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
+
+        <property name="context" type="PunchoutCatalogResponseContext"/>
+    </transfer>
+
+    <transfer name="PunchoutCatalogResponseContext">
+        <property name="rawData" type="array" />
         <property name="request" type="PunchoutCatalogRequest"/>
+        <property name="connectionSessionId" type="string"/>
     </transfer>
 
     <transfer name="PunchoutCatalogConnection">
@@ -142,11 +150,13 @@
     </transfer>
 
     <transfer name="PunchoutCatalogCartRequest">
-        <property name="lang" type="string"/>
+        <property name="locale" type="string"/>
 
         <property name="cart" type="PunchoutCatalogDocumentCart" />
         <property name="cartItem" type="PunchoutCatalogDocumentCartItem[]"  singular="cartItem"/>
         <property name="customer" type="PunchoutCatalogDocumentCartCustomer"/>
+
+        <property name="punchoutCatalogConnection" type="PunchoutCatalogConnection" />
     </transfer>
 
     <transfer name="PunchoutCatalogCartRequestOptions">
@@ -155,82 +165,76 @@
     </transfer>
 
     <transfer name="PunchoutCatalogCartResponse">
-        <property name="contentType" type="string" />
-        <property name="content" type="string" />
-
         <property name="isSuccess" type="bool"/>
         <property name="messages" type="Message[]" singular="message"/>
+        <property name="fields" type="PunchoutCatalogCartResponseField[]" singular="responseField" />
 
+        <!-- @todo: use it in code, and do not return in CURL -->
+        <property name="context" type="PunchoutCatalogCartResponseContext"/>
+    </transfer>
+
+    <transfer name="PunchoutCatalogCartResponseField">
+        <property name="name" type="string"/>
+        <property name="value" type="string"/>
+    </transfer>
+
+    <!-- @todo: use it in code, and do not return in CURL -->
+    <transfer name="PunchoutCatalogCartResponseContext">
+        <property name="rawData" type="string" />
         <property name="request" type="PunchoutCatalogCartRequest"/>
+        <property name="connectionSessionId" type="string"/>
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCart">
-        <property name="internalId" type="string"/>
-        <property name="supplierId" type="string"/>
-        <property name="lang" type="string"/>
+        <property name="locale" type="string"/>
 
-        <property name="totalWeight" type="float"/>
         <property name="totalQty" type="int"/>
         <property name="currency" type="string"/>
         <property name="coupon" type="string"/>
+        <property name="cartNote" type="string"/>
 
         <property name="subtotal" type="float"/>
         <property name="grandTotal" type="float"/>
-
-        <property name="taxTotal" type="float"/>
-        <property name="taxDescription" type="string"/>
-
         <property name="netTotal" type="float"/>
-
-        <property name="shippingTotal" type="float"/>
-        <property name="shippingDescription" type="string"/>
-        <property name="shippingTaxTotal" type="float"/>
-
-        <property name="handlingTotal" type="float"/>
-        <property name="handlingDescription" type="string"/>
-
+        <property name="taxTotal" type="float"/>
         <property name="discountTotal" type="float"/>
-        <property name="discountDescription" type="string"/>
 
-        <property name="comment" type="string"/>
+        <property name="taxDescription" type="string"/>
+        <property name="discountDescription" type="string"/>
 
         <property name="customAttributes" type="PunchoutCatalogCustomAttribute[]" singular="customAttribute"/>
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCartItem">
+        <property name="lineNumber" type="int"/>
+        <property name="locale" type="string"/>
+
         <property name="internalId" type="string"/>
         <property name="supplierId" type="string"/>
-        <property name="lineNumber" type="int"/>
-        <property name="lang" type="string"/>
-
-        <property name="manufacturerPartId" type="string"/>
         <property name="manufacturerName" type="string"/>
 
-        <property name="weight" type="string"/>
-        <property name="qty" type="int"/>
+        <property name="quantity" type="int"/>
+
         <property name="sku" type="string"/>
+        <property name="groupKey" type="string"/>
+        <property name="abstractSku" type="string"/>
 
         <property name="name" type="string"/>
         <property name="description" type="string"/>
-        <property name="uom" type="string"/>
-        <property name="unspsc" type="string"/><!-- @todo ... -->
-        <property name="comment" type="string"/>
+        <property name="longDescription" type="string"/>
+
+        <property name="productPackagingUnit" type="string"/>
+        <property name="unspsc" type="string"/>
+        <property name="cartNote" type="string"/>
         <property name="currency" type="string"/>
 
-        <property name="priceAmount" type="float"/>
-        <property name="totalAmount" type="float"/>
+        <property name="unitPrice" type="float"/>
+        <property name="sumPrice" type="float"/>
+        <property name="sumTaxAmount" type="float"/>
+        <property name="sumDiscountAmount" type="float"/>
 
         <property name="taxRate" type="float"/>
-        <property name="taxAmount" type="float"/>
         <property name="taxDescription" type="string"/>
-
-        <property name="shippingAmount" type="float"/>
-        <property name="shippingDescription" type="string"/>
-
-        <property name="handlingAmount" type="float"/>
-        <property name="handlingDescription" type="string"/>
-
-        <property name="discountAmount" type="float"/>
         <property name="discountDescription" type="string"/>
 
         <property name="options" type="PunchoutCatalogCustomAttribute[]" singular="option"/>
@@ -238,12 +242,11 @@
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCartCustomer">
-        <property name="internalId" type="string"/>
+        <property name="internalId" type="string"/><!-- @todo: review it-->
         <property name="firstName" type="string"/>
         <property name="lastName" type="string"/>
         <property name="middleName" type="string"/>
         <property name="email" type="string"/>
-        <property name="businessUnitId" type="string"/><!-- @todo: review it -->
         <property name="customAttributes" type="PunchoutCatalogCustomAttribute[]" singular="customAttribute"/>
     </transfer>
 

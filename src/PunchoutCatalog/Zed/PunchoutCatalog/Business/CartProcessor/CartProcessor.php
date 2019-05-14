@@ -29,7 +29,6 @@ class CartProcessor implements CartProcessorInterface
 {
     protected const ERROR_MISSING_CONNECTION = 'punchout-catalog.error.missing-connection';
     protected const ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR = 'punchout-catalog.error.missing-cart-format-strategy-processor';
-    protected const ERROR_GENERAL = 'punchout-catalog.error.general';
 
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface[]
@@ -75,7 +74,8 @@ class CartProcessor implements CartProcessorInterface
                 $punchoutCatalogCartRequestTransfer,
                 $this->getCurrentCartOptions()
             );
-            $punchoutCatalogCartResponseTransfer->setRequest($punchoutCatalogCartRequestTransfer);
+            $punchoutCatalogCartRequestTransfer->setPunchoutCatalogConnection($this->getCurrentConnection());
+            $punchoutCatalogCartResponseTransfer->getContext()->setRequest($punchoutCatalogCartRequestTransfer);
             return $punchoutCatalogCartResponseTransfer;
         } catch (Exception $e) {
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
@@ -87,7 +87,7 @@ class CartProcessor implements CartProcessorInterface
                 );
             } else {
                 $punchoutCatalogResponseTransfer->addMessage(
-                    (new MessageTransfer())->setValue(static::ERROR_GENERAL)
+                    (new MessageTransfer())->setValue(PunchoutConnectionConstsInterface::ERROR_GENERAL)
                 );
             }
 
@@ -123,8 +123,8 @@ class CartProcessor implements CartProcessorInterface
         $uuidOci = '97915852-9cd5-5425-a568-fe1232d4e27c';
 
         //$uuid = $uuidOci;
-        $uuid = $uuidCxmlBase64;
-        //$uuid = $uuidCxmlUrlEncoded;
+        //$uuid = $uuidCxmlBase64;
+        $uuid = $uuidCxmlUrlEncoded;
 
         return $this->punchoutCatalogRepository->findConnectionByUuid($uuid);
     }
@@ -140,7 +140,7 @@ class CartProcessor implements CartProcessorInterface
     {
         //Demo PEX cXML
         $url_cxml = 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/cxmlresponse/conn_id/12/';
-        $buyer_cookie = 'adf052dc8d5c2ad6c06dcc592eab3809';//value copied from Demo PEX cookie TRX list
+        $buyer_cookie = '9d5687e92e09c69f670bd0cfb9040b97';//value copied from Demo PEX cookie TRX list
         $data = [
             'cxml_to_credentials' => [
                 'identity' => 'DemoCS3',

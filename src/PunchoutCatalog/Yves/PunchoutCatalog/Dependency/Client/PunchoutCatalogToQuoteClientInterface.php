@@ -7,6 +7,8 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client;
 
+use Generated\Shared\Transfer\QuoteTransfer;
+
 interface PunchoutCatalogToQuoteClientInterface
 {
     /**

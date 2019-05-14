@@ -7,21 +7,29 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
+use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartResponseContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
-use SimpleXMLElement;
+use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
+
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
+use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
 
+use SimpleXMLElement;
+
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
-class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugin implements PunchoutCatalogCartProcessorStrategyPluginInterface
+class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutCatalogCartProcessorStrategyPluginInterface
 {
     protected const CXML_VERSION = '1.2.021';
 
@@ -36,64 +44,111 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
     public function processCart(
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
         PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
-    ): PunchoutCatalogCartResponseTransfer {
-        $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();
-        $punchoutCatalogCartRequestOptionsTransfer->requirePunchoutCatalogConnection();
-
-        (new ProtocolDataValidator())->validate(
-            $punchoutCatalogCartRequestOptionsTransfer->getProtocolData(),
-            false
-        );
-
-        $content = $this->prepareCxmlContent(
-            $punchoutCatalogCartRequestTransfer,
-            $punchoutCatalogCartRequestOptionsTransfer
-        );
-
-        return (new PunchoutCatalogCartResponseTransfer())
+    ): PunchoutCatalogCartResponseTransfer
+    {
+        $context = new PunchoutCatalogCartResponseContextTransfer();
+        $context->setConnectionSessionId('fake_session_id');
+        $response = (new PunchoutCatalogCartResponseTransfer())
             ->setIsSuccess(true)
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_HTML)
-            ->setContent($content);
-    }
+            ->setContext($context);
 
+        try {
+            $punchoutCatalogCartRequestOptionsTransfer->requireProtocolData();
+            $punchoutCatalogCartRequestOptionsTransfer->requirePunchoutCatalogConnection();
+    
+            (new ProtocolDataValidator())->validate(
+                $punchoutCatalogCartRequestOptionsTransfer->getProtocolData(),
+                false
+            );
+    
+            $xml = $this->prepareXmlContent(
+                $punchoutCatalogCartRequestTransfer,
+                $punchoutCatalogCartRequestOptionsTransfer
+            );
+    
+            $xml = $xml->asXML();
+            
+            $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
+            
+            //The names cXML-urlencoded and cXML-base64 are case insensitive.
+            if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
+                $response->addResponseField(
+                    (new PunchoutCatalogCartResponseFieldTransfer())
+                        ->setName('cxml-urlencoded')
+                        ->setValue($this->fixUrlencodedValue($xml))
+                );
+            } else {
+                $response->addResponseField(
+                    (new PunchoutCatalogCartResponseFieldTransfer())
+                        ->setName('cxml-base64')
+                        ->setValue($this->fixBase64Value($xml))
+                );
+            }
+            
+            $response->getContext()->setRawData($xml);
+            return $response;
+        } catch (\Exception $e) {
+            $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
+            
+            if (($e instanceof RequiredTransferPropertyException) || ($e instanceof InvalidArgumentException)) {
+                $msg = $e->getMessage();
+            }
+            
+            return $response->setIsSuccess(false)->addMessage(
+                (new MessageTransfer())->setValue($msg)
+            );
+        }
+    }
+    
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixUrlencodedValue(string $value): string
+    {
+        $value = htmlentities($value, ENT_QUOTES, "utf-8");
+        //$value = htmlspecialchars($value, ENT_QUOTES, "utf-8");
+        return iconv('utf-8', 'us-ascii//TRANSLIT', $value);
+    }
+    
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixBase64Value(string $value): string
+    {
+        return base64_encode($value);
+    }
+    
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
      *
-     * @return string
+     * @return SimpleXMLElement
      */
-    protected function prepareCxmlContent(
+    protected function prepareXmlContent(
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer,
         PunchoutCatalogCartRequestOptionsTransfer $punchoutCatalogCartRequestOptionsTransfer
-    ): string {
+    ): SimpleXMLElement
+    {
         $connection = $punchoutCatalogCartRequestOptionsTransfer->getPunchoutCatalogConnection();
-
+        
         $mappingTransfer = $this->convertToMappingTransfer(
             (string)$connection->getCart()->getMapping()
         );
 
-        $cXML = $this->getReturnHeader(
+        $xml = $this->getReturnHeader(
             $punchoutCatalogCartRequestTransfer,
             $punchoutCatalogCartRequestOptionsTransfer
         );
 
-        $cXML = new SimpleXMLElement($cXML);
-        $cXML = (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer, $cXML);
-
-        if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
-            $cxmlFields = [
-                'cxml-urlencoded' => $cXML->asXML(), //@todo: fix it
-            ];
-        } else {
-            $cxmlFields = [
-                'cxml-base64' => base64_encode($cXML->asXML()),
-            ];
-        }
-
-        return $this->renderHtmlForm(
-            $cxmlFields,
-            $punchoutCatalogCartRequestOptionsTransfer->getProtocolData()->getCart()->getUrl()
-        );
+        $xml = new SimpleXMLElement($xml);
+    
+        $xml = (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer, $xml);
+        
+        return $xml;
     }
 
     /**
@@ -108,7 +163,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
         foreach ($mappingTransfer->getObjects() as $object) {
             if ($object->getName() == 'cart_item') {
                 $object->setIsMultiple(true);
-                $object->setPath(['/cXML/Message[1]/PunchoutOrderMessage[1]/ItemIn']);
+                $object->setPath(['/cXML/Message[1]/PunchOutOrderMessage[1]/ItemIn']);
             }
         }
 
@@ -149,7 +204,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
 <cXML payloadID="{$this->getPayloadId()}"
     timestamp="{$this->getTimestamp()}"
-    xml:lang="{$punchoutCatalogCartRequestTransfer->getLang()}"
+    xml:lang="{$punchoutCatalogCartRequestTransfer->getLocale()}"
     version="{$ver}"
 >
     <Header>
@@ -171,10 +226,10 @@ class CxmlCartProcessorStrategyPlugin extends AbstractCartProcessorStrategyPlugi
         </Sender>
     </Header>
     <Message deploymentMode="{$deploymentMode}">
-        <PunchoutOrderMessage>
+        <PunchOutOrderMessage>
             <BuyerCookie>{$buyerCookie}</BuyerCookie>
-            <PunchoutOrderMessageHeader operationAllowed="{$operationAllowed}" />
-        </PunchoutOrderMessage>
+            <PunchOutOrderMessageHeader operationAllowed="{$operationAllowed}" />
+        </PunchOutOrderMessage>
     </Message>
 </cXML>
 EOF;

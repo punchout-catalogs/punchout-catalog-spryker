@@ -9,6 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Controller;
 
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
@@ -38,7 +39,7 @@ class GatewayController extends AbstractGatewayController
             //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
         }
         //---------------------------------------------------------------------//
-        return $this->getFacade()->processRequest($punchoutCatalogRequestTransfer);
+        return $this->filterResponseContext($this->getFacade()->processRequest($punchoutCatalogRequestTransfer));
     }
 
     /**
@@ -54,7 +55,7 @@ class GatewayController extends AbstractGatewayController
             $punchoutCatalogCartRequestTransfer = $this->getFakeCartTransfer();
         //}
         //---------------------------------------------------------------------//
-        return $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer);
+        return  $this->filterCartResponseContext($this->getFacade()->processCart($punchoutCatalogCartRequestTransfer));
     }
 
     /**
@@ -67,8 +68,8 @@ class GatewayController extends AbstractGatewayController
 //            ->setContentType('text/html')
 //            ->setContent('SAMPLE CANCEL');
         $punchoutCatalogCartRequestTransfer = new PunchoutCatalogCartRequestTransfer();
-        $punchoutCatalogCartRequestTransfer->setLang('en-US');
-        return $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer);
+        $punchoutCatalogCartRequestTransfer->setLocale('en-US');
+        return $this->filterCartResponseContext($this->getFacade()->processCart($punchoutCatalogCartRequestTransfer));
     }
 
     /**
@@ -172,9 +173,28 @@ class GatewayController extends AbstractGatewayController
 
     protected function getFakeCartTransfer()
     {
-        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/cart2.json');
+        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/cart.json');
         $transferJson = json_decode($testFile, true);
         $documentCartTransfer = new PunchoutCatalogCartRequestTransfer();
-        return $documentCartTransfer->fromArray($transferJson);
+        return $documentCartTransfer->fromArray($transferJson, true);
+    }
+
+    /**
+     * @param PunchoutCatalogCartResponseTransfer $response
+     * @return PunchoutCatalogCartResponseTransfer
+     */
+    protected function filterCartResponseContext(PunchoutCatalogCartResponseTransfer $response)
+    {
+        $response->setContext(null);
+        return $response;
+    }
+    /**
+     * @param PunchoutCatalogResponseTransfer $response
+     * @return PunchoutCatalogResponseTransfer
+     */
+    protected function filterResponseContext(PunchoutCatalogResponseTransfer $response)
+    {
+        $response->setContext(null);
+        return $response;
     }
 }

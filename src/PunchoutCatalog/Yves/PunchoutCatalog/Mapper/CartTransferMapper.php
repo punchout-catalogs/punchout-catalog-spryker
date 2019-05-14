@@ -15,6 +15,10 @@ use Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
+
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
+
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientInterface;
 
@@ -62,7 +66,7 @@ class CartTransferMapper implements CartTransferMapperInterface
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer {
         
-        $cartRequestTransfer->setLang($this->toLang($this->currentLocale));
+        $cartRequestTransfer->setLocale($this->toLang($this->currentLocale));
         
         //Empty Cart Transfer
         if (!$quoteTransfer || !$quoteTransfer->getItems()) {
@@ -89,28 +93,52 @@ class CartTransferMapper implements CartTransferMapperInterface
         QuoteItemTransfer $quoteItemTransfer,
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer {
-        $documentCartItemTransfer->setInternalId($quoteItemTransfer->getId());//@todo: generate spaid
+        $internalId = md5(json_encode($quoteItemTransfer->toArray()) . '_' . rand(0, 100000) . '_'  . microtime());
+        $internalId = $this->getUtilUuidGeneratorService()->generateUuid5FromObjectId($internalId);
+        
+        //@todo: fix Product Description
+        //@todo: fix Product Long Description = Product Description + \n + OptionCode1=OptionValue1; + \n + OptionCode2=OptionValue2; + \n
+        //@todo: CUT Product Description + Product Long Description use connection `max_description_length` (from session)
+        //@todo: fix Supplier ID, if not exists use connection `default_suppleir_id` (from session)
+        //@todo: fix UNSPSC/EAN/UPC
+        //@todo: fix Product Image
+        
+        $supplierId = 'fake-supp-id';
+        $productDescription = $quoteItemTransfer->getName();
+        $productLongDescription = $quoteItemTransfer->getName();
 
-        $documentCartItemTransfer->setQty($quoteItemTransfer->getQuantity());
+        $documentCartItemTransfer->setInternalId($internalId);//@todo: generate spaid
+        $documentCartItemTransfer->setSupplierId($supplierId);//@todo:
+        $documentCartItemTransfer->setLocale($this->toLang($this->currentLocale));
+        
+        $documentCartItemTransfer->setQuantity($quoteItemTransfer->getQuantity());
+        $documentCartItemTransfer->setProductPackagingUnit($quoteItemTransfer->getProductPackagingUnit());
         $documentCartItemTransfer->setSku($quoteItemTransfer->getSku());
+        $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
+        $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
+        
         $documentCartItemTransfer->setName($quoteItemTransfer->getName());
-        $documentCartItemTransfer->setDescription($quoteItemTransfer->getName());
-        $documentCartItemTransfer->setComment($quoteItemTransfer->getCartNote());
-        $documentCartItemTransfer->setUom($quoteItemTransfer->getProductPackagingUnit());
-        $documentCartItemTransfer->setLang($this->toLang($this->currentLocale));
-
+        $documentCartItemTransfer->setDescription($productDescription);
+        $documentCartItemTransfer->setLongDescription($productLongDescription);
+        $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
+        
+        //
+        //PRICING & RATES
         $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
 
-        $documentCartItemTransfer->setPriceAmount(
+        $documentCartItemTransfer->setUnitPrice(
             $this->toAmount($quoteItemTransfer->getUnitPrice(), $documentCartItemTransfer->getCurrency())
         );
-        $documentCartItemTransfer->setTotalAmount(
+        
+        $documentCartItemTransfer->setSumPrice(
             $this->toAmount($quoteItemTransfer->getSumPrice(), $documentCartItemTransfer->getCurrency())
         );
-        $documentCartItemTransfer->setTaxAmount(
+        
+        $documentCartItemTransfer->setSumTaxAmount(
             $this->toAmount($quoteItemTransfer->getSumTaxAmount(), $documentCartItemTransfer->getCurrency())
         );
-        $documentCartItemTransfer->setDiscountAmount(
+        
+        $documentCartItemTransfer->setSumDiscountAmount(
             $this->toAmount($quoteItemTransfer->getSumDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
         );
 
@@ -129,21 +157,6 @@ class CartTransferMapper implements CartTransferMapperInterface
         }
 
         $customAttributes = new ArrayObject();
-
-        if ($quoteItemTransfer->getAbstractSku()) {
-            $customAttribute = (new PunchoutCatalogCustomAttributeTransfer())
-                ->setCode('abstract_sku')
-                ->setValue($quoteItemTransfer->getAbstractSku());
-            $customAttributes->append($customAttribute);
-        }
-
-        if ($quoteItemTransfer->getGroupKey()) {
-            $customAttribute = (new PunchoutCatalogCustomAttributeTransfer())
-                ->setCode('group_key')
-                ->setValue($quoteItemTransfer->getGroupKey());
-            $customAttributes->append($customAttribute);
-        }
-
         $documentCartItemTransfer->setCustomAttributes($customAttributes);
 
         return $documentCartItemTransfer;
@@ -158,14 +171,40 @@ class CartTransferMapper implements CartTransferMapperInterface
     protected function prepareHeader(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer {
+    ): PunchoutCatalogCartRequestTransfer
+    {
         $documentCartTransfer = $cartRequestTransfer->getCart();
-
-        $documentCartTransfer->setInternalId($quoteTransfer->getIdQuote());
+        
         $documentCartTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
-        $documentCartTransfer->setComment($quoteTransfer->getCartNote());
-        $documentCartTransfer->setLang($this->toLang($this->currentLocale));
-
+        $documentCartTransfer->setCartNote($quoteTransfer->getCartNote());
+        $documentCartTransfer->setLocale($this->toLang($this->currentLocale));
+    
+        $coupons = [];
+        $discountDescription = [];
+        if ($quoteTransfer->getVoucherDiscounts()) {
+            foreach ($quoteTransfer->getVoucherDiscounts() as $voucherDiscount) {
+                $discountDescription[] = $voucherDiscount->getDisplayName();
+                $coupons[] = $voucherDiscount->getVoucherCode();
+            }
+        }
+    
+        if ($quoteTransfer->getCartRuleDiscounts()) {
+            foreach ($quoteTransfer->getCartRuleDiscounts() as $documentCartTransferRuleDiscount) {
+                $discountDescription[] = $documentCartTransferRuleDiscount->getDisplayName();
+            }
+        }
+    
+        $coupons = array_filter($coupons);
+        if ($coupons) {
+            $documentCartTransfer->setCoupon(implode(',', $coupons));
+        }
+    
+        $discountDescription = array_filter($discountDescription);
+        if ($discountDescription) {
+            $documentCartTransfer->setDiscountDescription(implode("\n", $discountDescription));
+        }
+        
+        //PRICING & RATES
         if ($quoteTransfer->getTotals()) {
             $documentCartTransfer->setSubtotal(
                 $this->toAmount($quoteTransfer->getTotals()->getSubtotal(), $documentCartTransfer->getCurrency())
@@ -183,32 +222,7 @@ class CartTransferMapper implements CartTransferMapperInterface
                 $this->toAmount($quoteTransfer->getTotals()->getDiscountTotal(), $documentCartTransfer->getCurrency())
             );
         }
-
-        $coupons = [];
-        $discountDescription = [];
-        if ($quoteTransfer->getVoucherDiscounts()) {
-            foreach ($quoteTransfer->getVoucherDiscounts() as $voucherDiscount) {
-                $discountDescription[] = $voucherDiscount->getDisplayName();
-                $coupons[] = $voucherDiscount->getVoucherCode();
-            }
-        }
-
-        if ($quoteTransfer->getCartRuleDiscounts()) {
-            foreach ($quoteTransfer->getCartRuleDiscounts() as $documentCartTransferRuleDiscount) {
-                $discountDescription[] = $documentCartTransferRuleDiscount->getDisplayName();
-            }
-        }
-
-        $coupons = array_filter($coupons);
-        if ($coupons) {
-            $documentCartTransfer->setCoupon(implode(',', $coupons));
-        }
-
-        $discountDescription = array_filter($discountDescription);
-        if ($discountDescription) {
-            $documentCartTransfer->setDiscountDescription(implode("\n", $discountDescription));
-        }
-
+        
         return $cartRequestTransfer;
     }
 
@@ -221,7 +235,8 @@ class CartTransferMapper implements CartTransferMapperInterface
     protected function prepareCustomer(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer {
+    ): PunchoutCatalogCartRequestTransfer
+    {
         if ($quoteTransfer->getCustomer()) {
             $customer = new PunchoutCatalogDocumentCartCustomerTransfer();
             $customer->setEmail($quoteTransfer->getCustomer()->getEmail());
@@ -304,8 +319,6 @@ class CartTransferMapper implements CartTransferMapperInterface
     }
 
     /**
-     * @todo: fix toAmount method, it does not return float
-     *
      * @param int $amount
      * @param string|null $isoCode
      *
@@ -313,6 +326,24 @@ class CartTransferMapper implements CartTransferMapperInterface
      */
     protected function toAmount(int $amount, ?string $isoCode)
     {
-        return $this->moneyClient->fromInteger($amount, $isoCode)->getAmount();
+        $currency = $this->moneyClient->fromInteger($amount, $isoCode);
+        
+        $fraction = 10;
+        
+        if ($currency->getCurrency()->getFractionDigits() > 1) {
+            $fraction = pow(10, $currency->getCurrency()->getFractionDigits());
+        }
+
+        $floatAmount = $currency->getAmount() / $fraction;
+        
+        return round($floatAmount, (int)$currency->getCurrency()->getFractionDigits());
+    }
+    
+    /**
+     * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
+     */
+    protected function getUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
+    {
+        return new UtilUuidGeneratorService();
     }
 }

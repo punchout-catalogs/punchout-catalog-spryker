@@ -2,7 +2,7 @@ connection_name,default_supplier_id,max_description_length,encoding,mapping
 Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
   ""cart"": {
     ""fields"": {
-      ""comment"": {
+      ""cart_note"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
       },
       ""grand_total"": {
@@ -16,20 +16,6 @@ Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Description[1]""
       },
 
-      ""shipping_total"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]""
-      },
-      ""shipping_description"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Description[1]""
-      },
-
-      ""handling_total"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]""
-      },
-      ""handling_description"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Description[1]""
-      },
-
       ""discount_total"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]""
       },
@@ -38,7 +24,8 @@ Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
       },
 
       ""currency"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency""
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency"",
+								""append"": true
       }
     }
   },
@@ -47,20 +34,20 @@ Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
       ""line_number"": {
         ""path"": ""@lineNumber""
       },
-      ""qty"": {
-        ""path"": ""@quantity"",
-        ""transform"": [
-          ""round""
-        ]
+      ""quantity"": {
+        ""path"": ""@quantity""
       },
       ""internal_id"": {
         ""path"": ""ItemID[1]/SupplierPartAuxiliaryID[1]""
       },
+						""sku"": {
+        ""path"": ""ItemID[1]/SupplierPartID[1],ItemDetail[1]/BuyerPartID[1],ItemDetail[1]/ManufacturerPartID[1]""
+      },
+						""unit_price"": {
+        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]""
+      },
       ""currency"": {
         ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]/@currency""
-      },
-      ""price_amount"": {
-        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]""
       },
       ""name"": {
         ""path"": ""ItemDetail[1]/Description[1]/ShortName""
@@ -68,11 +55,8 @@ Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
       ""description"": {
         ""path"": ""ItemDetail[1]/Description[1]""
       },
-      ""uom"": {
+      ""product_packaging_unit"": {
         ""path"": ""ItemDetail[1]/UnitOfMeasure[1]""
-      },
-      ""manufacturer_part_id"": {
-        ""path"": ""ItemDetail[1]/ManufacturerPartID[1]""
       },
       ""manufacturer_name"": {
         ""path"": ""ItemDetail[1]/ManufacturerName[1]""
@@ -80,19 +64,13 @@ Client 1 - cXml - User 1,PunchoutCatalogsInc,100,base64,"{
       ""supplier_id"": {
         ""path"": ""ItemDetail[1]/SupplierID[1]""
       },
-      ""comment"": {
+      ""cart_note"": {
         ""path"": ""ItemDetail[1]/Comments[1]""
-      },
-      ""supplier_part_id"": {
-        ""path"": ""ItemID[1]/SupplierPartID[1]""
-      },
-      ""buyer_part_id"": {
-        ""path"": ""ItemDetail[1]/BuyerPartID[1]""
       },
       ""unspsc"": {
         ""path"": ""ItemDetail[1]/Classification[@domain='UNSPSC']""
       },
-      ""lang"": {
+      ""locale"": {
         ""path"": ""ItemDetail[1]/Description[1]/@xml:lang""
       }
     }
@@ -102,19 +80,19 @@ Client 1 - Oci - User 1,PunchoutCatalogsInc,128,,"
 {
   ""cart_item"": {
     ""fields"": {
-      ""qty"": {
+      ""quantity"": {
         ""path"": ""NEW_ITEM-QUANTITY[%line_number%]""
       },
       ""internal_id"": {
         ""path"": ""NEW_ITEM-EXT_PRODUCT_ID[%line_number%]""
       },
       ""sku"": {
-        ""path"": ""NEW_ITEM-VENDORMAT[%line_number%]""
+        ""path"": ""NEW_ITEM-VENDORMAT[%line_number%],NEW_ITEM-MANUFACTMAT[%line_number%]""
       },
       ""currency"": {
         ""path"": ""NEW_ITEM-CURRENCY[%line_number%]""
       },
-      ""price_amount"": {
+      ""unit_price"": {
         ""path"": ""NEW_ITEM-PRICE[%line_number%]""
       },
       ""name"": {
@@ -123,14 +101,8 @@ Client 1 - Oci - User 1,PunchoutCatalogsInc,128,,"
       ""description"": {
         ""path"": ""NEW_ITEM-LONGTEXT_%line_number%:132[]""
       },
-      ""uom"": {
+      ""product_packaging_unit"": {
         ""path"": ""NEW_ITEM-UNIT[%line_number%]""
-      },
-      ""manufacturer_part_id"": {
-        ""path"": ""NEW_ITEM-MANUFACTMAT[%line_number%]""
-      },
-      ""manufacturer_name"": {
-        ""path"": ""NEW_ITEM-MANUFACTCODE[%line_number%]""
       },
       ""unspsc"": {
         ""path"": ""NEW_ITEM-MATGROUP[%line_number%]""
@@ -144,7 +116,7 @@ Client 1 - Oci - User 1,PunchoutCatalogsInc,128,,"
 Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
   ""cart"": {
     ""fields"": {
-      ""comment"": {
+      ""cart_note"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
       },
       ""grand_total"": {
@@ -158,20 +130,6 @@ Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Description[1]""
       },
 
-      ""shipping_total"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]""
-      },
-      ""shipping_description"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Description[1]""
-      },
-
-      ""handling_total"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]""
-      },
-      ""handling_description"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Description[1]""
-      },
-
       ""discount_total"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]""
       },
@@ -180,13 +138,13 @@ Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
       },
 
       ""currency"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Shipping[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Handling[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency"",
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency"",
 								""append"": true
       },
 
-""custom_attributes"": {
+					""custom_attributes"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/CustomAttributes/customOption()"",
-		""multiple"": true
+							 ""multiple"": true
       },
       ""custom_attributes/test1/code"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test1/Code""
@@ -194,10 +152,10 @@ Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
 					""custom_attributes/test1"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test1/Value""
       },
-""custom_attributes/test2/code"": {
+					""custom_attributes/test2/code"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test2/Code""
       },
-""custom_attributes/test2/value"": {
+						""custom_attributes/test2/value"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test2/Value""
       }
     }
@@ -207,21 +165,20 @@ Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
       ""line_number"": {
         ""path"": ""@lineNumber""
       },
-      ""qty"": {
+      ""quantity"": {
         ""path"": ""@quantity""
       },
       ""internal_id"": {
         ""path"": ""ItemID[1]/SupplierPartAuxiliaryID[1]""
       },
-						""price_amount"": {
+						""sku"": {
+        ""path"": ""ItemID[1]/SupplierPartID[1],ItemDetail[1]/BuyerPartID[1],ItemDetail[1]/ManufacturerPartID[1]""
+      },
+						""unit_price"": {
         ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]""
       },
       ""currency"": {
-        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]/@currency"",
-								""append"": true
-      },
-      ""lang"": {
-        ""path"": ""ItemDetail[1]/Description[1]/@xml:lang""
+        ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]/@currency""
       },
       ""name"": {
         ""path"": ""ItemDetail[1]/Description[1]/ShortName""
@@ -229,11 +186,8 @@ Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
       ""description"": {
         ""path"": ""ItemDetail[1]/Description[1]""
       },
-      ""uom"": {
+      ""product_packaging_unit"": {
         ""path"": ""ItemDetail[1]/UnitOfMeasure[1]""
-      },
-      ""manufacturer_part_id"": {
-        ""path"": ""ItemDetail[1]/ManufacturerPartID[1]""
       },
       ""manufacturer_name"": {
         ""path"": ""ItemDetail[1]/ManufacturerName[1]""
@@ -241,17 +195,14 @@ Client 1 - cXml - User 2,PunchoutCatalogsInc,,urlencoded,"{
       ""supplier_id"": {
         ""path"": ""ItemDetail[1]/SupplierID[1]""
       },
-      ""comment"": {
+      ""cart_note"": {
         ""path"": ""ItemDetail[1]/Comments[1]""
-      },
-      ""supplier_part_id"": {
-        ""path"": ""ItemID[1]/SupplierPartID[1]""
-      },
-      ""buyer_part_id"": {
-        ""path"": ""ItemDetail[1]/BuyerPartID[1]""
       },
       ""unspsc"": {
         ""path"": ""ItemDetail[1]/Classification[@domain='UNSPSC']""
+      },
+      ""locale"": {
+        ""path"": ""ItemDetail[1]/Description[1]/@xml:lang""
       },
       ""options"": {
         ""path"": ""ItemDetail[1]/Extrinsic/customOption()"",
