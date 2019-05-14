@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Widget;
 
-use Generated\Shared\Transfer\QuoteTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
 use Spryker\Yves\Kernel\Widget\AbstractWidget;
 
 /**
@@ -16,12 +16,11 @@ use Spryker\Yves\Kernel\Widget\AbstractWidget;
 class PunchoutCatalogCheckoutButtonsWidget extends AbstractWidget
 {
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      */
-    public function __construct(QuoteTransfer $quoteTransfer)
+    public function __construct(CustomerTransfer $customerTransfer)
     {
-        $this->addParameter('isVisible', $this->isVisible($quoteTransfer));
-        $this->addParameter('quote', $quoteTransfer);
+        $this->addParameter('isVisible', $this->isVisible($customerTransfer));
     }
 
     /**
@@ -41,12 +40,12 @@ class PunchoutCatalogCheckoutButtonsWidget extends AbstractWidget
     }
 
     /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *
      * @return bool
      */
-    protected function isVisible(QuoteTransfer $quoteTransfer): bool
+    protected function isVisible(CustomerTransfer $customerTransfer): bool
     {
-        return isset($quoteTransfer->getCustomer()->getPunchoutCatalogImpersonationDetails()['is_punchout']);
+        return isset($customerTransfer->getPunchoutCatalogImpersonationDetails()['is_punchout']);
     }
 }
