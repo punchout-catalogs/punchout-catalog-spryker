@@ -35,8 +35,6 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     protected const CXML_VERSION = '1.2.021';
 
     /**
-     * @api
-     *
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
@@ -90,7 +88,6 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
             $response->getContext()->setContent($xml);
             return $response;
         } catch (\Exception $e) {
-            die($e->getMessage());
             $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
             
             if (($e instanceof RequiredTransferPropertyException) || ($e instanceof InvalidArgumentException)) {
