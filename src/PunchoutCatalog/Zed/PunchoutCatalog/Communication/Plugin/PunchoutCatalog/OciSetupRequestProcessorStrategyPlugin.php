@@ -8,8 +8,8 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
@@ -23,11 +23,11 @@ class OciSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcess
     /**
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return bool
      */
-    public function isApplicable(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): bool
+    public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
         return (
             ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART)
@@ -39,11 +39,11 @@ class OciSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcess
     /**
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer
+    public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return parent::processRequest($punchoutCatalogRequestTransfer)
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_HTML);
@@ -54,20 +54,20 @@ class OciSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcess
      *
      * @param \Generated\Shared\Transfer\MessageTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processError(MessageTransfer $messageTransfer): PunchoutCatalogResponseTransfer
+    public function processError(MessageTransfer $messageTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return parent::processError($messageTransfer)
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_PLAIN);
     }
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return array
      */
-    protected function decode(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): array
+    protected function decode(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): array
     {
         $ociContent = $punchoutCatalogRequestTransfer->getContent();
         if (!is_array($ociContent)) {
@@ -75,7 +75,7 @@ class OciSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcess
         }
 
         $mappingTransfer = $this->convertToMappingTransfer(
-            (string)$punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getMapping()
+            (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
 
         return (new Decoder())->execute($mappingTransfer, $ociContent);

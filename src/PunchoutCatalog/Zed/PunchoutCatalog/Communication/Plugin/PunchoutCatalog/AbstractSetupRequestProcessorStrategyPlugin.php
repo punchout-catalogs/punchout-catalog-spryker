@@ -10,10 +10,10 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseContextTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 
 /**
@@ -23,6 +23,8 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterfa
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {
     /**
+     * @todo: use Token Stub to generate urls
+     *
      * Specification:
      * - Processes request message.
      * - Returns with prepared content and content type.
@@ -30,38 +32,29 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer
+    public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
-        $context = new PunchoutCatalogResponseContextTransfer();
-        $context->setConnectionSessionId('fake_session_id');
+        $this->prepareSetupRequestTransfer($punchoutCatalogRequestTransfer);
         
-        $punchoutCatalogRequestTransfer->setContext($context);
-        
-        $request = $this->preparePunchoutCatalogSetupRequestTransfer($punchoutCatalogRequestTransfer);
-
         /**
          * @Karoly here is some info for you
          *
-         * @todo: #1. CREATE/UPDATE/FIND comany user
+         * @todo: #1. CREATE/UPDATE/FIND company user
          * @todo: #2. Login user and generate token, provide Landing URL with Token
          */
-
-        //@todo: use Token Stub to generate urls
+        
         /** TEST STUB */
-        $companyUser = $request->getCompanyUser();
+        $companyUser = $punchoutCatalogRequestTransfer->getCompanyUser();
         $accessToken = ""; // ResourceShare->generateToken(); (idCustomer, idCompany, idConnection, ErpRequestParams)
         $landingUrl = 'http://www.democe23.com/?SID=f59a04fdb07a77053dcbdf36e71c52f9&test=' . rand(0, 1000);
         /** /TEST STUB */
-
-        $punchoutCatalogResponseTransfer = new PunchoutCatalogResponseTransfer();
-        $punchoutCatalogResponseTransfer->setContext($context);
-        $punchoutCatalogResponseTransfer->getContext()->setRequest($punchoutCatalogRequestTransfer);
         
-        return $punchoutCatalogResponseTransfer
+        return (new PunchoutCatalogSetupResponseTransfer())
+            ->setContext((clone $punchoutCatalogRequestTransfer->getContext())->setRawData(null))
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(true)
             ->setContent($this->createEntryResponse($landingUrl));
@@ -77,50 +70,59 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      *
      * @param \Generated\Shared\Transfer\MessageTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processError(MessageTransfer $messageTransfer): PunchoutCatalogResponseTransfer
+    public function processError(MessageTransfer $messageTransfer): PunchoutCatalogSetupResponseTransfer
     {
-        return (new PunchoutCatalogResponseTransfer())
+        return (new PunchoutCatalogSetupResponseTransfer())
             ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(false)
             ->setContent($this->createErrorResponse($messageTransfer));
     }
     
     /**
-     * @param PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @todo: re-use prepared Token Stub
+     * @todo: fix login mode
+     * @param PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return PunchoutCatalogSetupRequestTransfer
      */
-    protected function preparePunchoutCatalogSetupRequestTransfer(
-        PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+    protected function prepareSetupRequestTransfer(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
     ): PunchoutCatalogSetupRequestTransfer
     {
+        $punchoutCatalogRequestTransfer->requireContext();
+        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
+        
         $map = $this->decode($punchoutCatalogRequestTransfer);
         $punchoutCatalogRequestTransfer->getContext()->setRawData($map);
-    
+        
         $customerTransfer = new CustomerTransfer();
         if (!empty($map['customer']) && is_array($map['customer'])) {
             $customerTransfer->fromArray($map['customer'], true);
         }
-    
+        
         //List of PunchoutPatams - necessary to store in customer session
         $customerTransfer->setPunchoutCatalogImpersonationDetails([
             'is_punchout' => true,
-            'punchout_catalog_connection_id' => $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection(),
             'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData(),
+            'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
+            'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
+            'punchout_catalog_connection_cart' => $connection->getCart()->toArray(),
+            'punchout_data' => $map,//Store it in session - for sake of different customizations && custom fields
         ]);
     
-        $request = (new PunchoutCatalogSetupRequestTransfer())
+        $customerTransfer->setIsGuest(false);
+        
+        $punchoutCatalogRequestTransfer
             ->setCompanyUser(
                 (new CompanyUserTransfer())
-                    ->setFkCompanyBusinessUnit(
-                        $punchoutCatalogRequestTransfer->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
-                    )
+                    ->setFkCompanyBusinessUnit($connection->getSetup()->getFkCompanyBusinessUnit())
                     ->setCustomer($customerTransfer)
+                    ->setIsActive(true)
             );
-        
-        return $request;
+
+        return $punchoutCatalogRequestTransfer;
     }
     
     /**
@@ -138,9 +140,9 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     abstract protected function createErrorResponse(MessageTransfer $messageTransfer): string;
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return array
      */
-    abstract protected function decode(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): array;
+    abstract protected function decode(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): array;
 }

@@ -9,8 +9,9 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseContextTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
@@ -37,18 +38,20 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
         PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
     ): PunchoutCatalogCartResponseTransfer
     {
-        $context = new PunchoutCatalogCartResponseContextTransfer();
-        $context->setConnectionSessionId('fake_session_id');
         $response = (new PunchoutCatalogCartResponseTransfer())
-            ->setIsSuccess(true)
-            ->setContext($context);
+            ->setIsSuccess(true);
     
         try {
             $punchoutCatalogCartRequestTransfer->requireContext();
+        
+            $context = (new PunchoutCatalogCartResponseContextTransfer())->fromArray(
+                $punchoutCatalogCartRequestTransfer->getContext()->toArray(), true
+            );
+            $response->setContext($context);
             
-            $punchoutCatalogCartRequestContextTransfer = $punchoutCatalogCartRequestTransfer->getContext();
-            $punchoutCatalogCartRequestContextTransfer->requireProtocolData();
-            $punchoutCatalogCartRequestContextTransfer->requirePunchoutCatalogConnection();
+            $punchoutCatalogCartRequestContextTransfer = $punchoutCatalogCartRequestTransfer->getContext()
+                ->requireProtocolData()
+                ->requirePunchoutCatalogConnection();
         
             (new ProtocolDataValidator())->validate(
                 $punchoutCatalogCartRequestContextTransfer->getProtocolData(),
@@ -68,7 +71,8 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
                 );
             }
     
-            $response->getContext()->setRawData($fields);
+            $response->getContext()->setRawData($punchoutCatalogCartRequestTransfer->toArray());
+            $response->getContext()->setContent(json_encode($fields, JSON_PRETTY_PRINT));
             return $response;
         } catch (\Exception $e) {
             $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;

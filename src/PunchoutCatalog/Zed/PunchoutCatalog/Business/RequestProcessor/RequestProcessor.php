@@ -8,8 +8,8 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor;
 
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface;
@@ -45,14 +45,33 @@ class RequestProcessor implements RequestProcessorInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer
+    public function processRequest(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupResponseTransfer
     {
         try {
-            $punchoutCatalogRequestTransfer = $this->connectionAuthenticator->authenticateRequest($punchoutCatalogRequestTransfer);
+            $punchoutCatalogRequestTransfer = $this->connectionAuthenticator->authenticateRequest(
+                $punchoutCatalogRequestTransfer
+            );
+    
+            if ($punchoutCatalogRequestTransfer->getIsSuccess() === false) {
+                return $this->createErrorResponse(
+                    $punchoutCatalogRequestTransfer->getMessages()[0],
+                    $punchoutCatalogRequestTransfer->getProtocolType()
+                );
+            }
+    
+            $punchoutCatalogResponseTransfer = $this->process($punchoutCatalogRequestTransfer);
+            
+            if ($punchoutCatalogResponseTransfer === null) {
+                return $this->createErrorResponse($this->getMissingProcessorErrorMessage());
+            }
+    
+            return $punchoutCatalogResponseTransfer;
         } catch (RequiredTransferPropertyException $transferPropertyException) {
             return $this->createErrorResponse(
                 (new MessageTransfer())
@@ -64,34 +83,23 @@ class RequestProcessor implements RequestProcessorInterface
                     ->setValue(PunchoutConnectionConstsInterface::ERROR_INVALID_DATA)
             );
         }
-
-        if ($punchoutCatalogRequestTransfer->getIsSuccess() === false) {
-            return $this->createErrorResponse(
-                $punchoutCatalogRequestTransfer->getMessages()[0],
-                $punchoutCatalogRequestTransfer->getProtocolType()
-            );
-        }
-
-        $punchoutCatalogResponseTransfer = $this->process($punchoutCatalogRequestTransfer);
-
-        if ($punchoutCatalogResponseTransfer === null) {
-            return $this->createErrorResponse($this->getMissingProcessorErrorMessage());
-        }
-
-        return $punchoutCatalogResponseTransfer;
     }
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer|null
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer|null
      */
-    protected function process(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): ?PunchoutCatalogResponseTransfer
+    protected function process(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): ?PunchoutCatalogSetupResponseTransfer
     {
         $punchoutCatalogRequestTransfer
             ->requireProtocolType()
             ->requireProtocolData()
-            ->requirePunchoutCatalogConnection();
+            ->requireContext();
+        
+        $punchoutCatalogRequestTransfer->getContext()->requirePunchoutCatalogConnection();
 
         foreach ($this->requestProcessorPlugins as $requestProcessorPlugin) {
             if ($requestProcessorPlugin->isApplicable($punchoutCatalogRequestTransfer)) {
@@ -118,9 +126,9 @@ class RequestProcessor implements RequestProcessorInterface
      * @param \Generated\Shared\Transfer\MessageTransfer $message
      * @param string|null $format
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    protected function createErrorResponse(MessageTransfer $message, ?string $format = null): PunchoutCatalogResponseTransfer
+    protected function createErrorResponse(MessageTransfer $message, ?string $format = null): PunchoutCatalogSetupResponseTransfer
     {
         $format = $format ?? static::DEFAULT_FORMAT;
         return $this->requestProcessorPlugins[$format]->processError($message);

@@ -9,16 +9,16 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator;
 
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 
 interface ConnectionAuthenticatorInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
-    public function authenticateRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogRequestTransfer;
+    public function authenticateRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer;
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer $connectionCredentialSearch

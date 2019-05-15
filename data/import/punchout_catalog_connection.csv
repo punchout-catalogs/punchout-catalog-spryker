@@ -25,10 +25,10 @@ business-unit-regular-1,user_1,user_1_pass,,1,setup_request,cxml,Client 1 - cXml
 business-unit-regular-1,user_1,user_1_pass,,1,setup_request,oci,Client 1 - Oci - User 1,"{
   ""customer"": {
     ""fields"": {
-      ""firstname"": {
+      ""first_name"": {
         ""path"": ""first_name""
       },
-      ""lastname"": {
+      ""last_name"": {
         ""path"": ""last_name""
       },
       ""email"": {

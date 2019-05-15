@@ -13,7 +13,7 @@ use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartCustomerTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
 use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
@@ -143,7 +143,7 @@ class CartTransferMapper implements CartTransferMapperInterface
         if ($quoteItemTransfer->getProductOptions()) {
             $options = new ArrayObject();
             foreach ($quoteItemTransfer->getProductOptions() as $optionTransfer) {
-                $option = (new PunchoutCatalogCustomAttributeTransfer())
+                $option = (new PunchoutCatalogDocumentCustomAttributeTransfer())
                     ->setCode($optionTransfer->getGroupName())
                     ->setValue($optionTransfer->getValue());
 
@@ -283,11 +283,11 @@ class CartTransferMapper implements CartTransferMapperInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer $attributeTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomAttributeTransfer $attributeTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomAttributeTransfer
      */
-    protected function translateCustomAttribute(PunchoutCatalogCustomAttributeTransfer $attributeTransfer)
+    protected function translateCustomAttribute(PunchoutCatalogDocumentCustomAttributeTransfer $attributeTransfer)
     {
         $attributeTransfer->setCode(
             $this->glossaryStorageClient->translate(

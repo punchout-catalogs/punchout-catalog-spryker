@@ -11,12 +11,15 @@ use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
+
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReportTransfer;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
@@ -137,30 +140,38 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer
+    public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
+        $context = new PunchoutCatalogCommonContextTransfer();
+        $context->setPunchoutSessionId('fake-new-changed-session-id2');
+        
+        $punchoutCatalogRequestTransfer->setContext($context);
+        
         $transactionMapper = $this->getFactory()->createTransactionMapper();
 
-        $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer($punchoutCatalogRequestTransfer);
-
+        $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer(
+            $punchoutCatalogRequestTransfer
+        );
         $this->getEntityManager()->saveTransaction($requestTransaction);
 
+        
         $punchoutCatalogResponseTransfer = $this->getFactory()
             ->createRequestProcessor()
             ->processRequest($punchoutCatalogRequestTransfer);
-
-        $responseTransaction = $transactionMapper->mapResponseTransferToEntityTransfer($punchoutCatalogResponseTransfer);
-
+    
+        $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer(
+            $punchoutCatalogRequestTransfer, $requestTransaction
+        );
+        $this->getEntityManager()->saveTransaction($requestTransaction);
+        
+        $responseTransaction = $transactionMapper->mapResponseTransferToEntityTransfer(
+            $punchoutCatalogResponseTransfer
+        );
         $this->getEntityManager()->saveTransaction($responseTransaction);
-        if ($punchoutCatalogResponseTransfer->getContext() !== null
-            && $punchoutCatalogResponseTransfer->getContext()->getRequest() !== null) {
-            $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer($punchoutCatalogResponseTransfer->getContext()->getRequest(), $requestTransaction);
-            $this->getEntityManager()->saveTransaction($requestTransaction);
-        }
 
         return $punchoutCatalogResponseTransfer;
     }

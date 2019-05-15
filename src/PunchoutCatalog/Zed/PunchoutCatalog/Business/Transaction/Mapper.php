@@ -5,20 +5,20 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction;
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutTransactionConstsInterface;
 
 class Mapper implements MapperInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer $responseTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer $responseTransfer
      * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
      *
      * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */
     public function mapResponseTransferToEntityTransfer(
-        PunchoutCatalogResponseTransfer $responseTransfer,
+        PunchoutCatalogSetupResponseTransfer $responseTransfer,
         PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer = null
     ): PgwPunchoutCatalogTransactionEntityTransfer
     {
@@ -26,39 +26,40 @@ class Mapper implements MapperInterface
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
             $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_SETUP_RESPONSE);
         }
-        $requestTransfer = $responseTransfer->getContext()->getRequest();
-        if ($requestTransfer) {
-            if ($requestTransfer->getCompanyBusinessUnit()) {
-                $entityTransfer->setFkCompanyBusinessUnit(
-                    $requestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
-                );
-            }
-            if ($requestTransfer->getPunchoutCatalogConnection()) {
-                $entityTransfer->setFkPunchoutCatalogConnection(
-                    $requestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection()
-                );
-            }
-        }
-        $entityTransfer->setConnectionSessionId($responseTransfer->getContext()->getConnectionSessionId());
-
+    
+        $entityTransfer->setStatus($responseTransfer->getIsSuccess());
+        
         $content = $responseTransfer->getContent();
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
-
         $entityTransfer->setMessage($content);
-        $entityTransfer->setStatus($responseTransfer->getIsSuccess());
+        
+        if ($responseTransfer->getContext()) {
+            $context = $responseTransfer->getContext();
+    
+            $entityTransfer->setConnectionSessionId($context->getPunchoutSessionId());
+            
+            $entityTransfer->setFkPunchoutCatalogConnection(
+                $context->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection()
+            );
+            
+            $entityTransfer->setFkCompanyBusinessUnit(
+                $context->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
+            );
+        }
+        
         return $entityTransfer;
     }
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $requestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $requestTransfer
      * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
      *
      * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */
     public function mapRequestTransferToEntityTransfer(
-        PunchoutCatalogRequestTransfer $requestTransfer,
+        PunchoutCatalogSetupRequestTransfer $requestTransfer,
         PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer = null
     ): PgwPunchoutCatalogTransactionEntityTransfer
     {
@@ -66,34 +67,41 @@ class Mapper implements MapperInterface
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
             $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_SETUP_REQUEST);
         }
+    
+        $entityTransfer->setStatus($requestTransfer->getIsSuccess());
+        
         $content = $requestTransfer->getContent();
         if (!is_string($content)) {
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
-
         $entityTransfer->setMessage($content);
 
         if ($requestTransfer->getCompanyBusinessUnit()) {
             $entityTransfer->setFkCompanyBusinessUnit(
                 $requestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
             );
+        } elseif ($requestTransfer->getFkCompanyBusinessUnit()) {
+            $entityTransfer->setFkCompanyBusinessUnit($requestTransfer->getFkCompanyBusinessUnit());
         }
-
+        
         if ($requestTransfer->getContext()) {
-            $rawData = $requestTransfer->getContext()->getRawData();
-
+            $context = $requestTransfer->getContext();
+            
+            $rawData = $context->getRawData();
             if (!is_string($rawData)) {
                 $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
             }
 
             $entityTransfer->setRawData($rawData);
-            $entityTransfer->setConnectionSessionId($requestTransfer->getContext()->getConnectionSessionId());
+            $entityTransfer->setConnectionSessionId($context->getPunchoutSessionId());
+            
+            if ($context->getPunchoutCatalogConnection()) {
+                $entityTransfer->setFkPunchoutCatalogConnection(
+                    $context->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection()
+                );
+            }
         }
-        $entityTransfer->setStatus($requestTransfer->getIsSuccess());
-
-        if ($requestTransfer->getPunchoutCatalogConnection()) {
-            $entityTransfer->setFkPunchoutCatalogConnection($requestTransfer->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
-        }
+        
         return $entityTransfer;
     }
 
@@ -116,27 +124,33 @@ class Mapper implements MapperInterface
         $entityTransfer->setStatus($cartResponseTransfer->getIsSuccess());
         
         if ($cartResponseTransfer->getContext()) {
-            $content = $cartResponseTransfer->getContext()->getRawData();
+            $context = $cartResponseTransfer->getContext();
+
+            $rawData = $context->getRawData();
+            if (isset($rawData['context'])) {
+                unset($rawData['context']);
+            }
+            if (!is_string($rawData)) {
+                $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
+            }
+    
+            $entityTransfer->setRawData($rawData);
+            $entityTransfer->setConnectionSessionId($context->getPunchoutSessionId());
+    
+            $content = $context->getContent();
             if (!is_string($content)) {
                 $content = json_encode($content, JSON_PRETTY_PRINT);
             }
             $entityTransfer->setMessage($content);
             
-            $rawData = $cartResponseTransfer->getContext()->getRequest();
-            $rawData = $rawData ? $rawData->toArray() : [];
-    
-            if (!is_string($rawData)) {
-                $rawData = json_encode($rawData, JSON_PRETTY_PRINT);
+            if ($context->getPunchoutCatalogConnection()) {
+                $entityTransfer->setFkPunchoutCatalogConnection(
+                    $context->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection()
+                );
+                $entityTransfer->setFkCompanyBusinessUnit(
+                    $context->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
+                );
             }
-            $entityTransfer->setRawData($rawData);
-            
-            //@todo: @Dima improve method how to bypass connection - better use an own property in context, don't set request
-            if ($cartResponseTransfer->getContext()->getRequest() && $cartResponseTransfer->getContext()->getRequest()->getContext()->getPunchoutCatalogConnection()) {
-                $entityTransfer->setFkPunchoutCatalogConnection($cartResponseTransfer->getContext()->getRequest()->getContext()->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection());
-                $entityTransfer->setFkCompanyBusinessUnit($cartResponseTransfer->getContext()->getRequest()->getContext()->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit());
-            }
-    
-            $entityTransfer->setConnectionSessionId($cartResponseTransfer->getContext()->getConnectionSessionId());
         }
         
         return $entityTransfer;

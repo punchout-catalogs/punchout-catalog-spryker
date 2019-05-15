@@ -11,8 +11,8 @@ use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
 
 /**
@@ -21,26 +21,28 @@ use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
 class GatewayController extends AbstractGatewayController
 {
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer|null $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer|null $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processRequestAction(?PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer = null): PunchoutCatalogResponseTransfer
+    public function processRequestAction(?PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer = null): PunchoutCatalogSetupResponseTransfer
     {
         //@todo: remove it - it is fake data to test connection auth using ZED route directly in browser
         //---------------------------------------------------------------------//
         if ($punchoutCatalogRequestTransfer === null) {
-            $punchoutCatalogRequestTransfer = new PunchoutCatalogRequestTransfer();
+            $punchoutCatalogRequestTransfer = new PunchoutCatalogSetupRequestTransfer();
             $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit(16);
             $punchoutCatalogRequestTransfer->setContentType('text/xml');
             $punchoutCatalogRequestTransfer->setIsSuccess(true);
             $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
 
-            //$punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
-            //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
+            $punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
+            $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
         }
         //---------------------------------------------------------------------//
-        return $this->filterResponseContext($this->getFacade()->processRequest($punchoutCatalogRequestTransfer));
+        return $this->filterResponseContext(
+            $this->getFacade()->processRequest($punchoutCatalogRequestTransfer)
+        );
     }
 
     /**
@@ -51,10 +53,10 @@ class GatewayController extends AbstractGatewayController
     public function processCartTransferAction(?PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer = null): PunchoutCatalogCartResponseTransfer
     {
         //@todo: remove it
-        //if (null === $punchoutCatalogCartRequestTransfer) {
-        //    $punchoutCatalogCartRequestTransfer = $this->getFakeCartTransfer();
-        //}
-
+        if (null === $punchoutCatalogCartRequestTransfer) {
+            $punchoutCatalogCartRequestTransfer = $this->getFakeCartTransfer();
+        }
+        
         return  $this->filterCartResponseContext(
             $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer)
         );
@@ -68,10 +70,10 @@ class GatewayController extends AbstractGatewayController
     public function processCartCancelAction(?PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer = null): PunchoutCatalogCartResponseTransfer
     {
         //@todo: remove it
-        //if (null === $punchoutCatalogCancelRequestTransfer) {
-        //    $punchoutCatalogCancelRequestTransfer = new PunchoutCatalogCancelRequestTransfer();
-        //    $punchoutCatalogCancelRequestTransfer->fromArray($this->getFakeCartTransfer()->toArray(), true);
-        //}
+        if (null === $punchoutCatalogCancelRequestTransfer) {
+            $punchoutCatalogCancelRequestTransfer = new PunchoutCatalogCancelRequestTransfer();
+            $punchoutCatalogCancelRequestTransfer->fromArray($this->getFakeCartTransfer()->toArray(), true);
+        }
         
         return $this->filterCartResponseContext(
             $this->getFacade()->processCancel($punchoutCatalogCancelRequestTransfer)
@@ -186,10 +188,10 @@ class GatewayController extends AbstractGatewayController
         return $response->setContext(null);
     }
     /**
-     * @param PunchoutCatalogResponseTransfer $response
-     * @return PunchoutCatalogResponseTransfer
+     * @param PunchoutCatalogSetupResponseTransfer $response
+     * @return PunchoutCatalogSetupResponseTransfer
      */
-    protected function filterResponseContext(PunchoutCatalogResponseTransfer $response)
+    protected function filterResponseContext(PunchoutCatalogSetupResponseTransfer $response)
     {
         return $response->setContext(null);
     }

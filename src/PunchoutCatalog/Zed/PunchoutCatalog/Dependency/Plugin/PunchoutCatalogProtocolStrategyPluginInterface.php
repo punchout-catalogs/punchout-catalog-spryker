@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin;
 
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 
 interface PunchoutCatalogProtocolStrategyPluginInterface
 {
@@ -17,11 +17,11 @@ interface PunchoutCatalogProtocolStrategyPluginInterface
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return bool
      */
-    public function isApplicable(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): bool;
+    public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool;
 
     /**
      * Specification:
@@ -31,11 +31,11 @@ interface PunchoutCatalogProtocolStrategyPluginInterface
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
-    public function setRequestProtocol(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogRequestTransfer;
+    public function setRequestProtocol(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer;
 
     /**
      * Specification:
@@ -44,9 +44,9 @@ interface PunchoutCatalogProtocolStrategyPluginInterface
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
-    public function setPunchoutCatalogConnection(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogRequestTransfer;
+    public function setPunchoutCatalogConnection(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer;
 }

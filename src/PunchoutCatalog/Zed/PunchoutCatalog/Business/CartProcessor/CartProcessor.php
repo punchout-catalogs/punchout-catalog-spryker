@@ -97,9 +97,7 @@ class CartProcessor implements CartProcessorInterface
             $punchoutCatalogCartResponseTransfer = $this->cartProcessorPlugins[$format]->processCart(
                 $punchoutCatalogCartRequestTransfer
             );
-            
-            //@todo: review this piece of code
-            $punchoutCatalogCartResponseTransfer->getContext()->setRequest($punchoutCatalogCartRequestTransfer);
+
             return $punchoutCatalogCartResponseTransfer;
         } catch (Exception $e) {
             die($e->getMessage());

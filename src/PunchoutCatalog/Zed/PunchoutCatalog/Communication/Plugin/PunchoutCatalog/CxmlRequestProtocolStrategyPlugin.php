@@ -9,7 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use PunchoutCatalog\Service\UtilCxml\UtilCxmlService;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
@@ -37,11 +37,11 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     /**
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return bool
      */
-    public function isApplicable(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): bool
+    public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
         if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML) {
             return false;
@@ -57,11 +57,11 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     /**
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
-    public function setRequestProtocol(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogRequestTransfer
+    public function setRequestProtocol(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer
     {
         $protocolData = $this->utilCxmlService->fetchHeaderAsArray($punchoutCatalogRequestTransfer->getContent());
         $protocolOperation = $this->utilCxmlService->getOperation($punchoutCatalogRequestTransfer->getContent());
@@ -85,18 +85,21 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     /**
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
-    public function setPunchoutCatalogConnection(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogRequestTransfer
+    public function setPunchoutCatalogConnection(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer
     {
+        $punchoutCatalogRequestTransfer->requireContext();
+        
         $type = $this->mapProtocolOperationToConnectionType($punchoutCatalogRequestTransfer->getProtocolOperation());
 
         $credentialSearchTransfer = new PunchoutCatalogConnectionCredentialSearchTransfer();
         $credentialSearchTransfer->setFkCompanyBusinessUnit(
             $punchoutCatalogRequestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
         );
+        
         $credentialSearchTransfer->setFormat($punchoutCatalogRequestTransfer->getProtocolType());
         $credentialSearchTransfer->setType($type);
 
@@ -112,8 +115,11 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         );
 
         $punchoutCatalogConnectionTransfer = $this->getFacade()->findConnectionByCredential($credentialSearchTransfer);
-
-        return $punchoutCatalogRequestTransfer->setPunchoutCatalogConnection($punchoutCatalogConnectionTransfer);
+        $punchoutCatalogRequestTransfer->getContext()->setPunchoutCatalogConnection(
+            $punchoutCatalogConnectionTransfer
+        );
+        
+        return $punchoutCatalogRequestTransfer;
     }
 
     /**

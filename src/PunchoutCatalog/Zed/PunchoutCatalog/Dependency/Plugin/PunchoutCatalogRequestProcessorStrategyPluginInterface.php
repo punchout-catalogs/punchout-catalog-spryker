@@ -8,8 +8,8 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin;
 
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 
 interface PunchoutCatalogRequestProcessorStrategyPluginInterface
 {
@@ -19,11 +19,11 @@ interface PunchoutCatalogRequestProcessorStrategyPluginInterface
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return bool
      */
-    public function isApplicable(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): bool;
+    public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool;
 
     /**
      * Specification:
@@ -33,11 +33,11 @@ interface PunchoutCatalogRequestProcessorStrategyPluginInterface
      *
      * @api
      *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogResponseTransfer;
+    public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer;
 
     /**
      * Specification:
@@ -49,7 +49,7 @@ interface PunchoutCatalogRequestProcessorStrategyPluginInterface
      *
      * @param \Generated\Shared\Transfer\MessageTransfer $messageTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogResponseTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
      */
-    public function processError(MessageTransfer $messageTransfer): PunchoutCatalogResponseTransfer;
+    public function processError(MessageTransfer $messageTransfer): PunchoutCatalogSetupResponseTransfer;
 }

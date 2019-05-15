@@ -9,8 +9,8 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Persistence;
 
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransaction;
 
 interface PunchoutCatalogEntityManagerInterface

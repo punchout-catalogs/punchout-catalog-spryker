@@ -9,8 +9,8 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Persistence;
 
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransaction;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
@@ -44,6 +44,7 @@ class PunchoutCatalogEntityManager extends AbstractEntityManager implements Punc
     }
 
     /**
+     * @todo: review it
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $connectionTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer
@@ -71,6 +72,7 @@ class PunchoutCatalogEntityManager extends AbstractEntityManager implements Punc
     }
 
     /**
+     * @todo: review it
      * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
      *
      * @return void
@@ -83,6 +85,7 @@ class PunchoutCatalogEntityManager extends AbstractEntityManager implements Punc
     }
 
     /**
+     * @todo: review it
      * @param string $uuidConnection
      *
      * @return void

@@ -10,7 +10,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator;
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConfig;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlRequestProtocolStrategyPlugin;
@@ -58,20 +58,22 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
     }
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
-    public function authenticateRequest(PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogRequestTransfer
+    public function authenticateRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer
     {
         $punchoutCatalogRequestTransfer
             ->requireContent()
             ->requireContentType()
+            ->requireContext()
             ->requireFkCompanyBusinessUnit();
 
         $companyBusinessUnitTransfer = $this->companyBusinessUnitFacade->findCompanyBusinessUnitById(
             $punchoutCatalogRequestTransfer->getFkCompanyBusinessUnit()
         );
+        
         if (!$companyBusinessUnitTransfer) {
             return $punchoutCatalogRequestTransfer
                 ->setIsSuccess(false)
@@ -99,23 +101,24 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
 
     /**
      * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface $protocolStrategyPlugin
-     * @param \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
     public function applyProtocolStrategy(
         PunchoutCatalogProtocolStrategyPluginInterface $protocolStrategyPlugin,
-        PunchoutCatalogRequestTransfer $punchoutCatalogRequestTransfer
-    ): PunchoutCatalogRequestTransfer {
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupRequestTransfer {
         $punchoutCatalogRequestTransfer = $protocolStrategyPlugin->setRequestProtocol($punchoutCatalogRequestTransfer);
 
         $punchoutCatalogRequestTransfer
             ->requireProtocolType()
+            ->requireContext()
             ->requireProtocolData();
 
         $punchoutCatalogRequestTransfer = $protocolStrategyPlugin->setPunchoutCatalogConnection($punchoutCatalogRequestTransfer);
 
-        if ($punchoutCatalogRequestTransfer->getPunchoutCatalogConnection() === null) {
+        if (null === $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()) {
             return $punchoutCatalogRequestTransfer
                 ->setIsSuccess(false)
                 ->addMessage(
