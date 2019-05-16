@@ -197,6 +197,7 @@
 
         <property name="productPackagingUnit" type="string"/>
         <property name="unspsc" type="string"/>
+        <property name="brand" type="string"/>
         <property name="cartNote" type="string"/>
         <property name="currency" type="string"/>
 

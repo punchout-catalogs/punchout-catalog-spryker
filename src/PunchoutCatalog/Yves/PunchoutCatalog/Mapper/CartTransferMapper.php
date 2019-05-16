@@ -125,21 +125,27 @@ class CartTransferMapper implements CartTransferMapperInterface
             }
         }
         $imageUrl = '';
-        if (isset($quoteItemTransfer->getImages()[0])) {
+        if (!empty($quoteItemTransfer->getImages()[0])) {
             /** @var \Generated\Shared\Transfer\ProductImageTransfer $image */
             $image = $quoteItemTransfer->getImages()[0];
             $imageUrl = $image->getExternalUrlSmall();
         }
 
+        $brand = '';
+        if (!empty($productAbstractStorageData['attributes']['brand'])) {
+            $brand = $productAbstractStorageData['attributes']['brand'];
+        }
+
         $productDescription = $this->limitDescription($productAbstractStorageData['description']);
         $productLongDescription = $this->limitDescription(join('\n', array_filter($longDescriptionParts)));
 
-        $documentCartItemTransfer->setInternalId($internalId);//@todo: generate spaid
+        $documentCartItemTransfer->setInternalId($internalId);
         $documentCartItemTransfer->setSupplierId($supplierId);
         $documentCartItemTransfer->setLocale($this->toLang($this->currentLocale));
         
         $documentCartItemTransfer->setQuantity($quoteItemTransfer->getQuantity());
         $documentCartItemTransfer->setProductPackagingUnit($quoteItemTransfer->getProductPackagingUnit());
+        $documentCartItemTransfer->setBrand($brand);
         $documentCartItemTransfer->setSku($quoteItemTransfer->getSku());
         $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
