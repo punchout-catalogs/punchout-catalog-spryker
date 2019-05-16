@@ -7,19 +7,17 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog;
 
-use Spryker\Client\Customer\CustomerClient;
-use PunchoutCatalog\Client\PunchoutCatalog\PunchoutCatalogClient;
-use Spryker\Shared\Kernel\Store;
-use Spryker\Yves\Kernel\AbstractFactory;
-use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientInterface;
-use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientBridge;
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapper;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperInterface;
+use Spryker\Client\Customer\CustomerClient;
+use Spryker\Shared\Kernel\Store;
+use Spryker\Yves\Kernel\AbstractFactory;
 
 /**
  * @method \PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -31,19 +29,7 @@ class PunchoutCatalogFactory extends AbstractFactory
      */
     public function getPunchoutCatalogClient(): PunchoutCatalogToPunchoutCatalogClientInterface
     {
-        return new PunchoutCatalogToPunchoutCatalogClientBridge(
-            new PunchoutCatalogClient()
-        );
-    }
-
-    /**
-     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface
-     */
-    public function getCustomerClient(): PunchoutCatalogToCustomerClientInterface
-    {
-        return new PunchoutCatalogToCustomerClientBridge(
-            new CustomerClient()
-        );
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_PUNCHOUT_CATALOG);
     }
 
     /**
@@ -54,6 +40,8 @@ class PunchoutCatalogFactory extends AbstractFactory
         return new CartTransferMapper(
             $this->getGlossaryStorageClient(),
             $this->getMoneyClient(),
+            $this->getProductStorageClient(),
+            $this->getCustomerClient(),
             $this->getStore()->getCurrentLocale()
         );
     }
@@ -72,6 +60,22 @@ class PunchoutCatalogFactory extends AbstractFactory
     public function getMoneyClient(): PunchoutCatalogToMoneyClientInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_MONEY);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface
+     */
+    public function getProductStorageClient(): PunchoutCatalogToProductStorageClientInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_PRODUCT_STORAGE);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface
+     */
+    public function getCustomerClient(): PunchoutCatalogToCustomerClientInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_CUSTOMER);
     }
 
     /**

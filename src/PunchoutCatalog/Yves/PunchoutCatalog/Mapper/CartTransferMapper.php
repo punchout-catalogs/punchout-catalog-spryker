@@ -10,17 +10,18 @@ namespace PunchoutCatalog\Yves\PunchoutCatalog\Mapper;
 use ArrayObject;
 use Generated\Shared\Transfer\ItemTransfer as QuoteItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartCustomerTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
-
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientInterface;
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
 
 class CartTransferMapper implements CartTransferMapperInterface
 {
@@ -40,19 +41,34 @@ class CartTransferMapper implements CartTransferMapperInterface
     protected $moneyClient;
 
     /**
-     *
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface $glossaryStorageClient
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientInterface $moneyClient
+     * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface
+     */
+    protected $productStorageClient;
+
+    /**
+     * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface
+     */
+    protected $customerClient;
+
+    /**
+     * @param PunchoutCatalogToGlossaryStorageClientInterface $glossaryStorageClient
+     * @param PunchoutCatalogToMoneyClientInterface $moneyClient
+     * @param PunchoutCatalogToProductStorageClientInterface $productStorageClient
+     * @param PunchoutCatalogToCustomerClientInterface $customerClient
      * @param string $currentLocale
      */
     public function __construct(
         PunchoutCatalogToGlossaryStorageClientInterface $glossaryStorageClient,
         PunchoutCatalogToMoneyClientInterface $moneyClient,
+        PunchoutCatalogToProductStorageClientInterface $productStorageClient,
+        PunchoutCatalogToCustomerClientInterface $customerClient,
         string $currentLocale
     ) {
         $this->glossaryStorageClient = $glossaryStorageClient;
         $this->moneyClient = $moneyClient;
         $this->currentLocale = $currentLocale;
+        $this->productStorageClient = $productStorageClient;
+        $this->customerClient = $customerClient;
     }
 
     /**
@@ -93,20 +109,33 @@ class CartTransferMapper implements CartTransferMapperInterface
     ): PunchoutCatalogDocumentCartItemTransfer {
         $internalId = md5(json_encode($quoteItemTransfer->toArray()) . '_' . rand(0, 100000) . '_'  . microtime());
         $internalId = $this->getUtilUuidGeneratorService()->generateUuid5FromObjectId($internalId);
-        
-        //@todo: fix Product Description
-        //@todo: fix Product Long Description = Product Description + \n + OptionCode1=OptionValue1; + \n + OptionCode2=OptionValue2; + \n
-        //@todo: CUT Product Description + Product Long Description use connection `max_description_length` (from session)
-        //@todo: fix Supplier ID, if not exists use connection `default_suppleir_id` (from session)
+
         //@todo: fix UNSPSC/EAN/UPC
-        //@todo: fix Product Image
-        
-        $supplierId = 'fake-supp-id';
-        $productDescription = $quoteItemTransfer->getName();
-        $productLongDescription = $quoteItemTransfer->getName();
+
+        $supplierId = $this->getDefaultSupplierId();
+
+        $productAbstractStorageData = $this->productStorageClient->getProductAbstractStorageData($quoteItemTransfer->getIdProductAbstract(), $this->currentLocale);
+
+        $longDescriptionParts = [$productAbstractStorageData['description']];
+        foreach ($quoteItemTransfer->getProductOptions() as $option) {
+            $value = $this->glossaryStorageClient->translate($option->getValue(), $this->currentLocale);
+            $name = $this->glossaryStorageClient->translate($option->getGroupName(), $this->currentLocale);
+            if ($value || $name){
+                $longDescriptionParts[] = sprintf($name . '=' . $value);
+            }
+        }
+        $imageUrl = '';
+        if (isset($quoteItemTransfer->getImages()[0])) {
+            /** @var \Generated\Shared\Transfer\ProductImageTransfer $image */
+            $image = $quoteItemTransfer->getImages()[0];
+            $imageUrl = $image->getExternalUrlSmall();
+        }
+
+        $productDescription = $this->limitDescription($productAbstractStorageData['description']);
+        $productLongDescription = $this->limitDescription(join('\n', array_filter($longDescriptionParts)));
 
         $documentCartItemTransfer->setInternalId($internalId);//@todo: generate spaid
-        $documentCartItemTransfer->setSupplierId($supplierId);//@todo:
+        $documentCartItemTransfer->setSupplierId($supplierId);
         $documentCartItemTransfer->setLocale($this->toLang($this->currentLocale));
         
         $documentCartItemTransfer->setQuantity($quoteItemTransfer->getQuantity());
@@ -115,10 +144,11 @@ class CartTransferMapper implements CartTransferMapperInterface
         $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
         
-        $documentCartItemTransfer->setName($quoteItemTransfer->getName());
-        $documentCartItemTransfer->setDescription($productDescription);
-        $documentCartItemTransfer->setLongDescription($productLongDescription);
+        $documentCartItemTransfer->setName(trim($quoteItemTransfer->getName()));
+        $documentCartItemTransfer->setDescription(trim($productDescription));
+        $documentCartItemTransfer->setLongDescription(trim($productLongDescription));
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
+        $documentCartItemTransfer->setImageUrl($imageUrl);
         
         //
         //PRICING & RATES
@@ -343,5 +373,34 @@ class CartTransferMapper implements CartTransferMapperInterface
     protected function getUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
     {
         return new UtilUuidGeneratorService();
+    }
+
+    /**
+     * @param $description
+     * @return mixed
+     */
+    protected function limitDescription($description)
+    {
+        $impersonalDetails = $this->customerClient
+            ->getCustomer()
+            ->getPunchoutCatalogImpersonationDetails();
+        if (isset($impersonalDetails['punchout_catalog_connection_cart'])
+            && isset($impersonalDetails['punchout_catalog_connection_cart']['max_description_length'])) {
+            $length = intval($impersonalDetails['punchout_catalog_connection_cart']['max_description_length']);
+            return mb_substr($description, 0, $length);
+        }
+
+        return $description;
+    }
+
+    /**
+     * @return string
+     */
+    protected function getDefaultSupplierId(): string
+    {
+        $impersonalDetails = $this->customerClient
+            ->getCustomer()
+            ->getPunchoutCatalogImpersonationDetails();
+        return $impersonalDetails['punchout_catalog_connection_cart']['default_supplier_id'];
     }
 }

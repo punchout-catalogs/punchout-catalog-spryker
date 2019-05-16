@@ -193,6 +193,8 @@
         <property name="description" type="string"/>
         <property name="longDescription" type="string"/>
 
+        <property name="imageUrl" type="string"/>
+
         <property name="productPackagingUnit" type="string"/>
         <property name="unspsc" type="string"/>
         <property name="cartNote" type="string"/>
