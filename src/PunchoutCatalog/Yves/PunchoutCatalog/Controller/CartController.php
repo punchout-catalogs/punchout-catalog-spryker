@@ -23,6 +23,7 @@ class CartController extends AbstractController
 {
     protected const REDIRECT_URL = 'cart';
     protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is_not_punchout';
+    
     /**
      * Return transferred cart
      */
