@@ -381,15 +381,11 @@ class CartTransferMapper implements CartTransferMapperInterface
      */
     protected function limitDescription($description)
     {
-        $impersonalDetails = $this->customerClient
-            ->getCustomer()
-            ->getPunchoutCatalogImpersonationDetails();
-        if (isset($impersonalDetails['punchout_catalog_connection_cart'])
-            && isset($impersonalDetails['punchout_catalog_connection_cart']['max_description_length'])) {
-            $length = intval($impersonalDetails['punchout_catalog_connection_cart']['max_description_length']);
+        $cartDetails = $this->getPunchoutCartDetails();
+        if (!empty(['max_description_length'])) {
+            $length = intval($cartDetails['max_description_length']);
             return mb_substr($description, 0, $length);
         }
-
         return $description;
     }
 
@@ -398,9 +394,19 @@ class CartTransferMapper implements CartTransferMapperInterface
      */
     protected function getDefaultSupplierId(): string
     {
-        $impersonalDetails = $this->customerClient
-            ->getCustomer()
-            ->getPunchoutCatalogImpersonationDetails();
-        return $impersonalDetails['punchout_catalog_connection_cart']['default_supplier_id'];
+        $cartDetails = $this->getPunchoutCartDetails();
+        return $cartDetails['default_supplier_id'] ?? null;
+    }
+    
+    /**
+     * @return array
+     */
+    protected function getPunchoutCartDetails()
+    {
+       $impersonalDetails = $this->customerClient
+           ->getCustomer()
+           ->getPunchoutCatalogImpersonationDetails();
+       
+       return $impersonalDetails['punchout_catalog_connection_cart'] ?? [];
     }
 }

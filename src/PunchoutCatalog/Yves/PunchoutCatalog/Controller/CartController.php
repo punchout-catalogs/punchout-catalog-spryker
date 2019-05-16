@@ -161,10 +161,21 @@ class CartController extends AbstractController
      */
     protected function isPunchout()
     {
-        return ($this->getFactory()->getCustomerClient()->getCustomer()
+        return ($this->getPunchoutDetails() && $this->getPunchoutDetails()['is_punchout']);
+    }
+    
+    /**
+     * @return array|null
+     */
+    protected function getPunchoutDetails()
+    {
+        if ($this->getFactory()->getCustomerClient()->getCustomer()
             && $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails()
-            && $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails()['is_punchout']
-        );
+        ) {
+            return $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails();
+        }
+        
+        return null;
     }
     
     /**

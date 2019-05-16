@@ -46,6 +46,6 @@ class PunchoutCatalogCheckoutButtonsWidget extends AbstractWidget
      */
     protected function isVisible(CustomerTransfer $customerTransfer): bool
     {
-        return isset($customerTransfer->getPunchoutCatalogImpersonationDetails()['is_punchout']);
+        return !empty($customerTransfer->getPunchoutCatalogImpersonationDetails()['is_punchout']);
     }
 }
