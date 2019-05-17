@@ -98,10 +98,16 @@ class CartProcessor implements CartProcessorInterface
 
             return $punchoutCatalogCartResponseTransfer;
         } catch (\Exception $e) {
+            $message = $this->translate(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+            $mesageTransfer = (new MessageTransfer())
+                ->setValue($message)
+                ->setCode(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+            
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
             $punchoutCatalogResponseTransfer->setIsSuccess(false);
-            $punchoutCatalogResponseTransfer->addMessage(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+            $punchoutCatalogResponseTransfer->addMessage($mesageTransfer);
             $punchoutCatalogResponseTransfer->addException($e->getMessage());
+
             return $punchoutCatalogResponseTransfer;
         }
     }
