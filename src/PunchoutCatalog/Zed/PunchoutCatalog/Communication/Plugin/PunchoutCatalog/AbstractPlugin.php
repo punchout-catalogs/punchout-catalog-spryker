@@ -30,6 +30,7 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     }
 
     /**
+     * @todo: fix it
      * @api
      *
      * @return string
@@ -47,6 +48,7 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     }
 
     /**
+     * @todo: fix it
      * @api
      *
      * @return string

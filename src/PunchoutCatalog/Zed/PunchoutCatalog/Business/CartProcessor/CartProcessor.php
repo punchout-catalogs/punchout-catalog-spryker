@@ -7,7 +7,6 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor;
 
-use Exception;
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
@@ -15,13 +14,14 @@ use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
-use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlCartProcessorStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciCartProcessorStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
+
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
+use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\Exception as CartException;
 
 /**
  * Class CartProcessor
@@ -69,8 +69,6 @@ class CartProcessor implements CartProcessorInterface
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
-     * @throws \Spryker\Zed\ProductStorage\Exception\InvalidArgumentException
-     *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCart(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): PunchoutCatalogCartResponseTransfer
@@ -85,13 +83,13 @@ class CartProcessor implements CartProcessorInterface
             );
             
             if ($connection === null) {
-                throw new InvalidArgumentException(static::ERROR_MISSING_CONNECTION);
+                throw new CartException(static::ERROR_MISSING_CONNECTION);
             }
             $punchoutCatalogCartRequestTransfer->getContext()->setPunchoutCatalogConnection($connection);
             
             $format = $connection->getFormat();
             if (!$format || !isset($this->cartProcessorPlugins[$format])) {
-                throw new InvalidArgumentException(static::ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR);
+                throw new CartException(static::ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR);
             }
             
             $punchoutCatalogCartResponseTransfer = $this->cartProcessorPlugins[$format]->processCart(
@@ -99,22 +97,23 @@ class CartProcessor implements CartProcessorInterface
             );
 
             return $punchoutCatalogCartResponseTransfer;
-        } catch (Exception $e) {
-            die($e->getMessage());
+        } catch (\Exception $e) {
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
             $punchoutCatalogResponseTransfer->setIsSuccess(false);
-
-            if (($e instanceof RequiredTransferPropertyException) || ($e instanceof InvalidArgumentException)) {
-                $punchoutCatalogResponseTransfer->addMessage(
-                    (new MessageTransfer())->setValue($e->getMessage())
-                );
-            } else {
-                $punchoutCatalogResponseTransfer->addMessage(
-                    (new MessageTransfer())->setValue(PunchoutConnectionConstsInterface::ERROR_GENERAL)
-                );
-            }
-
+            $punchoutCatalogResponseTransfer->addMessage(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+            $punchoutCatalogResponseTransfer->addException($e->getMessage());
             return $punchoutCatalogResponseTransfer;
         }
+    }
+    
+    /**
+     * @todo: use glossary
+     * @param string $message
+     *
+     * @return string
+     */
+    protected function translate(string $message): string
+    {
+        return 'Translated - ' . $message;
     }
 }

@@ -18,7 +18,9 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequest
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
-class OciSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcessorStrategyPlugin implements PunchoutCatalogRequestProcessorStrategyPluginInterface
+class OciSetupRequestProcessorStrategyPlugin
+    extends AbstractSetupRequestProcessorStrategyPlugin
+    implements PunchoutCatalogRequestProcessorStrategyPluginInterface
 {
     /**
      * @api

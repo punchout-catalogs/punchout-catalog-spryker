@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConfig;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlRequestProtocolStrategyPlugin;
@@ -19,6 +20,10 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompa
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
+
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
+use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\Exception;
 
 class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
 {
@@ -61,8 +66,14 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
+     *
+     * @throws Exception
+     * @throws RequiredTransferPropertyException
+     * @throws InvalidArgumentException
      */
-    public function authenticateRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer
+    public function authenticateRequest(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupRequestTransfer
     {
         $punchoutCatalogRequestTransfer
             ->requireContent()
@@ -75,28 +86,18 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
         );
         
         if (!$companyBusinessUnitTransfer) {
-            return $punchoutCatalogRequestTransfer
-                ->setIsSuccess(false)
-                ->addMessage(
-                    (new MessageTransfer())
-                        ->setValue(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION)
-                );
+            throw new Exception(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
         }
 
         $punchoutCatalogRequestTransfer->setCompanyBusinessUnit($companyBusinessUnitTransfer);
         
-        foreach ($this->protocolStrategyPlugins as $protocolStrategyPlugin) {
-            if ($protocolStrategyPlugin->isApplicable($punchoutCatalogRequestTransfer)) {
-                return $punchoutCatalogRequestTransfer = $this->applyProtocolStrategy($protocolStrategyPlugin, $punchoutCatalogRequestTransfer);
+        foreach ($this->protocolStrategyPlugins as $strategy) {
+            if ($strategy->isApplicable($punchoutCatalogRequestTransfer)) {
+                return $this->applyProtocolStrategy($strategy, $punchoutCatalogRequestTransfer);
             }
         }
 
-        return $punchoutCatalogRequestTransfer
-            ->setIsSuccess(false)
-            ->addMessage(
-                (new MessageTransfer())
-                    ->setValue(PunchoutConnectionConstsInterface::ERROR_INVALID_DATA)
-            );
+        throw new Exception(PunchoutConnectionConstsInterface::ERROR_INVALID_DATA);
     }
 
     /**
@@ -104,27 +105,28 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
+     *
+     * @throws Exception
+     * @throws RequiredTransferPropertyException
      */
-    public function applyProtocolStrategy(
+    protected function applyProtocolStrategy(
         PunchoutCatalogProtocolStrategyPluginInterface $protocolStrategyPlugin,
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
-    ): PunchoutCatalogSetupRequestTransfer {
+    ): PunchoutCatalogSetupRequestTransfer
+    {
         $punchoutCatalogRequestTransfer = $protocolStrategyPlugin->setRequestProtocol($punchoutCatalogRequestTransfer);
 
         $punchoutCatalogRequestTransfer
             ->requireProtocolType()
             ->requireContext()
             ->requireProtocolData();
-
-        $punchoutCatalogRequestTransfer = $protocolStrategyPlugin->setPunchoutCatalogConnection($punchoutCatalogRequestTransfer);
-
+        
+        $punchoutCatalogRequestTransfer = $protocolStrategyPlugin->setPunchoutCatalogConnection(
+            $punchoutCatalogRequestTransfer
+        );
+        
         if (null === $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()) {
-            return $punchoutCatalogRequestTransfer
-                ->setIsSuccess(false)
-                ->addMessage(
-                    (new MessageTransfer())
-                        ->setValue(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION)
-                );
+            throw new Exception(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
         }
 
         return $punchoutCatalogRequestTransfer;
@@ -135,7 +137,9 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer|null
      */
-    public function findConnectionByCredential(PunchoutCatalogConnectionCredentialSearchTransfer $connectionCredentialSearch): ?PunchoutCatalogConnectionTransfer
+    public function findConnectionByCredential(
+        PunchoutCatalogConnectionCredentialSearchTransfer $connectionCredentialSearch
+    ): ?PunchoutCatalogConnectionTransfer
     {
         $connection = $this->punchoutCatalogRepository->findConnectionByCredential($connectionCredentialSearch);
         if ($connection === null || $connection->getIdPunchoutCatalogConnection() === null) {

@@ -19,7 +19,9 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequest
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
-class CxmlSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcessorStrategyPlugin implements PunchoutCatalogRequestProcessorStrategyPluginInterface
+class CxmlSetupRequestProcessorStrategyPlugin
+    extends AbstractSetupRequestProcessorStrategyPlugin
+    implements PunchoutCatalogRequestProcessorStrategyPluginInterface
 {
     protected const ERROR_CODE_INTERNAL = 500;
     protected const ERROR_TEXT_INTERNAL = 'Internal Server Error';
@@ -133,12 +135,10 @@ class CxmlSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProces
         $statusText = static::ERROR_TEXT_INTERNAL;
         $statusMessage = $messageTransfer->getValue();
 
-        if ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_INVALID_DATA
-            || $messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_MISSING_REQUEST_PROCESSOR
-        ) {
+        if ($messageTransfer->getCode() == PunchoutConnectionConstsInterface::ERROR_INVALID_DATA) {
             $statusText = static::ERROR_TEXT_NOT_ACCEPTABLE;
             $status = static::ERROR_CODE_NOT_ACCEPTABLE;
-        } elseif ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION) {
+        } elseif ($messageTransfer->getCode() == PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION) {
             $statusText = static::ERROR_TEXT_UNATHORIZED;
             $status = static::ERROR_CODE_UNATHORIZED;
         }

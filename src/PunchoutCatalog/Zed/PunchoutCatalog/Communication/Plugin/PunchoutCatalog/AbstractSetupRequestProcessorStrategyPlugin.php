@@ -52,6 +52,9 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $accessToken = ""; // ResourceShare->generateToken(); (idCustomer, idCompany, idConnection, ErpRequestParams)
         $landingUrl = 'http://www.de.suite-nonsplit.local/?SID=f59a04fdb07a77053dcbdf36e71c52f9&test=' . rand(0, 1000);
         /** /TEST STUB */
+    
+        //Mark Request as Success TRX
+        $punchoutCatalogRequestTransfer->setIsSuccess(true);
         
         return (new PunchoutCatalogSetupResponseTransfer())
             ->setContext((clone $punchoutCatalogRequestTransfer->getContext())->setRawData(null))

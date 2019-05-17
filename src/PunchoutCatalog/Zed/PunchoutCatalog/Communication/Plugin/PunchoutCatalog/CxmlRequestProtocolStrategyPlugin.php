@@ -10,11 +10,15 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
-use PunchoutCatalog\Service\UtilCxml\UtilCxmlService;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\Exception as AuthenticatorException;
+
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
+use PunchoutCatalog\Service\UtilCxml\UtilCxmlService;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -49,7 +53,9 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
             return false;
         }
 
-        return $this->utilCxmlService->isCXml($punchoutCatalogRequestTransfer->getContent());
+        return (is_string($punchoutCatalogRequestTransfer->getContent())
+            && $this->utilCxmlService->isCXml($punchoutCatalogRequestTransfer->getContent())
+        );
     }
 
     /**
@@ -58,8 +64,11 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
+     * @throws \Exception
      */
-    public function setRequestProtocol(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer
+    public function setRequestProtocol(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupRequestTransfer
     {
         $protocolData = $this->utilCxmlService->fetchHeaderAsArray($punchoutCatalogRequestTransfer->getContent());
         $protocolOperation = $this->utilCxmlService->getOperation($punchoutCatalogRequestTransfer->getContent());
@@ -73,9 +82,13 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
 
         $punchoutCatalogRequestTransfer->requireProtocolOperation();
 
-        (new ProtocolDataValidator())->validate(
-            $punchoutCatalogRequestTransfer->getProtocolData()
-        );
+        try {
+            (new ProtocolDataValidator())->validate(
+                $punchoutCatalogRequestTransfer->getProtocolData()
+            );
+        } catch (RequiredTransferPropertyException $e) {
+            throw new AuthenticatorException(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
+        }
 
         return $punchoutCatalogRequestTransfer;
     }
@@ -87,7 +100,9 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
-    public function setPunchoutCatalogConnection(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer
+    public function setPunchoutCatalogConnection(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupRequestTransfer
     {
         $punchoutCatalogRequestTransfer->requireContext();
         

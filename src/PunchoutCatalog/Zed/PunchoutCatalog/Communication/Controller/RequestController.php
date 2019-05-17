@@ -35,9 +35,7 @@ class RequestController extends AbstractController
      */
     public function indexAction(Request $request): Response
     {
-        $punchoutCatalogRequestTransfer = $this->mapSymfonyRequestToPunchoutCatalogSetupRequestTransfer(
-            $request
-        );
+        $punchoutCatalogRequestTransfer = $this->mapSymfonyRequestToSetupRequestTransfer($request);
         
         $processingResult = $this->getFacade()->processRequest($punchoutCatalogRequestTransfer);
         
@@ -51,7 +49,7 @@ class RequestController extends AbstractController
      *
      * @return PunchoutCatalogSetupRequestTransfer
      */
-    protected function mapSymfonyRequestToPunchoutCatalogSetupRequestTransfer(Request $request): PunchoutCatalogSetupRequestTransfer
+    protected function mapSymfonyRequestToSetupRequestTransfer(Request $request): PunchoutCatalogSetupRequestTransfer
     {
         $idBusinessUnit = $request->query->get(static::BUSINESS_UNIT_PARAM);
     
@@ -76,8 +74,8 @@ class RequestController extends AbstractController
         }
     
         //@todo: remove it
-        //$punchoutCatalogRequestTransfer->setContentType('text/xml');
-        //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
+        $punchoutCatalogRequestTransfer->setContentType('text/xml');
+        $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
     
         //$punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
         //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
@@ -179,7 +177,7 @@ class RequestController extends AbstractController
         return [
             'username' => 'user_1',
             'password' => 'user_1_pass',
-            'HOOK_URL' => 'http://www.test.com/cart.php',
+            'HOOK_URL' => 'http://www.test.com/cart.php2',
             'first_name' => 'ftest1',
             'last_name' => 'ltest2',
             'email' => 'teste@example.com',

@@ -41,50 +41,38 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
         $response = (new PunchoutCatalogCartResponseTransfer())
             ->setIsSuccess(true);
     
-        try {
-            $punchoutCatalogCartRequestTransfer->requireContext();
-        
-            $context = (new PunchoutCatalogCartResponseContextTransfer())->fromArray(
-                $punchoutCatalogCartRequestTransfer->getContext()->toArray(), true
-            );
-            $response->setContext($context);
-            
-            $punchoutCatalogCartRequestContextTransfer = $punchoutCatalogCartRequestTransfer->getContext()
-                ->requireProtocolData()
-                ->requirePunchoutCatalogConnection();
-        
-            (new ProtocolDataValidator())->validate(
-                $punchoutCatalogCartRequestContextTransfer->getProtocolData(),
-                false
-            );
+        $punchoutCatalogCartRequestTransfer->requireContext();
     
-            $fields = $this->prepareOciContent(
-                $punchoutCatalogCartRequestTransfer,
-                $punchoutCatalogCartRequestContextTransfer
-            );
+        $context = (new PunchoutCatalogCartResponseContextTransfer())->fromArray(
+            $punchoutCatalogCartRequestTransfer->getContext()->toArray(), true
+        );
+        $response->setContext($context);
     
-            foreach ($fields as $fieldName => $fieldValue) {
-                $response->addResponseField(
-                    (new PunchoutCatalogCartResponseFieldTransfer())
-                        ->setName($fieldName)
-                        ->setValue($this->fixOciValue((string)$fieldValue))
-                );
-            }
+        $punchoutCatalogCartRequestContextTransfer = $punchoutCatalogCartRequestTransfer->getContext()
+            ->requireProtocolData()
+            ->requirePunchoutCatalogConnection();
     
-            $response->getContext()->setRawData($punchoutCatalogCartRequestTransfer->toArray());
-            $response->getContext()->setContent(json_encode($fields, JSON_PRETTY_PRINT));
-            return $response;
-        } catch (\Exception $e) {
-            $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
+        (new ProtocolDataValidator())->validate(
+            $punchoutCatalogCartRequestContextTransfer->getProtocolData(),
+            false
+        );
     
-            if (($e instanceof RequiredTransferPropertyException) || ($e instanceof InvalidArgumentException)) {
-                $msg = $e->getMessage();
-            }
+        $fields = $this->prepareOciContent(
+            $punchoutCatalogCartRequestTransfer,
+            $punchoutCatalogCartRequestContextTransfer
+        );
     
-            return $response->setIsSuccess(false)->addMessage(
-                (new MessageTransfer())->setValue($msg)
+        foreach ($fields as $fieldName => $fieldValue) {
+            $response->addResponseField(
+                (new PunchoutCatalogCartResponseFieldTransfer())
+                    ->setName($fieldName)
+                    ->setValue($this->fixOciValue((string)$fieldValue))
             );
         }
+    
+        $response->getContext()->setRawData($punchoutCatalogCartRequestTransfer->toArray());
+        $response->getContext()->setContent(json_encode($fields, JSON_PRETTY_PRINT));
+        return $response;
     }
 
     /**

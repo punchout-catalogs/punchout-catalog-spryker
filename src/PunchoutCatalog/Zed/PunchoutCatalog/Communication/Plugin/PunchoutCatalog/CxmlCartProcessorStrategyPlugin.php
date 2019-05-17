@@ -45,59 +45,47 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     {
         $response = (new PunchoutCatalogCartResponseTransfer())
             ->setIsSuccess(true);
-        
-        try {
-            $punchoutCatalogCartRequestTransfer->requireContext();
-            
-            $context = (new PunchoutCatalogCartResponseContextTransfer())->fromArray(
-                $punchoutCatalogCartRequestTransfer->getContext()->toArray(), true
+    
+        $punchoutCatalogCartRequestTransfer->requireContext();
+    
+        $context = (new PunchoutCatalogCartResponseContextTransfer())->fromArray(
+            $punchoutCatalogCartRequestTransfer->getContext()->toArray(), true
+        );
+        $response->setContext($context);
+    
+        $context = $punchoutCatalogCartRequestTransfer->getContext()
+            ->requireProtocolData()
+            ->requirePunchoutCatalogConnection();
+    
+        (new ProtocolDataValidator())->validate(
+            $context->getProtocolData(),
+            false
+        );
+    
+        $xml = $this->prepareXmlContent($punchoutCatalogCartRequestTransfer);
+    
+        $xml = $xml->asXML();
+    
+        $connection = $context->getPunchoutCatalogConnection();
+    
+        //The names cXML-urlencoded and cXML-base64 are case insensitive.
+        if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
+            $response->addResponseField(
+                (new PunchoutCatalogCartResponseFieldTransfer())
+                    ->setName('cxml-urlencoded')
+                    ->setValue($this->fixUrlencodedValue($xml))
             );
-            $response->setContext($context);
-    
-            $context = $punchoutCatalogCartRequestTransfer->getContext()
-                ->requireProtocolData()
-                ->requirePunchoutCatalogConnection();
-    
-            (new ProtocolDataValidator())->validate(
-                $context->getProtocolData(),
-                false
-            );
-    
-            $xml = $this->prepareXmlContent($punchoutCatalogCartRequestTransfer);
-    
-            $xml = $xml->asXML();
-            
-            $connection = $context->getPunchoutCatalogConnection();
-            
-            //The names cXML-urlencoded and cXML-base64 are case insensitive.
-            if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
-                $response->addResponseField(
-                    (new PunchoutCatalogCartResponseFieldTransfer())
-                        ->setName('cxml-urlencoded')
-                        ->setValue($this->fixUrlencodedValue($xml))
-                );
-            } else {
-                $response->addResponseField(
-                    (new PunchoutCatalogCartResponseFieldTransfer())
-                        ->setName('cxml-base64')
-                        ->setValue($this->fixBase64Value($xml))
-                );
-            }
-    
-            $response->getContext()->setRawData($punchoutCatalogCartRequestTransfer->toArray());
-            $response->getContext()->setContent($xml);
-            return $response;
-        } catch (\Exception $e) {
-            $msg = PunchoutConnectionConstsInterface::ERROR_GENERAL;
-            
-            if (($e instanceof RequiredTransferPropertyException) || ($e instanceof InvalidArgumentException)) {
-                $msg = $e->getMessage();
-            }
-            
-            return $response->setIsSuccess(false)->addMessage(
-                (new MessageTransfer())->setValue($msg)
+        } else {
+            $response->addResponseField(
+                (new PunchoutCatalogCartResponseFieldTransfer())
+                    ->setName('cxml-base64')
+                    ->setValue($this->fixBase64Value($xml))
             );
         }
+    
+        $response->getContext()->setRawData($punchoutCatalogCartRequestTransfer->toArray());
+        $response->getContext()->setContent($xml);
+        return $response;
     }
     
     /**

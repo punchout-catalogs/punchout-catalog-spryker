@@ -5,6 +5,10 @@
         <property name="punchoutCatalogImpersonationDetails" type="array" />
     </transfer>
 
+    <transfer name="Message">
+        <property name="code" type="string" />
+    </transfer>
+
     <!-- SETUP REQUEST / RESPONSE-->
     <transfer name="PunchoutCatalogSetupRequest">
         <property name="contentType" type="string" />
@@ -19,17 +23,20 @@
         <property name="companyUser" type="CompanyUser" />
 
         <property name="isSuccess" type="bool"/>
+        <!--
         <property name="messages" type="Message[]" singular="message"/>
-
+        -->
         <property name="context" type="PunchoutCatalogCommonContext"/>
     </transfer>
 
     <transfer name="PunchoutCatalogSetupResponse">
         <property name="contentType" type="string" />
         <property name="content" type="string" />
-
         <property name="isSuccess" type="bool"/>
+        <!--
         <property name="messages" type="Message[]" singular="message"/>
+        -->
+        <property name="exceptions" type="string[]" singular="exception"/>
 
         <property name="context" type="PunchoutCatalogCommonContext"/>
     </transfer>
@@ -142,8 +149,9 @@
 
     <transfer name="PunchoutCatalogCartResponse">
         <property name="isSuccess" type="bool"/>
-        <property name="messages" type="Message[]" singular="message"/>
         <property name="fields" type="PunchoutCatalogCartResponseField[]" singular="responseField" />
+        <property name="messages" type="Message[]" singular="message"/>
+        <property name="exceptions" type="string[]" singular="exception"/>
 
         <property name="context" type="PunchoutCatalogCartResponseContext"/>
     </transfer>

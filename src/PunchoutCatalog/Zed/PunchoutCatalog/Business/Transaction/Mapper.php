@@ -34,16 +34,22 @@ class Mapper implements MapperInterface
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
         $entityTransfer->setMessage($content);
-        
-        if ($responseTransfer->getContext()) {
-            $context = $responseTransfer->getContext();
     
+        $exceptions = $responseTransfer->getExceptions();
+        if ($exceptions) {
+            $entityTransfer->setErrorMessage(implode("\n", $exceptions));
+        }
+        
+        $context = $responseTransfer->getContext();
+        if ($context) {
             $entityTransfer->setConnectionSessionId($context->getPunchoutSessionId());
-            
+        }
+    
+        if ($context && $context->getPunchoutCatalogConnection()) {
             $entityTransfer->setFkPunchoutCatalogConnection(
                 $context->getPunchoutCatalogConnection()->getIdPunchoutCatalogConnection()
             );
-            
+        
             $entityTransfer->setFkCompanyBusinessUnit(
                 $context->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
             );
