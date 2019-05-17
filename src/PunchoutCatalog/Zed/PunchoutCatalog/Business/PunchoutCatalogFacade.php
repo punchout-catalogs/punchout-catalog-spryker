@@ -147,7 +147,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
         $context = new PunchoutCatalogCommonContextTransfer();
-        $context->setPunchoutSessionId('fake-new-changed-session-id2');
+        $context->setPunchoutSessionId('fake-new-changed-session-id2');//@todo: generate correct session id
         
         $punchoutCatalogRequestTransfer->setContext($context);
         
@@ -157,7 +157,6 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
             $punchoutCatalogRequestTransfer
         );
         $this->getEntityManager()->saveTransaction($requestTransaction);
-
         
         $punchoutCatalogResponseTransfer = $this->getFactory()
             ->createRequestProcessor()
