@@ -43,7 +43,9 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
      */
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
-        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
+        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART
+            && $punchoutCatalogRequestTransfer->getContentType() !== null
+        ) {
             return false;
         }
 

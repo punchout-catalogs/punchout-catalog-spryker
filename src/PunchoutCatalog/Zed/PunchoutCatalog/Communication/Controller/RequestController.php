@@ -14,7 +14,7 @@ use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use Symfony\Component\HttpFoundation\Request;
-#use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
+use Symfony\Component\HttpFoundation\Response;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 
 /**
@@ -24,33 +24,32 @@ class RequestController extends AbstractController
 {
     /**
      * @todo: handle request, not dummy params: OCI GET + POST, cXML data
+     *
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
+     * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function processAction(Request $request): PunchoutCatalogSetupResponseTransfer
+    public function indexAction(Request $request): Response
     {
-        dd($request->get('username'));
-
+        $idBusinessUnit = $request->query->get('business-unit');
+        
         $punchoutCatalogRequestTransfer = new PunchoutCatalogSetupRequestTransfer();
-        $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit(16);
-        dd($punchoutCatalogRequestTransfer);
         //@todo: remove it - it is fake data to test connection auth using ZED route directly in browser
+        $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit($idBusinessUnit);
+    
+        $punchoutCatalogRequestTransfer->setContentType('text/xml');
+        $punchoutCatalogRequestTransfer->setIsSuccess(true);
+        $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
+    
+        //$punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
+        //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
         //---------------------------------------------------------------------//
-        if ($punchoutCatalogRequestTransfer === null) {
-            /**
-            $punchoutCatalogRequestTransfer->setContentType('text/xml');
-            $punchoutCatalogRequestTransfer->setIsSuccess(true);
-            $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
-
-            $punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
-            $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
-            */
-        }
-        //---------------------------------------------------------------------//
-        return $this->filterResponseContext(
-            $this->getFacade()->processRequest($punchoutCatalogRequestTransfer)
-        );
+        
+        $result = $this->getFacade()->processRequest($punchoutCatalogRequestTransfer);
+        
+        return (new Response())
+            ->setContent($result->getContent())
+            ->setStatusCode(Response::HTTP_OK);
     }
 
     /**
@@ -150,14 +149,5 @@ class RequestController extends AbstractController
             'last_name' => 'ltest2',
             'email' => 'teste@example.com',
         ];
-    }
-
-    /**
-     * @param PunchoutCatalogSetupResponseTransfer $response
-     * @return PunchoutCatalogSetupResponseTransfer
-     */
-    protected function filterResponseContext(PunchoutCatalogSetupResponseTransfer $response)
-    {
-        return $response->setContext(null);
     }
 }

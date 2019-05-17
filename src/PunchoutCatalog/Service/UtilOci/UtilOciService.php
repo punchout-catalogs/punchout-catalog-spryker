@@ -25,17 +25,30 @@ class UtilOciService extends AbstractService implements UtilOciServiceInterface
      */
     public function fetchHeaderAsArray(array $content): array
     {
-        $username = $content['username'] ?? null;
-        if (empty($username)) {
-            $username = $content['login'] ?? null;
+        $username = $hookUrl = null;
+        
+        $usernameKeys = ['username', 'login', 'cid'];
+        $hookKeys = ['HOOK_URL', 'hook_url', 'Hook_Url'];
+        
+        foreach ($usernameKeys as $usernameKey) {
+            if (!empty($content[$usernameKey])) {
+                $username = $content[$usernameKey];
+            }
         }
+    
+        foreach ($hookKeys as $hookKey) {
+            if (!empty($content[$hookKey])) {
+                $hookUrl = $content[$hookKey];
+            }
+        }
+        
         return [
             'oci_credentials' => [
                 'username' => $username,
                 'password' => $content['password'] ?? null,
             ],
             'cart' => [
-                'url' => $content['HOOK_URL'] ? $content['HOOK_URL'] : $content['hook_url'],
+                'url' => $hookUrl,
                 'operation' => 'create',//always create
             ]
         ];
@@ -66,6 +79,6 @@ class UtilOciService extends AbstractService implements UtilOciServiceInterface
      */
     public function isOci(array $content): bool
     {
-        return isset($content['HOOK_URL']) || isset($content['hook_url']);
+        return isset($content['HOOK_URL']) || isset($content['hook_url']) || isset($content['Hook_Url']);
     }
 }
