@@ -30,9 +30,7 @@ class OciSetupRequestProcessorStrategyPlugin extends AbstractSetupRequestProcess
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
         return (
-            ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART
-                || $punchoutCatalogRequestTransfer->getContentType() === null
-            )
+            ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART)
             && ($punchoutCatalogRequestTransfer->getProtocolType() === PunchoutConnectionConstsInterface::FORMAT_OCI)
             && ($punchoutCatalogRequestTransfer->getProtocolOperation() === PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST)
         );

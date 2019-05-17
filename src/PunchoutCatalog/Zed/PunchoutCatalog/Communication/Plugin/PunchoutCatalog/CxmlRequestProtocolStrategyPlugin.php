@@ -45,9 +45,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     {
         if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML) {
             return false;
-        }
-
-        if (empty($punchoutCatalogRequestTransfer->getContent())) {
+        } elseif (empty($punchoutCatalogRequestTransfer->getContent())) {
             return false;
         }
 

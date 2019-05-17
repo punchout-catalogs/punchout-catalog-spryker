@@ -13,6 +13,7 @@ use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
@@ -23,36 +24,69 @@ use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 class RequestController extends AbstractController
 {
     /**
-     * @todo: handle request, not dummy params: OCI GET + POST, cXML data
-     *
+     * @var string
+     */
+    protected const BUSINESS_UNIT_PARAM = 'business-unit';
+    
+    /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(Request $request): Response
     {
-        $idBusinessUnit = $request->query->get('business-unit');
+        $punchoutCatalogRequestTransfer = $this->mapSymfonyRequestToPunchoutCatalogSetupRequestTransfer(
+            $request
+        );
         
-        $punchoutCatalogRequestTransfer = new PunchoutCatalogSetupRequestTransfer();
-        //@todo: remove it - it is fake data to test connection auth using ZED route directly in browser
-        $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit($idBusinessUnit);
+        $processingResult = $this->getFacade()->processRequest($punchoutCatalogRequestTransfer);
+        
+        return (new Response())
+            ->setContent($processingResult->getContent())
+            ->setStatusCode(Response::HTTP_OK);
+    }
     
-        $punchoutCatalogRequestTransfer->setContentType('text/xml');
+    /**
+     * @param Request $request
+     *
+     * @return PunchoutCatalogSetupRequestTransfer
+     */
+    protected function mapSymfonyRequestToPunchoutCatalogSetupRequestTransfer(Request $request): PunchoutCatalogSetupRequestTransfer
+    {
+        $idBusinessUnit = $request->query->get(static::BUSINESS_UNIT_PARAM);
+    
+        $punchoutCatalogRequestTransfer = new PunchoutCatalogSetupRequestTransfer();
         $punchoutCatalogRequestTransfer->setIsSuccess(true);
-        $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
+        $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit((int)$idBusinessUnit);
+        
+        if (null === $request->getContentType() || 'form' === $request->getContentType()) {
+            $punchoutCatalogRequestTransfer->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART);
+        } elseif ('xml' === $request->getContentType()) {
+            $punchoutCatalogRequestTransfer->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML);
+        } else {
+            $punchoutCatalogRequestTransfer->setContentType($request->getContentType());
+        }
+
+        if ($request->getMethod() == Request::METHOD_GET) {
+            $punchoutCatalogRequestTransfer->setContent($request->query->all());//ALL $_GET
+        } elseif ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
+            $punchoutCatalogRequestTransfer->setContent($request->request->all());//ALL $_POST
+        } else {
+            $punchoutCatalogRequestTransfer->setContent($request->getContent());//RAW BODY
+        }
+    
+        //@todo: remove it
+        //$punchoutCatalogRequestTransfer->setContentType('text/xml');
+        //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
     
         //$punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
         //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
-        //---------------------------------------------------------------------//
-        
-        $result = $this->getFacade()->processRequest($punchoutCatalogRequestTransfer);
-        
-        return (new Response())
-            ->setContent($result->getContent())
-            ->setStatusCode(Response::HTTP_OK);
-    }
 
+        return $punchoutCatalogRequestTransfer;
+    }
+    
     /**
+     * @todo: remove it
      * @return string
      */
     protected function getFakeSetupRequestCxml(): string
@@ -137,6 +171,7 @@ class RequestController extends AbstractController
     }
 
     /**
+     * @todo: remove it
      * @return array
      */
     protected function getFakeSetupRequestOci(): array

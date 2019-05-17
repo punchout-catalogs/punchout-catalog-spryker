@@ -14,7 +14,10 @@ interface PunchoutConnectionConstsInterface
 
     public const DATA_FORMAT_XML = 'xml';
     public const DATA_FORMAT_ARRAY = 'array';
-
+    
+    public const CONTENT_TYPE_FORM = 'form';
+    public const CONTENT_TYPE_XML = 'xml';
+    
     public const CONTENT_TYPE_FORM_MULTIPART = 'multipart/form-data';
     public const CONTENT_TYPE_TEXT_XML = 'text/xml';
     public const CONTENT_TYPE_TEXT_HTML = 'text/html';
