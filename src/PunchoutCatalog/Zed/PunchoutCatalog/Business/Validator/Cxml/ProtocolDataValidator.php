@@ -24,7 +24,7 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
             ->requireCart()
             ->requireCxmlSenderCredentials()
             ->requireCxmlToCredentials();
-
+        
         $protocolDataTransfer->getCart()
             ->requireUrl()
             ->requireOperation()
@@ -38,11 +38,11 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
         if ($validateSharedSecret) {
             $protocolDataTransfer->getCxmlSenderCredentials()->requireSharedSecret();
         }
-
+        
         $protocolDataTransfer->getCxmlToCredentials()
             ->requireIdentity()
             ->requireDomain();
-
+        
         return true;
     }
 }

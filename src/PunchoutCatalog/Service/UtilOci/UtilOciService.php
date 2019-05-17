@@ -42,10 +42,12 @@ class UtilOciService extends AbstractService implements UtilOciServiceInterface
             }
         }
         
+        $password = $content['password'] ?? null;
+        
         return [
             'oci_credentials' => [
                 'username' => $username,
-                'password' => $content['password'] ?? null,
+                'password' => $password,
             ],
             'cart' => [
                 'url' => $hookUrl,

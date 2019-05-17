@@ -106,8 +106,9 @@ class UtilCxmlService extends AbstractService implements UtilCxmlServiceInterfac
      *
      * @return string
      */
-    protected function single(\SimpleXMLElement $XMLElement, string $xpath): string
+    protected function single(\SimpleXMLElement $XMLElement, string $xpath): ?string
     {
-        return (string)current($XMLElement->xpath($xpath));
+        $val = (string)current($XMLElement->xpath($xpath));
+        return $val !== '' ? $val : null;
     }
 }
