@@ -9,7 +9,10 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Spryker\Zed\DataImport\DataImportConfig;
-use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesLoginUrlConfigurationException;
+use Spryker\Shared\Application\ApplicationConstants;
+
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException;
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException;
 
 class PunchoutCatalogConfig extends DataImportConfig
 {
@@ -79,16 +82,36 @@ class PunchoutCatalogConfig extends DataImportConfig
     }
 
     /**
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesLoginUrlConfigurationException
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
      *
      * @return string
      */
-    public function getYvesLoginUrl(): string
+    public function getYvesHost(): string
     {
-        throw new MissingYvesLoginUrlConfigurationException(
-            'Missing configuration! You need to configure Yves login URL ' .
-            'in your own PunchoutCatalogConfig::getYvesLoginUrl() ' .
-            'to be able to generate login URL with access token for remote systems.'
-        );
+        if (!$this->getConfig()->get(ApplicationConstants::HOST_YVES)) {
+            throw new MissingYvesUrlConfigurationException(
+                'Missing configuration! You need to configure Yves URL ' .
+                'in your own PunchoutCatalogConfig::getYvesHost() ' .
+                'to be able to generate login URL with access token for remote systems.'
+            );
+        }
+        return $this->getConfig()->get(ApplicationConstants::HOST_YVES);
+    }
+    
+    /**
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
+     *
+     * @return string
+     */
+    public function getZedHost(): string
+    {
+        if (!$this->getConfig()->get(ApplicationConstants::HOST_ZED)) {
+            throw new MissingZedUrlConfigurationException(
+                'Missing configuration! You need to configure Zed URL ' .
+                'in your own PunchoutCatalogConfig::getZedHost() ' .
+                'to be able to generate PunchOut URL for remote systems.'
+            );
+        }
+        return $this->getConfig()->get(ApplicationConstants::HOST_ZED);
     }
 }

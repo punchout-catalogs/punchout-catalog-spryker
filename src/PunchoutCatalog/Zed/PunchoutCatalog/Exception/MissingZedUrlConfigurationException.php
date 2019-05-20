@@ -9,6 +9,6 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Exception;
 
 use Exception;
 
-class MissingYvesUrlConfigurationException extends Exception
+class MissingZedUrlConfigurationException extends Exception
 {
 }

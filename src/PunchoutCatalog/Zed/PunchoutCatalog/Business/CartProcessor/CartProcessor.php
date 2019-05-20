@@ -21,7 +21,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInt
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\Exception as CartException;
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\TransferredCartException;
 
 /**
  * Class CartProcessor
@@ -83,13 +83,13 @@ class CartProcessor implements CartProcessorInterface
             );
             
             if ($connection === null) {
-                throw new CartException(static::ERROR_MISSING_CONNECTION);
+                throw new TransferredCartException(static::ERROR_MISSING_CONNECTION);
             }
             $punchoutCatalogCartRequestTransfer->getContext()->setPunchoutCatalogConnection($connection);
             
             $format = $connection->getFormat();
             if (!$format || !isset($this->cartProcessorPlugins[$format])) {
-                throw new CartException(static::ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR);
+                throw new TransferredCartException(static::ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR);
             }
             
             $punchoutCatalogCartResponseTransfer = $this->cartProcessorPlugins[$format]->processCart(
@@ -98,16 +98,27 @@ class CartProcessor implements CartProcessorInterface
 
             return $punchoutCatalogCartResponseTransfer;
         } catch (\Exception $e) {
-            $message = $this->translate(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+            if ($e instanceof TransferredCartException) {
+                $message = $this->translate($e->getMessage());
+                $code = $e->getMessage();
+            } else {
+                $message = $this->translate(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+                $code = PunchoutConnectionConstsInterface::ERROR_GENERAL;
+            }
+            
             $mesageTransfer = (new MessageTransfer())
                 ->setValue($message)
-                ->setCode(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+                ->setCode($code);
             
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
             $punchoutCatalogResponseTransfer->setIsSuccess(false);
             $punchoutCatalogResponseTransfer->addMessage($mesageTransfer);
             $punchoutCatalogResponseTransfer->addException($e->getMessage());
-
+    
+            if ($e->getPrevious()) {
+                $punchoutCatalogResponseTransfer->addException("Original Exception:\n" . $e->getPrevious()->getMessage());
+            }
+            
             return $punchoutCatalogResponseTransfer;
         }
     }

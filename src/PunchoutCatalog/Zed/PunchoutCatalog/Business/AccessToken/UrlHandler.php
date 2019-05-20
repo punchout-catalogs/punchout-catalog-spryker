@@ -38,6 +38,6 @@ class UrlHandler implements UrlHandlerInterface
             'returnUrl' => $returnUrl,
         ];
 
-        return $this->punchoutCatalogConfig->getYvesLoginUrl() . "?" . http_build_query($params);
+        return $this->punchoutCatalogConfig->getYvesHost() . "?" . http_build_query($params);
     }
 }

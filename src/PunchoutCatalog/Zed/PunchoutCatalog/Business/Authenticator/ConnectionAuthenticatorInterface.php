@@ -17,6 +17,10 @@ interface ConnectionAuthenticatorInterface
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
+     *
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException
+     * @throws \Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException
+     * @throws \Spryker\Zed\ProductStorage\Exception\InvalidArgumentException
      */
     public function authenticateRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestTransfer;
 

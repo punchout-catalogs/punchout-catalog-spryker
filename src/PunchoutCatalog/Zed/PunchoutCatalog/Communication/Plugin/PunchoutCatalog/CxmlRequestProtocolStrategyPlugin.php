@@ -15,8 +15,8 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\Exception as AuthenticatorException;
 
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use PunchoutCatalog\Service\UtilCxml\UtilCxmlService;
 
@@ -87,7 +87,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
                 $punchoutCatalogRequestTransfer->getProtocolData()
             );
         } catch (RequiredTransferPropertyException $e) {
-            throw new AuthenticatorException(
+            throw new AuthenticateException(
                 PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
             );
         }

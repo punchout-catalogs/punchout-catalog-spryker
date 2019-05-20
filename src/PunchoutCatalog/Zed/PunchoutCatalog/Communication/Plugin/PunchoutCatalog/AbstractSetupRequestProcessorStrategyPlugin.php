@@ -49,6 +49,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         
         /** TEST STUB */
         $companyUser = $punchoutCatalogRequestTransfer->getCompanyUser();
+       // var_dump($this->getConfig()->getYvesHost());exit;
         $accessToken = ""; // ResourceShare->generateToken(); (idCustomer, idCompany, idConnection, ErpRequestParams)
         $landingUrl = 'http://www.de.suite-nonsplit.local/?SID=f59a04fdb07a77053dcbdf36e71c52f9&test=' . rand(0, 1000);
         /** /TEST STUB */

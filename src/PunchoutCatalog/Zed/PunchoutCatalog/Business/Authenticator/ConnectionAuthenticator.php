@@ -23,7 +23,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtoco
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\Exception;
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
 {
@@ -67,7 +67,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      *
-     * @throws Exception
+     * @throws AuthenticateException
      * @throws RequiredTransferPropertyException
      * @throws InvalidArgumentException
      */
@@ -86,7 +86,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
         );
         
         if (!$companyBusinessUnitTransfer) {
-            throw new Exception(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
+            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
         }
 
         $punchoutCatalogRequestTransfer->setCompanyBusinessUnit($companyBusinessUnitTransfer);
@@ -97,7 +97,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
             }
         }
 
-        throw new Exception(PunchoutConnectionConstsInterface::ERROR_INVALID_DATA);
+        throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_INVALID_DATA);
     }
 
     /**
@@ -106,7 +106,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      *
-     * @throws Exception
+     * @throws AuthenticateException
      * @throws RequiredTransferPropertyException
      */
     protected function applyProtocolStrategy(
@@ -126,7 +126,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
         );
         
         if (null === $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()) {
-            throw new Exception(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
+            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
         }
 
         return $punchoutCatalogRequestTransfer;

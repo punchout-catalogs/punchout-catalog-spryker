@@ -18,7 +18,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\Oci
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\Exception as AuthenticatorException;
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 /**
  * Class RequestProcessor
@@ -77,7 +77,7 @@ class RequestProcessor implements RequestProcessorInterface
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer
-     * @throws AuthenticatorException
+     * @throws AuthenticateException
      */
     protected function process(
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
@@ -96,7 +96,7 @@ class RequestProcessor implements RequestProcessorInterface
             }
         }
 
-        throw new AuthenticatorException(PunchoutConnectionConstsInterface::ERROR_INVALID_DATA);
+        throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_INVALID_DATA);
     }
     
     /**
@@ -107,7 +107,7 @@ class RequestProcessor implements RequestProcessorInterface
      */
     protected function processException(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer, \Exception $exception): ?PunchoutCatalogSetupResponseTransfer
     {
-        if ($exception instanceof AuthenticatorException) {
+        if ($exception instanceof AuthenticateException) {
             $code = $exception->getMessage();
         } elseif (($exception instanceof InvalidArgumentException)
             || ($exception instanceof RequiredTransferPropertyException)

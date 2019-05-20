@@ -5,8 +5,10 @@
  * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
-namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor;
+namespace PunchoutCatalog\Zed\PunchoutCatalog\Exception;
 
-class Exception extends \Exception
+use Exception;
+
+class AuthenticateException extends Exception
 {
 }
