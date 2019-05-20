@@ -87,7 +87,9 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
                 $punchoutCatalogRequestTransfer->getProtocolData()
             );
         } catch (RequiredTransferPropertyException $e) {
-            throw new AuthenticatorException(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
+            throw new AuthenticatorException(
+                PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
+            );
         }
 
         return $punchoutCatalogRequestTransfer;

@@ -79,7 +79,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
             ->setProtocolData(
                 (new PunchoutCatalogProtocolDataTransfer())->fromArray($protocolData)
             );
-    
+        
         try {
             $punchoutCatalogRequestTransfer->requireProtocolOperation();
             
@@ -87,7 +87,9 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
                 $punchoutCatalogRequestTransfer->getProtocolData()
             );
         } catch (RequiredTransferPropertyException $e) {
-            throw new AuthenticatorException(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
+            throw new AuthenticatorException(
+                PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
+            );
         }
 
         return $punchoutCatalogRequestTransfer;

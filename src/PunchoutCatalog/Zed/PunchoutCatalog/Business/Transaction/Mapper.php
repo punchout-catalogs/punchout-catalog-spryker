@@ -81,11 +81,11 @@ class Mapper implements MapperInterface
             $content = json_encode($content, JSON_PRETTY_PRINT);
         }
         $entityTransfer->setMessage($content);
-    
-        $exceptions = $requestTransfer->getExceptions();
-        if ($exceptions) {
-            $entityTransfer->setErrorMessage(implode("\n", $exceptions));
-        }
+        
+        //$exceptions = $requestTransfer->getExceptions();
+        //if ($exceptions) {
+        //    $entityTransfer->setErrorMessage(implode("\n", $exceptions));
+        //}
         
         if ($requestTransfer->getCompanyBusinessUnit()) {
             $entityTransfer->setFkCompanyBusinessUnit(
