@@ -39,45 +39,6 @@ interface PunchoutCatalogFacadeInterface
 
     /**
      * Specification:
-     * - Saves a connection entity from connection transfer object.
-     * - Returns connection transfer object
-     *
-     * @api
-     *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
-     *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer
-     */
-    public function saveConnection(PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer): PunchoutCatalogConnectionTransfer;
-
-    /**
-     * Specification:
-     * - Deletes a connection by connection transfer object.
-     * - Returns void
-     *
-     * @api
-     *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
-     *
-     * @return void
-     */
-    public function deleteConnection(PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer): void;
-
-    /**
-     * Specification:
-     * - Deletes a connection by uuid.
-     * - Returns void
-     *
-     * @api
-     *
-     * @param string $uuidConnection
-     *
-     * @return void
-     */
-    public function deleteConnectionByUuid(string $uuidConnection): void;
-
-    /**
-     * Specification:
      * - Finds a connection by uuid.
      * - Returns null if connection does not exist.
      *

@@ -45,52 +45,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         return $this->getEntityManager()
             ->saveTransaction($punchoutCatalogRequest);
     }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
-     *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer
-     */
-    public function saveConnection(PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer): PunchoutCatalogConnectionTransfer
-    {
-        return $this->getEntityManager()
-            ->saveConnection($punchoutCatalogConnectionTransfer);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
-     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer
-     *
-     * @return void
-     */
-    public function deleteConnection(PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer): void
-    {
-        $this->getEntityManager()
-            ->deleteConnection($punchoutCatalogConnectionTransfer);
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
-     * @param string $uuidConnection
-     *
-     * @return void
-     */
-    public function deleteConnectionByUuid(string $uuidConnection): void
-    {
-        $this->getEntityManager()
-            ->deleteConnectionByUuid($uuidConnection);
-    }
-
+    
     /**
      * {@inheritdoc}
      *
