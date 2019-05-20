@@ -125,6 +125,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
             'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
             'punchout_catalog_connection_cart' => $connection->getCart()->toArray(),
             'punchout_data' => $map,//Store it in session - for sake of different customizations && custom fields
+            'punchout_login_mode' => $connection->getSetup()->getLoginMode(),
         ]);
     
         $customerTransfer->setIsGuest(false);
