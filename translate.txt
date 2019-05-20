@@ -8,3 +8,5 @@ punchout-catalog.error.unexpected
 punchout-catalog.cart.return
 punchout-catalog.cart.checkout
 punchout-catalog.cart.cancel
+punchout-catalog.cart.go-to-transfer
+punchout-catalog.cart.go-to-cancel

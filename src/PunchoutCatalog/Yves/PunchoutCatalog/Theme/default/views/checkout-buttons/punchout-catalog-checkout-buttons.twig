@@ -8,13 +8,13 @@
     {% if data.isVisible %}
         <div class="spacing-bottom">
             <a class="button button--expand button--success"
-               href="{{ url('punchout-catalog/cart/transfer') }}" {{ qa('punchout-catalog-go-to-transfer') }}>
+               href="{{ url('punchout-catalog/cart/transfer') }}" {{ qa('punchout-catalog.cart.go-to-transfer') }}>
                 {{ 'punchout-catalog.cart.checkout' | trans }}
             </a>
         </div>
         <div class="spacing-bottom">
             <a class="button button--expand button--warning"
-               href="{{ url('punchout-catalog/cart/cancel') }}" {{ qa('punchout-catalog-go-to-cancel') }}>
+               href="{{ url('punchout-catalog/cart/cancel') }}" {{ qa('punchout-catalog.cart.go-to-cancel') }}>
                 {{ 'punchout-catalog.cart.cancel' | trans }}
             </a>
         </div>
