@@ -32,8 +32,6 @@ class CxmlSetupRequestProcessorStrategyPlugin
     protected const ERROR_CODE_NOT_ACCEPTABLE = 406;
     protected const ERROR_TEXT_NOT_ACCEPTABLE = 'Not Acceptable';
 
-    protected const CXML_VERSION = '1.2.021';
-
     /**
      * @api
      *
@@ -112,7 +110,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
         $landingUrl = htmlspecialchars($landingUrl);
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getLocale() . '" version="' . static::CXML_VERSION . '">
+<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
     <Response>
         <Status code="200" text="OK"/>
         <PunchoutSetupResponse>
@@ -146,20 +144,18 @@ class CxmlSetupRequestProcessorStrategyPlugin
         $statusMessage = htmlspecialchars($statusMessage);
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getLocale() . '" version="' . static::CXML_VERSION . '">
+<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
     <Response>
         <Status code="' . $status . '" text="' . $statusText . '">' . $statusMessage . '</Status>
     </Response>
 </cXML>';
     }
-
+    
     /**
-     * @todo: get current locale and extract cxml lang
-     *
      * @return string
      */
-    protected function getLocale(): string
+    protected function getDefaultLocale(): string
     {
-        return 'en-US';
+        return str_replace('_', '-', $this->getConfig()->getDefaultLocale());
     }
 }

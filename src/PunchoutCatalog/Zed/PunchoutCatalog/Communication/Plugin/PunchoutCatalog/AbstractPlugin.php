@@ -30,7 +30,6 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     }
 
     /**
-     * @todo: fix it
      * @api
      *
      * @return string
@@ -38,23 +37,28 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     public function getPayloadId(): string
     {
         $dti = $this->getTimestamp();
-
-        $hostname = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'example.com';
-        $processId = 1;
+        
         $randomNumber = rand(1, 999999999);
-        $payloadId = $dti . '.' . $processId . '.' . $randomNumber . '@' . $hostname;
+        $payloadId = $dti . '.' . $randomNumber . '@' . $this->getHostname();
 
         return $payloadId;
     }
 
     /**
-     * @todo: fix it
-     * @api
-     *
      * @return string
      */
     public function getTimestamp(): string
     {
         return date('Y-m-d\TH:i:sP');
+    }
+    
+    /**
+     * @return string
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     */
+    protected function getHostname()
+    {
+        $zedUrl = $this->getConfig()->getBaseUrlYves();
+        return parse_url($zedUrl)['host'];
     }
 }

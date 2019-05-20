@@ -19,7 +19,10 @@ class PunchoutCatalogConfig extends DataImportConfig
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_CONNECTION = 'punchout-catalog-connection';
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP = 'punchout-catalog-connection-setup';
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_CART = 'punchout-catalog-connection-cart';
-
+    
+    protected const PUNCHOUT_REQUEST_URL = '/punchout-catalog/request';
+    protected const PUNCHOUT_DEFAULT_LOCALE = 'en_US';
+    
     /**
      * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
      */
@@ -80,38 +83,63 @@ class PunchoutCatalogConfig extends DataImportConfig
 
         return $moduleRoot . DIRECTORY_SEPARATOR;
     }
-
+    
     /**
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
-     *
      * @return string
      */
-    public function getYvesHost(): string
+    public function getDefaultLocale(): string
     {
-        if (!$this->getConfig()->get(ApplicationConstants::HOST_YVES)) {
-            throw new MissingYvesUrlConfigurationException(
-                'Missing configuration! You need to configure Yves URL ' .
-                'in your own PunchoutCatalogConfig::getYvesHost() ' .
-                'to be able to generate login URL with access token for remote systems.'
-            );
-        }
-        return $this->getConfig()->get(ApplicationConstants::HOST_YVES);
+        return static::PUNCHOUT_DEFAULT_LOCALE;
     }
     
     /**
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
+     * @param int $businessUnitId
      *
      * @return string
+     *
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
      */
-    public function getZedHost(): string
+    public function getZedPunchoutUrl(int $businessUnitId): string
     {
-        if (!$this->getConfig()->get(ApplicationConstants::HOST_ZED)) {
-            throw new MissingZedUrlConfigurationException(
-                'Missing configuration! You need to configure Zed URL ' .
-                'in your own PunchoutCatalogConfig::getZedHost() ' .
-                'to be able to generate PunchOut URL for remote systems.'
-            );
+        $params = [
+            'business-unit' => $businessUnitId,
+        ];
+        return $this->getBaseUrlZed() . static::PUNCHOUT_REQUEST_URL . "?" .  http_build_query($params);
+    }
+    
+    /**
+     * @return string
+     *
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     */
+    public function getBaseUrlYves(): string
+    {
+        if ($this->getConfig()->hasKey(ApplicationConstants::BASE_URL_YVES)) {
+            return $this->getConfig()->get(ApplicationConstants::BASE_URL_YVES);
         }
-        return $this->getConfig()->get(ApplicationConstants::HOST_ZED);
+        
+        throw new MissingYvesUrlConfigurationException(
+            'Missing configuration! You need to configure Yves URL ' .
+            'in your own PunchoutCatalogConfig::getBaseUrlYves() ' .
+            'to be able to generate login URL with access token for remote systems.'
+        );
+    }
+    
+    /**
+     * @return string
+     *
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
+     */
+    public function getBaseUrlZed(): string
+    {
+        if ($this->getConfig()->hasKey(ApplicationConstants::BASE_URL_ZED)) {
+            return $this->getConfig()->get(ApplicationConstants::BASE_URL_ZED);
+        }
+        
+        throw new MissingZedUrlConfigurationException(
+            'Missing configuration! You need to configure Zed URL ' .
+            'in your own PunchoutCatalogConfig::getBaseUrlZed() ' .
+            'to be able to generate PunchOut URL for remote systems.'
+        );
     }
 }

@@ -10,11 +10,11 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken;
 interface UrlHandlerInterface
 {
     /**
-     * @param string $locale
      * @param string $accessToken
+     * @param string $locale
      * @param string $returnUrl
      *
      * @return string
      */
-    public function getLoginUrl(string $locale, string $accessToken, string $returnUrl): string;
+    public function getLoginUrl(string $accessToken, ?string $locale = '', ?string $returnUrl = ''): string;
 }

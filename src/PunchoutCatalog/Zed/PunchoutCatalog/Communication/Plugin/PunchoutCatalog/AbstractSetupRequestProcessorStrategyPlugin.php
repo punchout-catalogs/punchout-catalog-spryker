@@ -23,6 +23,16 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterfa
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {
     /**
+     * @return string
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
+     */
+    protected function getHostname()
+    {
+        $zedUrl = $this->getConfig()->getBaseUrlZed();
+        return parse_url($zedUrl)['host'];
+    }
+    
+    /**
      * @todo: use Token Stub to generate urls
      *
      * Specification:
@@ -49,9 +59,10 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         
         /** TEST STUB */
         $companyUser = $punchoutCatalogRequestTransfer->getCompanyUser();
-       // var_dump($this->getConfig()->getYvesHost());exit;
-        $accessToken = ""; // ResourceShare->generateToken(); (idCustomer, idCompany, idConnection, ErpRequestParams)
-        $landingUrl = 'http://www.de.suite-nonsplit.local/?SID=f59a04fdb07a77053dcbdf36e71c52f9&test=' . rand(0, 1000);
+        $accessToken = "testTokenHere"; // ResourceShare->generateToken(); (idCustomer, idCompany, idConnection, ErpRequestParams);
+        $landingUrl = $this->getFactory()->createUrlHandler()->getLoginUrl(
+            $accessToken
+        );
         /** /TEST STUB */
     
         //Mark Request as Success TRX
