@@ -31,7 +31,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\TransferredCartException;
 class CartProcessor implements CartProcessorInterface
 {
     protected const ERROR_MISSING_CONNECTION = 'punchout-catalog.error.missing-connection';
-    protected const ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR = 'punchout-catalog.error.missing-cart-format-strategy-processor';
+    protected const ERROR_MISSING_FORMAT = 'punchout-catalog.error.missing-cart-format';
 
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface[]
@@ -89,7 +89,7 @@ class CartProcessor implements CartProcessorInterface
             
             $format = $connection->getFormat();
             if (!$format || !isset($this->cartProcessorPlugins[$format])) {
-                throw new TransferredCartException(static::ERROR_MISSING_FORMAT_STRATEGY_PROCESSOR);
+                throw new TransferredCartException(static::ERROR_MISSING_FORMAT);
             }
             
             $punchoutCatalogCartResponseTransfer = $this->cartProcessorPlugins[$format]->processCart(

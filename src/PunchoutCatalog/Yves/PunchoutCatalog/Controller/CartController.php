@@ -22,7 +22,7 @@ use Symfony\Component\HttpFoundation\Response;
 class CartController extends AbstractController
 {
     protected const REDIRECT_URL = 'cart';
-    protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is_not_punchout';
+    protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is-not-punchout';
     
     /**
      * Return transferred cart
@@ -35,8 +35,7 @@ class CartController extends AbstractController
         }
         
         $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
-        //$quoteTransfer = $this->getFakeQuoteTransfer();
-
+        
         $punchoutCatalogCartRequestTransfer = $this->getFactory()
             ->getTransferCartMapper()
             ->mapQuoteTransferToPunchoutCatalogCartRequestTransfer(
@@ -50,14 +49,14 @@ class CartController extends AbstractController
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartTransfer($punchoutCatalogCartRequestTransfer);
-
+        
         if ($cartResponseTransfer->getIsSuccess()) {
             return $this->handleSuccessResponse($cartResponseTransfer);
         } else {
             return $this->handleErrorResponse($cartResponseTransfer);
         }
     }
-
+    
     /**
      * Return empty transferred cart
      */
@@ -70,7 +69,7 @@ class CartController extends AbstractController
         
         $punchoutCatalogCancelRequestTransfer = new PunchoutCatalogCancelRequestTransfer();
         $punchoutCatalogCancelRequestTransfer->setContext($this->getPunchoutCatalogCartRequestContext());
-        
+
         /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer */
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
@@ -82,7 +81,7 @@ class CartController extends AbstractController
             return $this->handleErrorResponse($cartResponseTransfer);
         }
     }
-
+    
     /**
      * @param string $contentType
      *
@@ -93,6 +92,7 @@ class CartController extends AbstractController
         $response = new Response();
         $response->headers->set('Content-Type', $contentType);
         $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        
         return $response;
     }
     
@@ -103,19 +103,13 @@ class CartController extends AbstractController
      */
     protected function handleSuccessResponse(PunchoutCatalogCartResponseTransfer $cartResponseTransfer): Response
     {
-        //@todo: use $url in widget, not here as Widget has access to session object
-        $url = 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/cxmlresponse/conn_id/12/';
-        //$url = 'https://dev.buyerquest.net/cs3/punchoutclient/transactions/ociresponse/conn_id/18/';
-        //$url = 'https://demo.punchoutexpress.com/gateway/testconn/';
-        //$url = 'http://www.de.suite-nonsplit.local/punchout-catalog/?punchout-poom=1';
-        
         $response = $this->createResponse('text/html');
-    
+        
         $viewData = [
             'fields' => $cartResponseTransfer->getFields(),
-            'submit_url' => $url,
+            'submit_url' => $this->getPunchoutDetails()['protocol_data']['cart']['url'],
         ];
-    
+        
         return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
     }
     
@@ -149,7 +143,7 @@ class CartController extends AbstractController
         
         $context = new PunchoutCatalogCartRequestContextTransfer();
         $context->fromArray([
-            'locale' => 'en-US-Fake',
+            'locale' => $this->getCurrentlocale(),
             'punchout_catalog_connection_id' => $impersonalDetails['punchout_catalog_connection_id'],
             'protocol_data' => $impersonalDetails['protocol_data'],
         ]);
@@ -180,15 +174,10 @@ class CartController extends AbstractController
     }
     
     /**
-     * @todo: remove it
-     *
-     * @return \Generated\Shared\Transfer\QuoteTransfer
+     * @return string
      */
-    protected function getFakeQuoteTransfer()
+    protected function getCurrentlocale()
     {
-        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/quote.json');
-        $quoteTransferJson = json_decode($testFile, true);
-        $quoteTransfer = new \Generated\Shared\Transfer\QuoteTransfer();
-        return $quoteTransfer->fromArray($quoteTransferJson);
+        return $this->getFactory()->getStore()->getCurrentLocale();
     }
 }

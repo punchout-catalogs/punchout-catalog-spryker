@@ -1,0 +1,10 @@
+punchout-catalog.error.is-not-punchout
+punchout-catalog.error.missing-connection
+punchout-catalog.error.missing-cart-format
+punchout-catalog.error.general
+punchout-catalog.error.authentication
+punchout-catalog.error.invalid-data
+punchout-catalog.error.unexpected
+punchout-catalog.cart.return
+punchout-catalog.cart.checkout
+punchout-catalog.cart.cancel

@@ -11,8 +11,8 @@ use SprykerShop\Yves\ShopApplication\Plugin\Provider\AbstractYvesControllerProvi
 
 class PunchoutCatalogControllerProvider extends AbstractYvesControllerProvider
 {
-    protected const ROUTE_PUNCHOUT_CATALOG_CART_TRANSFER = 'punchout-catalog/cart/transfer';
-    protected const ROUTE_PUNCHOUT_CATALOG_CART_CANCEL = 'punchout-catalog/cart/cancel';
+    protected const ROUTE_CART_TRANSFER = 'punchout-catalog/cart/transfer';
+    protected const ROUTE_CART_CANCEL = 'punchout-catalog/cart/cancel';
 
     /**
      * @param \Silex\Application $app
@@ -31,8 +31,14 @@ class PunchoutCatalogControllerProvider extends AbstractYvesControllerProvider
      */
     protected function addCartRoutes()
     {
-        $this->createController('/punchout-catalog/cart/transfer', static::ROUTE_PUNCHOUT_CATALOG_CART_TRANSFER, 'PunchoutCatalog', 'Cart', 'transfer');
-        $this->createController('/punchout-catalog/cart/cancel', static::ROUTE_PUNCHOUT_CATALOG_CART_CANCEL, 'PunchoutCatalog', 'Cart', 'cancel');
+        $this->createController('/{punchoutCatalog}/cart/transfer', static::ROUTE_CART_TRANSFER, 'PunchoutCatalog', 'Cart', 'transfer')
+            ->assert('punchoutCatalog', $this->getAllowedLocalesPattern() . 'punchout-catalog|punchout-catalog')
+            ->value('punchoutCatalog', 'punchout-catalog');
+        
+        $this->createController('/{punchoutCatalog}/cart/cancel', static::ROUTE_CART_CANCEL, 'PunchoutCatalog', 'Cart', 'cancel')
+            ->assert('punchoutCatalog', $this->getAllowedLocalesPattern() . 'punchout-catalog|punchout-catalog')
+            ->value('punchoutCatalog', 'punchout-catalog');
+        
         return $this;
     }
 }
