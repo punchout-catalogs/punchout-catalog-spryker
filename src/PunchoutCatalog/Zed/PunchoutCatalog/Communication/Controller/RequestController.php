@@ -74,11 +74,11 @@ class RequestController extends AbstractController
         }
     
         //@todo: remove it
-        $punchoutCatalogRequestTransfer->setContentType('text/xml');
-        $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
+        //$punchoutCatalogRequestTransfer->setContentType('text/xml');
+        //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
     
-        //$punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
-        //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
+        $punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
+        $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
 
         return $punchoutCatalogRequestTransfer;
     }
@@ -178,6 +178,7 @@ class RequestController extends AbstractController
             'username' => 'user_1',
             'password' => 'user_1_pass',
             'HOOK_URL' => 'http://www.test.com/cart.php2',
+            'OCI_VERSION' => '4.0',
             'first_name' => 'ftest1',
             'last_name' => 'ltest2',
             'email' => 'teste@example.com',

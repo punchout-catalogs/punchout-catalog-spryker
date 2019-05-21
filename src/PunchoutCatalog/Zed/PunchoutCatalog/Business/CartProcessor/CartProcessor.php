@@ -14,10 +14,13 @@ use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
+use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlCartProcessorStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciCartProcessorStrategyPlugin;
-use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
@@ -42,11 +45,32 @@ class CartProcessor implements CartProcessorInterface
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface
      */
     protected $punchoutCatalogRepository;
-
-    public function __construct(PunchoutCatalogRepositoryInterface $punchoutCatalogRepository)
+    
+    /**
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig
+     */
+    protected $punchoutCatalogConfig;
+    
+    /**
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface
+     */
+    protected $punchoutCatalogToGlossaryFacade;
+    
+    /**
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface $punchoutCatalogRepository
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig $punchoutCatalogConfig
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface $punchoutCatalogToGlossaryFacade
+     */
+    public function __construct(
+        PunchoutCatalogRepositoryInterface $punchoutCatalogRepository,
+        PunchoutCatalogConfig $punchoutCatalogConfig,
+        PunchoutCatalogToGlossaryFacadeInterface $punchoutCatalogToGlossaryFacade
+    )
     {
         $this->punchoutCatalogRepository = $punchoutCatalogRepository;
-
+        $this->punchoutCatalogConfig = $punchoutCatalogConfig;
+        $this->punchoutCatalogToGlossaryFacade = $punchoutCatalogToGlossaryFacade;
+        
         $this->cartProcessorPlugins = [
             PunchoutConnectionConstsInterface::FORMAT_CXML => new CxmlCartProcessorStrategyPlugin(),
             PunchoutConnectionConstsInterface::FORMAT_OCI => new OciCartProcessorStrategyPlugin(),
@@ -99,15 +123,17 @@ class CartProcessor implements CartProcessorInterface
             return $punchoutCatalogCartResponseTransfer;
         } catch (\Exception $e) {
             if ($e instanceof TransferredCartException) {
-                $message = $this->translate($e->getMessage());
+                $message = $e->getMessage();
                 $code = $e->getMessage();
             } else {
-                $message = $this->translate(PunchoutConnectionConstsInterface::ERROR_GENERAL);
+                $message = PunchoutConnectionConstsInterface::ERROR_GENERAL;
                 $code = PunchoutConnectionConstsInterface::ERROR_GENERAL;
             }
+    
+            $localeName = $this->getCurrentLocale($punchoutCatalogCartRequestTransfer);
             
             $mesageTransfer = (new MessageTransfer())
-                ->setValue($message)
+                ->setValue($this->translate($message, $localeName))
                 ->setCode($code);
             
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
@@ -124,13 +150,29 @@ class CartProcessor implements CartProcessorInterface
     }
     
     /**
-     * @todo: use glossary
-     * @param string $message
+     * @param PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
      * @return string
      */
-    protected function translate(string $message): string
+    protected function getCurrentLocale(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): string
     {
-        return 'Translated - ' . $message;
+        if ($punchoutCatalogCartRequestTransfer->getContext()
+            && $punchoutCatalogCartRequestTransfer->getContext()->getLocale()
+        ) {
+            return str_replace('-', '_', $punchoutCatalogCartRequestTransfer->getContext()->getLocale());
+        }
+        return $this->punchoutCatalogConfig->getDefaultLocale();
+    }
+    
+    /**
+     * @param string $id
+     * @param string $localeName
+     * @param array $parameters
+     *
+     * @return string
+     */
+    protected function translate($id, $localeName, array $parameters = []): string
+    {
+        return $this->punchoutCatalogToGlossaryFacade->translate($id, $localeName, $parameters);
     }
 }

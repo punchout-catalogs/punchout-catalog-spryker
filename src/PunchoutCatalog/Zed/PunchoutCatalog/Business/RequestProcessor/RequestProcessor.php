@@ -11,8 +11,12 @@ use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
+
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlSetupRequestProcessorStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciSetupRequestProcessorStrategyPlugin;
 
@@ -38,18 +42,36 @@ class RequestProcessor implements RequestProcessorInterface
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface[]
      */
     protected $requestProcessorPlugins;
-
+    
+    /**
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig
+     */
+    protected $punchoutCatalogConfig;
+    
+    /**
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface
+     */
+    protected $punchoutCatalogToGlossaryFacade;
+    
     /**
      * @param \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface $connectionAuthenticator
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig $punchoutCatalogConfig
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface $punchoutCatalogToGlossaryFacade
      */
-    public function __construct(ConnectionAuthenticatorInterface $connectionAuthenticator)
+    public function __construct(
+        ConnectionAuthenticatorInterface $connectionAuthenticator,
+        PunchoutCatalogConfig $punchoutCatalogConfig,
+        PunchoutCatalogToGlossaryFacadeInterface $punchoutCatalogToGlossaryFacade
+    )
     {
+        $this->connectionAuthenticator = $connectionAuthenticator;
+        $this->punchoutCatalogConfig = $punchoutCatalogConfig;
+        $this->punchoutCatalogToGlossaryFacade = $punchoutCatalogToGlossaryFacade;
+        
         $this->requestProcessorPlugins = [
             PunchoutConnectionConstsInterface::FORMAT_CXML => new CxmlSetupRequestProcessorStrategyPlugin(),
             PunchoutConnectionConstsInterface::FORMAT_OCI => new OciSetupRequestProcessorStrategyPlugin(),
         ];
-
-        $this->connectionAuthenticator = $connectionAuthenticator;
     }
 
     /**
@@ -125,10 +147,11 @@ class RequestProcessor implements RequestProcessorInterface
             }
         }
     
-        $message = $this->translate($code);
-        $mesageTransfer = (new MessageTransfer())->setValue($message)->setCode($code);
+        $message = $this->translate($code, $this->punchoutCatalogConfig->getDefaultLocale());
+        
+        $messageTransfer = (new MessageTransfer())->setValue($message)->setCode($code);
     
-        $response = $errorStrategy->processError($mesageTransfer);
+        $response = $errorStrategy->processError($messageTransfer);
         $response->setContext($punchoutCatalogRequestTransfer->getContext());
         $response->addException($exception->getMessage());
         
@@ -140,13 +163,14 @@ class RequestProcessor implements RequestProcessorInterface
     }
     
     /**
-     * @todo: use glossary
-     * @param string $message
+     * @param string $id
+     * @param string $localeName
+     * @param array $parameters
      *
      * @return string
      */
-    protected function translate(string $message): string
+    protected function translate($id, $localeName, array $parameters = []): string
     {
-        return 'Translated - ' . $message;
+        return $this->punchoutCatalogToGlossaryFacade->translate($id, $localeName, $parameters);
     }
 }

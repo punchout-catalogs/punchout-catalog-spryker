@@ -81,6 +81,12 @@ class UtilOciService extends AbstractService implements UtilOciServiceInterface
      */
     public function isOci(array $content): bool
     {
-        return isset($content['HOOK_URL']) || isset($content['hook_url']) || isset($content['Hook_Url']);
+        return isset($content['HOOK_URL'])
+            || isset($content['hook_url'])
+            || isset($content['Hook_Url'])
+            || isset($content['OCI_VERSION'])
+            || isset($content['oci_version'])
+            || isset($content['Oci_Version'])
+        ;
     }
 }

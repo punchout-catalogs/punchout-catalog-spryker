@@ -7,24 +7,33 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
+use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
+
+use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\MapperInterface;
-use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
-use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandler;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessorInterface;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessorInterface;
+
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -39,7 +48,9 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createRequestProcessor(): RequestProcessorInterface
     {
         return new RequestProcessor(
-            $this->createConnectionAuthenticator()
+            $this->createConnectionAuthenticator(),
+            $this->getConfig(),
+            $this->getGlossaryFacade()
         );
     }
 
@@ -49,7 +60,9 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createCartProcessor(): CartProcessorInterface
     {
         return new CartProcessor(
-            $this->getRepository()
+            $this->getRepository(),
+            $this->getConfig(),
+            $this->getGlossaryFacade()
         );
     }
 
@@ -72,7 +85,15 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     {
         return new Mapper();
     }
-
+    
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface
+     */
+    public function getGlossaryFacade(): PunchoutCatalogToGlossaryFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_GLOSSARY);
+    }
+    
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
      */
