@@ -21,9 +21,9 @@ class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin imp
         $customer = $this->getFactory()
             ->getCustomerClient()
             ->getCustomer();
+        
         if ($customer){
-            $impersonationDetails = $customer
-                ->getPunchoutCatalogImpersonationDetails();
+            $impersonationDetails = $customer->getPunchoutCatalogImpersonationDetails();
 
             if (!empty($impersonationDetails['is_punchout'])
                 && isset($impersonationDetails['punchout_login_mode'])
