@@ -13,6 +13,7 @@ use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMone
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientBridge;
+use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Yves\Kernel\Container;
@@ -29,6 +30,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     public const CLIENT_CUSTOMER = 'CLIENT_CUSTOMER';
     public const CLIENT_PUNCHOUT_CATALOG = 'CLIENT_PUNCHOUT_CATALOG';
     public const CLIENT_PRODUCT_STORAGE = 'CLIENT_PRODUCT_STORAGE';
+    public const PLUGIN_CART_TRANSFER_MAPPER = 'PLUGIN_CART_TRANSFER_MAPPER';
 
     /**
      * @param \Spryker\Yves\Kernel\Container $container
@@ -44,6 +46,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addProductStorageClient($container);
         $container = $this->addPunchoutCatalogClient($container);
         $container = $this->addCustomerClient($container);
+        $container = $this->addCartTransferMapperPlugins($container);
 
         return $container;
     }
@@ -152,5 +155,29 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
         };
 
         return $container;
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addCartTransferMapperPlugins(Container $container)
+    {
+        $container[self::PLUGIN_CART_TRANSFER_MAPPER] = function () {
+            return $this->getCartTransferMapperPlugins();
+        };
+
+        return $container;
+    }
+
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface[]
+     */
+    protected function getCartTransferMapperPlugins(): array
+    {
+        return [
+            new CartTransferMapperDefaultPlugin(),
+        ];
     }
 }

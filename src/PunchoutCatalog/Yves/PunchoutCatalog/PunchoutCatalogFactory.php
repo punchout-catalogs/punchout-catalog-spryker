@@ -38,12 +38,21 @@ class PunchoutCatalogFactory extends AbstractFactory
     public function getTransferCartMapper(): CartTransferMapperInterface
     {
         return new CartTransferMapper(
+            $this->getCartTransferMapperPlugins(),
             $this->getGlossaryStorageClient(),
             $this->getMoneyClient(),
             $this->getProductStorageClient(),
             $this->getCustomerClient(),
             $this->getStore()->getCurrentLocale()
         );
+    }
+
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface[]
+     */
+    public function getCartTransferMapperPlugins(): array
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::PLUGIN_CART_TRANSFER_MAPPER);
     }
 
     /**
