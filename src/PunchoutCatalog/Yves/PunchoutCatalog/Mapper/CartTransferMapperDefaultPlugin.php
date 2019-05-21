@@ -356,7 +356,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected function limitDescription($description)
     {
         $cartDetails = $this->getPunchoutCartDetails();
-        if (!empty(['max_description_length'])) {
+        if (!empty($cartDetails['max_description_length'])) {
             $length = intval($cartDetails['max_description_length']);
             return mb_substr($description, 0, $length);
         }
