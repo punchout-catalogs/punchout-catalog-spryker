@@ -11,18 +11,18 @@ interface PunchoutCatalogToVaultFacadeInterface
 {
     /**
      * @param string $dataType
-     * @param string $dataIndex
+     * @param string $dataKey
      *
      * @return string|null
      */
-    public function retrieve(string $dataType, string $dataIndex): ?string;
+    public function retrieve(string $dataType, string $dataKey): ?string;
 
     /**
      * @param string $dataType
-     * @param string $dataIndex
+     * @param string $dataKey
      * @param string $data
      *
-     * @return void
+     * @return bool
      */
-    public function store(string $dataType, string $dataIndex, string $data): void;
+    public function store(string $dataType, string $dataKey, string $data): bool;
 }

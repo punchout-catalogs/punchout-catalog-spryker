@@ -11,7 +11,7 @@ use Spryker\Zed\DataImport\DataImportDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeBridge;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOAuthCustomerFacadeBridge;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeBridge;
 
 /**
@@ -22,7 +22,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     public const FACADE_GLOSSARY = 'FACADE_GLOSSARY';
     public const FACADE_COMPANY_BUSINESS_UNIT = 'COMPANY_BUSINESS_UNIT';
     public const FACADE_VAULT = 'FACADE_VAULT';
-    public const FACADE_OAUTH_CUSTOMER = 'FACADE_OAUTH_CUSTOMER';
+    public const FACADE_OAUTH_COMPANY_USER = 'FACADE_OAUTH_COMPANY_USER';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -35,7 +35,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = $this->addGlossaryFacade($container);
         $container = $this->addCompanyBusinessUnitFacade($container);
         $container = $this->addVaultFacade($container);
-        $container = $this->addOAuthCustomerFacade($container);
+        $container = $this->addOAuthCompanyUserFacade($container);
 
         return $container;
     }
@@ -76,7 +76,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     protected function addVaultFacade(Container $container): Container
     {
         $container[static::FACADE_VAULT] = function (Container $container) {
-            return new PunchoutCatalogToVaultFacadeBridge();
+            return new PunchoutCatalogToVaultFacadeBridge($container->getLocator()->vault()->facade());
         };
 
         return $container;
@@ -87,10 +87,10 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    protected function addOAuthCustomerFacade(Container $container): Container
+    protected function addOAuthCompanyUserFacade(Container $container): Container
     {
-        $container[static::FACADE_OAUTH_CUSTOMER] = function (Container $container) {
-            return new PunchoutCatalogToOAuthCustomerFacadeBridge();
+        $container[static::FACADE_OAUTH_COMPANY_USER] = function (Container $container) {
+            return new PunchoutCatalogToOauthCompanyUserFacadeBridge($container->getLocator()->oauthCompanyUser()->facade());
         };
 
         return $container;

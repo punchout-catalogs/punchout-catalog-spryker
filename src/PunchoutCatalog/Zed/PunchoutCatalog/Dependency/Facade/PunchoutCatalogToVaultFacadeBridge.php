@@ -7,57 +7,43 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
-use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConfig;
+use Spryker\Zed\Vault\Business\VaultFacadeInterface;
 
 class PunchoutCatalogToVaultFacadeBridge implements PunchoutCatalogToVaultFacadeInterface
 {
-    // TODO: hack to simulate Vault behavior. Key equals to idPunchoutCatalogConnection.
-    protected $secrets = [
-        PunchoutCatalogConfig::VAULT_PASSWORD_DATA_TYPE => [
-            1 => 'user_1_pass',
-            2 => 'user_1_pass',
-            3 => 'user_2_pass',
-            4 => 'user_1_pass',
-            5 => 'user_3_pass',
-    
-            6 => 'user_1_pass',
-            7 => 'user_1_pass',
-            8 => 'user_2_pass',
-            9 => 'user_1_pass',
-            10 => 'user_3_pass',
-    
-            11 => 'user_1_pass',
-            12 => 'user_1_pass',
-            13 => 'user_2_pass',
-            14 => 'user_1_pass',
-            15 => 'user_3_pass',
-        ],
-    ];
+    /**
+     * @var VaultFacadeInterface
+     */
+    protected $vaultFacade;
 
-    public function __construct()
+    /**
+     * @param VaultFacadeInterface $vaultFacade
+     */
+    public function __construct($vaultFacade)
     {
+        $this->vaultFacade = $vaultFacade;
     }
 
     /**
      * @param string $dataType
-     * @param string $dataIndex
+     * @param string $dataKey
      *
      * @return string|null
      */
-    public function retrieve(string $dataType, string $dataIndex): ?string
+    public function retrieve(string $dataType, string $dataKey): ?string
     {
-        return $this->secrets[$dataType][$dataIndex] ?? null;
+        return $this->vaultFacade->retrieve($dataType, $dataKey);
     }
 
     /**
      * @param string $dataType
-     * @param string $dataIndex
+     * @param string $dataKey
      * @param string $data
      *
-     * @return void
+     * @return bool
      */
-    public function store(string $dataType, string $dataIndex, string $data): void
+    public function store(string $dataType, string $dataKey, string $data): bool
     {
-        // Will be implemented so it saves the provided data for later retrieval.
+        $this->vaultFacade->store($dataType, $dataKey, $data);
     }
 }

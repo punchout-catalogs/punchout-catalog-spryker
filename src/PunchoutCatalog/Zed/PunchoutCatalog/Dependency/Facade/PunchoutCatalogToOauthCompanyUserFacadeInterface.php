@@ -10,12 +10,12 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\OauthResponseTransfer;
 
-interface PunchoutCatalogToOAuthCustomerFacadeInterface
+interface PunchoutCatalogToOauthCompanyUserFacadeInterface
 {
     /**
      * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *
      * @return \Generated\Shared\Transfer\OauthResponseTransfer
      */
-    public function getAccessToken(CustomerTransfer $customerTransfer): OauthResponseTransfer;
+    public function createCompanyUserAccessToken(CustomerTransfer $customerTransfer): OauthResponseTransfer;
 }

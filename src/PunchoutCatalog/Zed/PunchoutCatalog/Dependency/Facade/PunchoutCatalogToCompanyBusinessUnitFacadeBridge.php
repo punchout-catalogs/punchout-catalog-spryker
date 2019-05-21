@@ -17,7 +17,7 @@ class PunchoutCatalogToCompanyBusinessUnitFacadeBridge implements PunchoutCatalo
     protected $companyBusinessUnitFacade;
 
     /**
-     * @param \Spryker\Zed\Company\Business\CompanyBusinessUnitFacadeInterface $companyBusinessUnitFacade
+     * @param \Spryker\Zed\CompanyBusinessUnit\Business\CompanyBusinessUnitFacadeInterface $companyBusinessUnitFacade
      */
     public function __construct($companyBusinessUnitFacade)
     {

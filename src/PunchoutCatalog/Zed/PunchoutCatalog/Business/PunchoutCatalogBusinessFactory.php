@@ -7,6 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
 use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
 use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
 
@@ -114,11 +115,11 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface
      */
-    public function getOAuthCustomerFacade(): PunchoutCatalogToVaultFacadeInterface
+    public function getOauthCompanyUserFacade(): PunchoutCatalogToOauthCompanyUserFacadeInterface
     {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_OAUTH_CUSTOMER);
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_OAUTH_COMPANY_USER);
     }
 
     /**
