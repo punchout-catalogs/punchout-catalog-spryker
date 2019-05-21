@@ -2,16 +2,17 @@
 
 {% define data = {
     fields: fields,
-    submit_url: submit_url
+    submit_url: submit_url,
+    submit_target: submit_target
 } %}
 
 {% block template %}
 <h3>{{ 'punchout-catalog.cart.return' | trans }}</h3>
-<form id="punchoutCartForm"
-      method="POST"
+<form id="punchoutCartForm" method="POST"
       action="{{data.submit_url}}"
       enctype="application/x-www-form-urlencoded"
       style="height: 0; width: 0; border: 0;"
+      {% if data.submit_target %}target="{{data.submit_target}}"{% endif %}
 >
 {% if data.fields %}
     {% for field in data.fields %}

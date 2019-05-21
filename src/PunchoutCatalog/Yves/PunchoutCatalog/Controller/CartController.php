@@ -108,6 +108,7 @@ class CartController extends AbstractController
         $viewData = [
             'fields' => $cartResponseTransfer->getFields(),
             'submit_url' => $this->getPunchoutDetails()['protocol_data']['cart']['url'],
+            'submit_target' => $this->getPunchoutDetails()['protocol_data']['cart']['target'] ?? null,
         ];
         
         return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);

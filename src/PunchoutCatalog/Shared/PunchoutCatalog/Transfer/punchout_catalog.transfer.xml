@@ -50,6 +50,7 @@
 
     <transfer name="PunchoutCatalogProtocolDataCart">
         <property name="url" type="string" />
+        <property name="target" type="string" />
         <property name="operation" type="string" />
         <property name="buyerCookie" type="string" />
         <property name="deploymentMode" type="string" />

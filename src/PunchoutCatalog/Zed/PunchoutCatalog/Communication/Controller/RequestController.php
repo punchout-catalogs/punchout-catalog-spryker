@@ -182,6 +182,7 @@ class RequestController extends AbstractController
             'first_name' => 'ftest1',
             'last_name' => 'ltest2',
             'email' => 'teste@example.com',
+            'returntarget' => '_top',
         ];
     }
 }
