@@ -22,35 +22,24 @@ use Spryker\Zed\Kernel\Communication\Controller\AbstractGatewayController;
 class GatewayController extends AbstractGatewayController
 {
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer|null $punchoutCatalogCartRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
-    public function processCartTransferAction(?PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer = null): PunchoutCatalogCartResponseTransfer
+    public function processCartTransferAction(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer = null): PunchoutCatalogCartResponseTransfer
     {
-        //@todo: remove it
-        if (null === $punchoutCatalogCartRequestTransfer) {
-            $punchoutCatalogCartRequestTransfer = $this->getFakeCartTransfer();
-        }
-        
         return  $this->filterCartResponseContext(
             $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer)
         );
     }
 
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer|null $punchoutCatalogCancelRequestTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
-    public function processCartCancelAction(?PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer = null): PunchoutCatalogCartResponseTransfer
+    public function processCartCancelAction(PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer = null): PunchoutCatalogCartResponseTransfer
     {
-        //@todo: remove it
-        if (null === $punchoutCatalogCancelRequestTransfer) {
-            $punchoutCatalogCancelRequestTransfer = new PunchoutCatalogCancelRequestTransfer();
-            $punchoutCatalogCancelRequestTransfer->fromArray($this->getFakeCartTransfer()->toArray(), true);
-        }
-        
         return $this->filterCartResponseContext(
             $this->getFacade()->processCancel($punchoutCatalogCancelRequestTransfer)
         );
@@ -63,13 +52,5 @@ class GatewayController extends AbstractGatewayController
     protected function filterCartResponseContext(PunchoutCatalogCartResponseTransfer $response)
     {
         return $response->setContext(null);
-    }
-
-    protected function getFakeCartTransfer()
-    {
-        $testFile = file_get_contents('/data/shop/development/current/data/DE/logs/cart.json');
-        $transferJson = json_decode($testFile, true);
-        $documentCartTransfer = new PunchoutCatalogCartRequestTransfer();
-        return $documentCartTransfer->fromArray($transferJson, true);
     }
 }

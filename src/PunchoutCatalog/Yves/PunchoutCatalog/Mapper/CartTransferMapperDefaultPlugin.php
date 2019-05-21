@@ -12,8 +12,6 @@ use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface;
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
 use Spryker\Yves\Kernel\AbstractPlugin;
 
 /**
@@ -245,11 +243,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer
     {
-        $internalId = md5(json_encode($quoteItemTransfer->toArray()) . '_' . rand(0, 100000) . '_' . microtime());
-        $internalId = $this->getUtilUuidGeneratorService()->generateUuid5FromObjectId($internalId);
-
-        //@todo: fix UNSPSC/EAN/UPC
-
+        $internalId = $this->getQuoteItemInternalId($quoteItemTransfer);
         $supplierId = $this->getDefaultSupplierId();
 
         $productAbstractStorageData = $this->productStorageClient->getProductAbstractStorageData($quoteItemTransfer->getIdProductAbstract(), $this->currentLocale);
@@ -335,14 +329,6 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
-     * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
-     */
-    protected function getUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
-    {
-        return new UtilUuidGeneratorService();
-    }
-
-    /**
      * @return string
      */
     protected function getDefaultSupplierId(): string
@@ -400,5 +386,21 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
         return $attributeTransfer;
     }
-
+    
+    /**
+     * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
+     *
+     * @return string
+     */
+    protected function getQuoteItemInternalId(QuoteItemTransfer $quoteItemTransfer): string
+    {
+        $internalId = md5(
+            json_encode($quoteItemTransfer->toArray())
+            . '_' . microtime(true)
+            . '_' . uniqid('', true)
+        );
+        return $this->getFactory()
+            ->getUtilUuidGeneratorService()
+            ->generateUuid5FromObjectId($internalId);
+    }
 }

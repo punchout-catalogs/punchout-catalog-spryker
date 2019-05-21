@@ -10,6 +10,9 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
 use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
 
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep;
@@ -194,5 +197,13 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createPunchoutCatalogConnectionCartWriterStep()
     {
         return new PunchoutCatalogConnectionCartWriterStep();
+    }
+    
+    /**
+     * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
+     */
+    public function createUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
+    {
+        return new UtilUuidGeneratorService();
     }
 }

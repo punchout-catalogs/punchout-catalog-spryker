@@ -207,8 +207,6 @@ abstract class AbstractCoder
     }
 
     /**
-     * @todo: fix custom_attributes and options
-     *
      * @param string $field
      * @param $data
      *

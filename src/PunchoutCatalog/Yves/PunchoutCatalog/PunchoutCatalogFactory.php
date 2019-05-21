@@ -15,6 +15,9 @@ use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunc
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapper;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperInterface;
+
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
 use Spryker\Client\Customer\CustomerClient;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Yves\Kernel\AbstractFactory;
@@ -101,5 +104,13 @@ class PunchoutCatalogFactory extends AbstractFactory
     public function getQuoteClient(): PunchoutCatalogToQuoteClientInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_QUOTE);
+    }
+    
+    /**
+     * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
+     */
+    public function getUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
+    {
+        return new UtilUuidGeneratorService();
     }
 }

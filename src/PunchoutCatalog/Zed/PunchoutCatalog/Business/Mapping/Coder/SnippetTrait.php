@@ -51,8 +51,6 @@ trait SnippetTrait
     }
 
     /**
-     * @todo: review it
-     *
      * @param $xpath
      *
      * @return string

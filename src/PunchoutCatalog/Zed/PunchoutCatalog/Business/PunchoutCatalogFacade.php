@@ -102,7 +102,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
         $context = new PunchoutCatalogCommonContextTransfer();
-        $context->setPunchoutSessionId('fake-new-changed-session-id2');//@todo: generate correct session id
+        $context->setPunchoutSessionId($this->generateSessionId());
         
         $punchoutCatalogRequestTransfer->setContext($context);
         
@@ -213,5 +213,16 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     public function importCart(?DataImporterConfigurationTransfer $dataImporterConfigurationTransfer = null): DataImporterReportTransfer
     {
         return $this->getFactory()->getPunchoutCatalogCartDataImport()->import($dataImporterConfigurationTransfer);
+    }
+    
+    /**
+     * @return string
+     */
+    protected function generateSessionId(): string
+    {
+        $id = microtime(true) . '_' . uniqid('', true);
+        return $this->getFactory()
+            ->createUtilUuidGeneratorService()
+            ->generateUuid5FromObjectId($id);
     }
 }

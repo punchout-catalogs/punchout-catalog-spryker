@@ -224,7 +224,7 @@
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCartCustomer">
-        <property name="internalId" type="string"/><!-- @todo: review it-->
+        <property name="internalId" type="string"/>
         <property name="firstName" type="string"/>
         <property name="lastName" type="string"/>
         <property name="middleName" type="string"/>

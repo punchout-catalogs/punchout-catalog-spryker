@@ -159,8 +159,6 @@ class XmlUtil
     }
 
     /**
-     * @todo: review it and test
-     *
      * @param string $value
      *
      * @return string

@@ -33,7 +33,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     }
     
     /**
-     * @todo: use Token Stub to generate urls
+     todo: use Token Stub to generate urls
      *
      * Specification:
      * - Processes request message.
