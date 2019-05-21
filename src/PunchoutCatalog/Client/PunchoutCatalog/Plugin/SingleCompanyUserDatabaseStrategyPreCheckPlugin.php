@@ -1,6 +1,6 @@
 <?php
 
-namespace PunchoutCatalog\Client\PunchoutCatalog\Communication\Plugin;
+namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin;
 
 use Generated\Shared\Transfer\QuoteTransfer;
 use Spryker\Client\Kernel\AbstractPlugin;

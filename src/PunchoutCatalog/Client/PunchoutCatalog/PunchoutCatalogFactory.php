@@ -9,6 +9,7 @@ namespace PunchoutCatalog\Client\PunchoutCatalog;
 
 use Spryker\Client\Kernel\AbstractFactory;
 use PunchoutCatalog\Client\PunchoutCatalog\Dependency\Client\PunchoutCatalogToZedRequestClientInterface;
+use PunchoutCatalog\Client\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface;
 use PunchoutCatalog\Client\PunchoutCatalog\Zed\PunchoutCatalogStub;
 use PunchoutCatalog\Client\PunchoutCatalog\Zed\PunchoutCatalogStubInterface;
 
