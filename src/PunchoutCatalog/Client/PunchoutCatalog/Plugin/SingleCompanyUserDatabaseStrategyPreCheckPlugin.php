@@ -18,14 +18,18 @@ class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin imp
      */
     public function check(QuoteTransfer $quoteTransfer): bool
     {
-        $impersonationDetails = $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails();
-
-        if (isset($impersonationDetails['punchout_login_mode'])
-            && $impersonationDetails['punchout_login_mode'] === 'single_user') {
-            if (!empty($impersonationDetails['is_punchout'])) {
-                return false;
-            }
+        $impersonationDetails = $this->getFactory()
+            ->getCustomerClient()
+            ->getCustomer()
+            ->getPunchoutCatalogImpersonationDetails();
+        
+        if (!empty($impersonationDetails['is_punchout'])
+            && isset($impersonationDetails['punchout_login_mode'])
+            && ($impersonationDetails['punchout_login_mode'] === 'single_user')
+        ) {
+            return false;
         }
+        
         return true;
     }
 }
