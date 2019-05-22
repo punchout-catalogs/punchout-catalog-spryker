@@ -10,7 +10,7 @@ use Spryker\Client\Kernel\AbstractPlugin;
  * @method \PunchoutCatalog\Client\PunchoutCatalog\PunchoutCatalogFactory getFactory()
  * @method \PunchoutCatalog\Client\PunchoutCatalog\PunchoutCatalogClient getClient()
  */
-class BusinessOnBehalfSwitchPreCheckPlugin extends AbstractPlugin implements CompanyUserChangeAllowedCheckPluginInterface
+class DisallowPunchoutCompanyUserChangePlugin extends AbstractPlugin implements CompanyUserChangeAllowedCheckPluginInterface
 {
     /**
      * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
