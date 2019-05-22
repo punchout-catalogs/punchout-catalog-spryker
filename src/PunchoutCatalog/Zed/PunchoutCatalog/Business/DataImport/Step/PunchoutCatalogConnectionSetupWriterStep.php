@@ -11,9 +11,9 @@ use Orm\Zed\CompanyBusinessUnit\Persistence\SpyCompanyBusinessUnitQuery;
 use Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogConnectionQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogConnectionSetupQuery;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet\PunchoutCatalogConnectionSetupDataSet;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet\PunchoutCatalogConnectionSetupDataSet;
 
 class PunchoutCatalogConnectionSetupWriterStep implements DataImportStepInterface
 {
@@ -30,6 +30,9 @@ class PunchoutCatalogConnectionSetupWriterStep implements DataImportStepInterfac
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
             ->findOneByName($dataSet[PunchoutCatalogConnectionSetupDataSet::CONNECTION_NAME]);
 
+        if ($connectionEntity == null) {
+            return;
+        }
         /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup $setupEntity */
         $setupEntity = PgwPunchoutCatalogConnectionSetupQuery::create()
             ->filterByIdPunchoutCatalogConnectionSetup(
@@ -40,7 +43,7 @@ class PunchoutCatalogConnectionSetupWriterStep implements DataImportStepInterfac
         $businessUnit = SpyCompanyBusinessUnitQuery::create()->findOneByKey(
             $dataSet[PunchoutCatalogConnectionSetupDataSet::COMPANY_BUSINESS_UNIT_KEY]
         );
-        
+
         if ($businessUnit && $businessUnit->getIdCompanyBusinessUnit()) {
             $setupEntity->setFkCompanyBusinessUnit($businessUnit->getIdCompanyBusinessUnit());
         }
