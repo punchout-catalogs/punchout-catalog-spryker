@@ -8,6 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
 use Generated\Shared\Transfer\CompanyBusinessUnitTransfer;
+use Spryker\Zed\CompanyBusinessUnit\Business\CompanyBusinessUnitFacadeInterface;
 
 class PunchoutCatalogToCompanyBusinessUnitFacadeBridge implements PunchoutCatalogToCompanyBusinessUnitFacadeInterface
 {
@@ -19,7 +20,7 @@ class PunchoutCatalogToCompanyBusinessUnitFacadeBridge implements PunchoutCatalo
     /**
      * @param \Spryker\Zed\CompanyBusinessUnit\Business\CompanyBusinessUnitFacadeInterface $companyBusinessUnitFacade
      */
-    public function __construct($companyBusinessUnitFacade)
+    public function __construct(CompanyBusinessUnitFacadeInterface $companyBusinessUnitFacade)
     {
         $this->companyBusinessUnitFacade = $companyBusinessUnitFacade;
     }

@@ -11,7 +11,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig;
 
 class UrlHandler implements UrlHandlerInterface
 {
-    protected const USER_LOGIN_URL = '/login';
+    protected const USER_LOGIN_URL = '/access-token/';
     
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig
@@ -35,15 +35,9 @@ class UrlHandler implements UrlHandlerInterface
      */
     public function getLoginUrl(string $accessToken, ?string $locale = 'de', ?string $returnUrl = ''): string
     {
-        $params = [
-            'token' => $accessToken,
-            'returnUrl' => $returnUrl,
-        ];
-    
         $locale = $locale ? '/' . $locale : '';
         return $this->punchoutCatalogConfig->getBaseUrlYves()
             . $locale
-            . static::USER_LOGIN_URL
-            . "?" . http_build_query($params);
+            . static::USER_LOGIN_URL . $accessToken;
     }
 }

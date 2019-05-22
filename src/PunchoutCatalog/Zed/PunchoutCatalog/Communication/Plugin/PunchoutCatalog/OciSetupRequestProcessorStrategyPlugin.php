@@ -10,6 +10,8 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
+
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
@@ -67,9 +69,9 @@ class OciSetupRequestProcessorStrategyPlugin
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer
      */
-    protected function decode(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): array
+    protected function decode(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestDocumentTransfer
     {
         $ociContent = $punchoutCatalogRequestTransfer->getContent();
         if (!is_array($ociContent)) {
@@ -79,8 +81,10 @@ class OciSetupRequestProcessorStrategyPlugin
         $mappingTransfer = $this->convertToMappingTransfer(
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
-
-        return (new Decoder())->execute($mappingTransfer, $ociContent);
+    
+        $map = (new Decoder())->execute($mappingTransfer, $ociContent);
+        
+        return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }
 
     /**

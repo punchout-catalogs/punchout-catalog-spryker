@@ -86,7 +86,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
         );
         
         if (!$companyBusinessUnitTransfer) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION);
+            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_BUSINESS_UNIT);
         }
 
         $punchoutCatalogRequestTransfer->setCompanyBusinessUnit($companyBusinessUnitTransfer);

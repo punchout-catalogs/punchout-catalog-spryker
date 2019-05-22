@@ -50,17 +50,25 @@ class Decoder extends AbstractCoder implements DecoderInterface
 
             if ($object->getIsMultiple()) {
                 $_lines = [];
-                foreach ($object->getPath() as $path) {
-                    $multiLines = $this->get($source, $path);
-
-                    //@todo: improve code complexity
-                    if ($multiLines && is_array($multiLines)) {
-                        foreach ($multiLines as $lineSource) {
-                            $_line = $this->map($object, $lineSource);
-                            if (!empty($_line)) {
-                                $_lines[] = $_line;
+                
+                if ($object->getPath()) {
+                    foreach ($object->getPath() as $path) {
+                        $multiLines = $this->get($source, $path);
+        
+                        //@todo: improve code complexity
+                        if ($multiLines && is_array($multiLines)) {
+                            foreach ($multiLines as $lineSource) {
+                                $_line = $this->map($object, $lineSource);
+                                if (!empty($_line)) {
+                                    $_lines[] = $_line;
+                                }
                             }
                         }
+                    }
+                } else {
+                    $_line = $this->map($object, $source);
+                    if (!empty($_line)) {
+                        $_lines[] = $_line;
                     }
                 }
 

@@ -32,7 +32,7 @@
 
         <property name="fkCompanyBusinessUnit" type="int" />
         <property name="companyBusinessUnit" type="CompanyBusinessUnit" />
-        <property name="companyUser" type="CompanyUser" />
+        <property name="customer" type="Customer" />
 
         <property name="isSuccess" type="bool"/>
         <!--
@@ -239,8 +239,8 @@
         <property name="internalId" type="string"/>
         <property name="firstName" type="string"/>
         <property name="lastName" type="string"/>
-        <property name="middleName" type="string"/>
         <property name="email" type="string"/>
+
         <property name="customAttributes" type="PunchoutCatalogDocumentCustomAttribute[]" singular="customAttribute"/>
     </transfer>
 
@@ -300,4 +300,25 @@
         <property name="punchoutCatalogConnection" type="PunchoutCatalogConnection" />
         <property name="content" type="string" /><!-- it can be an string or array -->
     </transfer>
+
+    <!-- Setup Request Mapping -->
+    <transfer name="PunchoutCatalogDocumentCustomer">
+        <property name="firstName" type="string"/>
+        <property name="lastName" type="string"/>
+        <property name="email" type="string"/>
+
+        <property name="customAttributes" type="PunchoutCatalogDocumentCustomAttribute[]" singular="customAttribute"/>
+        <property name="fkCompanyBusinessUnit" type="int"/>
+    </transfer>
+
+    <transfer name="PunchoutCatalogDocumentCartItem">
+        <property name="internalId" type="string"/>
+        <property name="customAttributes" type="PunchoutCatalogDocumentCustomAttribute[]" singular="customAttribute"/>
+    </transfer>
+
+    <transfer name="PunchoutCatalogSetupRequestDocument">
+        <property name="cartItem" type="PunchoutCatalogDocumentCartItem[]"  singular="cartItem"/>
+        <property name="customer" type="PunchoutCatalogDocumentCustomer"/>
+    </transfer>
+    <!-- / Setup Request Mapping -->
 </transfers>

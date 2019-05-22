@@ -154,6 +154,7 @@ class RequestProcessor implements RequestProcessorInterface
         $response = $errorStrategy->processError($messageTransfer);
         $response->setContext($punchoutCatalogRequestTransfer->getContext());
         $response->addException($exception->getMessage());
+        $response->addException($exception->getTraceAsString());
         
         if ($exception->getPrevious()) {
             $response->addException("Original Exception:\n" . $exception->getPrevious()->getMessage());

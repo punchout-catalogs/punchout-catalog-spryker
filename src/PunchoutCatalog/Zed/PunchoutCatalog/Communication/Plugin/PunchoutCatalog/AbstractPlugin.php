@@ -24,11 +24,21 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
      */
     protected function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
     {
-        $mapping = trim($mapping);
-        $mapping = json_decode(trim($mapping), true);
-        return (new MappingConverter())->convert($mapping);
+        return (new MappingConverter())->convert(
+            $this->convertToArray($mapping)
+        );
     }
-
+    
+    /**
+     * @param string $mapping
+     *
+     * @return array
+     */
+    protected function convertToArray(string $mapping): array
+    {
+        return json_decode(trim($mapping), true);
+    }
+    
     /**
      * @api
      *

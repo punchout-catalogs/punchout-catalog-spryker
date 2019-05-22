@@ -10,6 +10,8 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
+
 use SimpleXMLElement;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
@@ -82,9 +84,11 @@ class CxmlSetupRequestProcessorStrategyPlugin
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
-     * @return array
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer
      */
-    protected function decode(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): array
+    protected function decode(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupRequestDocumentTransfer
     {
         $content = $punchoutCatalogRequestTransfer->getContent();
 
@@ -97,7 +101,9 @@ class CxmlSetupRequestProcessorStrategyPlugin
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
 
-        return (new Decoder())->execute($mappingTransfer, $xmlContent);
+        $map = (new Decoder())->execute($mappingTransfer, $xmlContent);
+
+        return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }
 
     /**

@@ -22,10 +22,12 @@ abstract class AbstractCommand
      */
     public function execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        if (!$this->_canProcessOriginalValue($value)) {
+        if (!$this->_canProcessOriginalValue($value) && !empty($value)) {
             foreach ($value as &$_val) {
                 $_val = $this->_execute($transform, $_val);
             }
+        } elseif (!$this->_canProcessOriginalValue($value) && empty($value)) {
+            $value = $this->_execute($transform, '');
         } else {
             $value = $this->_execute($transform, $value);
         }
