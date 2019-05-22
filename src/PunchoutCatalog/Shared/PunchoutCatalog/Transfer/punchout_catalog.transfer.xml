@@ -5,6 +5,18 @@
         <property name="punchoutCatalogImpersonationDetails" type="array" />
     </transfer>
 
+    <transfer name="CompanyUserIdentifier">
+        <property name="punchoutCatalogImpersonationDetails" type="array" />
+    </transfer>
+
+    <transfer name="OauthUser">
+        <property name="punchoutCatalogImpersonationDetails" type="array" />
+    </transfer>
+
+    <transfer name="OauthRequest">
+        <property name="punchoutCatalogImpersonationDetails" type="array" />
+    </transfer>
+
     <transfer name="Message">
         <property name="code" type="string" />
     </transfer>
