@@ -12,9 +12,8 @@ interface UrlHandlerInterface
     /**
      * @param string $accessToken
      * @param string $locale
-     * @param string $returnUrl
      *
      * @return string
      */
-    public function getLoginUrl(string $accessToken, ?string $locale = '', ?string $returnUrl = ''): string;
+    public function getLoginUrl(string $accessToken, string $locale = null): string;
 }

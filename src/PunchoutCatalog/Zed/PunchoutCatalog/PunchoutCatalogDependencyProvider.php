@@ -12,6 +12,7 @@ use Spryker\Zed\DataImport\DataImportDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeBridge;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeBridge;
 
@@ -22,10 +23,12 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
 {
     public const FACADE_GLOSSARY = 'FACADE_GLOSSARY';
     public const FACADE_COMPANY_BUSINESS_UNIT = 'FACADE_COMPANY_BUSINESS_UNIT';
+    public const FACADE_COMPANY_USER = 'FACADE_COMPANY_USER';
     public const FACADE_CUSTOMER = 'FACADE_CUSTOMER';
     public const FACADE_VAULT = 'FACADE_VAULT';
     public const FACADE_OAUTH_COMPANY_USER = 'FACADE_OAUTH_COMPANY_USER';
-
+    public const QUERY_CONTAINER_COMPANY_USER = 'QUERY_CONTAINER_COMPANY_USER';
+    
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -36,6 +39,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = parent::provideBusinessLayerDependencies($container);
         $container = $this->addGlossaryFacade($container);
         $container = $this->addCompanyBusinessUnitFacade($container);
+        $container = $this->addCompanyUserFacade($container);
         $container = $this->addCustomerFacade($container);
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
@@ -53,9 +57,12 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = parent::provideCommunicationLayerDependencies($container);
         $container = $this->addGlossaryFacade($container);
         $container = $this->addCompanyBusinessUnitFacade($container);
+        $container = $this->addCompanyUserFacade($container);
         $container = $this->addCustomerFacade($container);
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
+        
+        //$container = $this->addCompanyUserQueryContainer($container);
         
         return $container;
     }
@@ -85,6 +92,36 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
             return new PunchoutCatalogToCompanyBusinessUnitFacadeBridge($container->getLocator()->companyBusinessUnit()->facade());
         };
 
+        return $container;
+    }
+    
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    /**
+    protected function addCompanyUserQueryContainer(Container $container)
+    {
+        $container[static::QUERY_CONTAINER_COMPANY_USER] = function (Container $container) {
+            return new PunchoutCatalogToCompanyUserQueryContainerBridge($container->getLocator()->companyUser()->queryContainer());
+        };
+        
+        return $container;
+    }
+    */
+    
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addCompanyUserFacade(Container $container): Container
+    {
+        $container[static::FACADE_COMPANY_USER] = function (Container $container) {
+            return new PunchoutCatalogToCompanyUserFacadeBridge($container->getLocator()->companyUser()->facade());
+        };
+        
         return $container;
     }
     

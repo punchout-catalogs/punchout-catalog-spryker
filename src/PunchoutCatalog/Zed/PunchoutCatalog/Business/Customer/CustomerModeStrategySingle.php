@@ -8,12 +8,12 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer;
 
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer;
-use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
+use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
+
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
@@ -21,26 +21,16 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterfa
 class CustomerModeStrategySingle implements CustomerModeStrategyInterface
 {
     /**
-     * @var PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
      */
-    protected $companyBusinessUnitFacade;
+    protected $companyUserFacade;
     
     /**
-     * @var PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface $companyUserFacade
      */
-    protected $customerFacade;
-
-    /**
-     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface $businessUnitFacade
-     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface $customerFacade
-     */
-    public function __construct(
-        PunchoutCatalogToCompanyBusinessUnitFacadeInterface $companyBusinessUnitFacade,
-        PunchoutCatalogToCustomerFacadeInterface $customerFacade
-    )
+    public function __construct(PunchoutCatalogToCompanyUserFacadeInterface $companyUserFacade)
     {
-        $this->companyBusinessUnitFacade = $companyBusinessUnitFacade;
-        $this->customerFacade = $customerFacade;
+        $this->companyUserFacade = $companyUserFacade;
     }
     
     /**
@@ -58,33 +48,14 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
     {
         $connectionTransfer->requireSetup();
         $connectionTransfer->getSetup()->requireFkCompanyUser();
-    
-        $customerTransfer = $this->customerFacade->findCustomerById(
-            $connectionTransfer->getSetup()->getFkCompanyUser()
-        );
+        $connectionTransfer->getSetup()->requireFkCompanyBusinessUnit();
         
-        if (!$customerTransfer) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
-        }
-    
+        //@todo: load company user by fk_business_unit_id and fk_customer_id
         
-        $companyBusinessUnit = $this->companyBusinessUnitFacade->findCompanyBusinessUnitById(
-            $connectionTransfer->getSetup()->getFkCompanyBusinessUnit()
-        );
+        $companyUserTransfer = (new CompanyUserTransfer())->setIdCompanyUser(11);
         
-        if (!$companyBusinessUnit) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_BUSINESS_UNIT);
-        }
-        
-        $companyUserTransfer = (new CompanyUserTransfer())
-            ->setFkCompanyBusinessUnit($companyBusinessUnit->getIdCompanyBusinessUnit())
-            ->setFkCompany($companyBusinessUnit->getFkCompany())
-            ->setFkCustomer($customerTransfer->getIdCustomer())
-            //->setIdCompanyUser($customerTransfer->getCompanyUserTransfer()->getIdCompanyUser())
-            ->setIdCompanyUser($customerTransfer->getIdCustomer())//@todo: review value of this field
-        ;
-
-        $customerTransfer->setCompanyUserTransfer($companyUserTransfer);
+        $customerTransfer = (new CustomerTransfer())
+            ->setCompanyUserTransfer($companyUserTransfer);
         
         return $customerTransfer;
     }

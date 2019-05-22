@@ -308,7 +308,6 @@
         <property name="email" type="string"/>
 
         <property name="customAttributes" type="PunchoutCatalogDocumentCustomAttribute[]" singular="customAttribute"/>
-        <property name="fkCompanyBusinessUnit" type="int"/>
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCartItem">

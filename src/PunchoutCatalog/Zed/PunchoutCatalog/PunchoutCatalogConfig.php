@@ -22,6 +22,7 @@ class PunchoutCatalogConfig extends DataImportConfig
     
     protected const PUNCHOUT_REQUEST_URL = '/punchout-catalog/request';
     protected const PUNCHOUT_DEFAULT_LOCALE = 'en_US';
+    protected const PUNCHOUT_DEFAULT_STORE_LOCALE = 'de';
     
     /**
      * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
@@ -90,6 +91,14 @@ class PunchoutCatalogConfig extends DataImportConfig
     public function getDefaultLocale(): string
     {
         return static::PUNCHOUT_DEFAULT_LOCALE;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getDefaultStoreLocale(): string
+    {
+        return static::PUNCHOUT_DEFAULT_STORE_LOCALE;
     }
     
     /**

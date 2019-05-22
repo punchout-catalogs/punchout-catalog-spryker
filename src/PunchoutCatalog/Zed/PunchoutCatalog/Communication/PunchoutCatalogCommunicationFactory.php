@@ -16,6 +16,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandler;
@@ -34,26 +35,31 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     }
     
     /**
-     * @param string $mode
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface
      */
-    public function createCustomerLoginModeStrategy(
-        string $mode = PunchoutConnectionConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE
-    ): CustomerModeStrategyInterface
+    public function createCustomerLoginSingleStrategy(): CustomerModeStrategyInterface
     {
-        switch ($mode) {
-            case PunchoutConnectionConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE:
-                return new CustomerModeStrategySingle(
-                    $this->getCompanyBusinessUnitFacade(),
-                    $this->getCustomerFacade()
-                );
-            case PunchoutConnectionConstsInterface::CUSTOMER_LOGIN_MODE_DYNAMIC:
-                return new CustomerModeStrategyDynamic(
-                    $this->getCompanyBusinessUnitFacade()
-                );
-            default:
-                throw new InvalidArgumentException(PunchoutConnectionConstsInterface::ERROR_MISSING_LOGIN_MODE);
-        }
+        return new CustomerModeStrategySingle(
+            $this->getCompanyUserFacade()
+        );
+    }
+    
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface
+     */
+    public function createCustomerLoginDynamicStrategy(): CustomerModeStrategyInterface
+    {
+        return new CustomerModeStrategyDynamic(
+            $this->getCompanyBusinessUnitFacade()
+        );
+    }
+    
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
+     */
+    public function getCompanyUserFacade(): PunchoutCatalogToCompanyUserFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_USER);
     }
     
     /**

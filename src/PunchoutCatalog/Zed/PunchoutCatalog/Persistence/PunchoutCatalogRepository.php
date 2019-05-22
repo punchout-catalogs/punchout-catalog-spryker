@@ -103,4 +103,26 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
 
         return $connectionList;
     }
+    
+    /**
+     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
+     *
+     * @return \Generated\Shared\Transfer\CompanyUserTransfer
+     */
+    public function findCompanyUserByCustomer(CompanyUserTransfer $companyUserTransfer): bool
+    {
+        $companyUserTransfer
+            ->requireFkCompanyBusinessUnit()
+            ->requireFkCustomer();
+        
+        $companyUserQuery = $this->getFactory()
+            ->createCompanyBusinessUnitQuery()
+            ->useCompanyUserQuery();
+        
+        return $companyUserQuery
+            ->filterByFkCustomer($companyUserTransfer->getFkCustomer())
+            ->endUse()
+            ->filterByIdCompanyBusinessUnit($companyUserTransfer->getFkCompanyBusinessUnit())
+            ->exists();
+    }
 }

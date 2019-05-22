@@ -18,6 +18,7 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -62,36 +63,28 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
         $punchoutCatalogRequestTransfer->requireContext();
-        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
-        
-        $documentTransfer = $this->decode($punchoutCatalogRequestTransfer);
-        $impersonalDetails = $this->prepareImpersonalDetails($punchoutCatalogRequestTransfer, $documentTransfer);
-        
-        $punchoutCatalogRequestTransfer->getContext()->setRawData($documentTransfer->toArray());
+        $punchoutCatalogRequestTransfer->getContext()->requirePunchoutCatalogConnection();
     
-        if ($connection->getSetup()->getLoginMode() == PunchoutConnectionConstsInterface::CUSTOMER_LOGIN_MODE_DYNAMIC) {
-            $documentTransfer->requireCustomer();
-        }
+        $documentTransfer = $this->decode($punchoutCatalogRequestTransfer);
+        $punchoutCatalogRequestTransfer->getContext()->setRawData($documentTransfer->toArray());
         
-        $customerStrategy = $this->getFactory()->createCustomerLoginModeStrategy(
-            $connection->getSetup()->getLoginMode()
-        );
+        $customerTransfer = $this->prepareCustomerTransfer($punchoutCatalogRequestTransfer, $documentTransfer);
         
-        /** @var CustomerTransfer $customerTransfer */
-        $customerTransfer = $customerStrategy->getCustomerTransfer($connection, $documentTransfer->getCustomer());
-        $customerTransfer->setPunchoutCatalogImpersonationDetails($impersonalDetails);
-
+        /** @var \Generated\Shared\Transfer\OauthResponseTransfer $oAuthResponseTransfer */
         $oAuthResponseTransfer = $this->getFactory()
             ->getOauthCompanyUserFacade()
             ->createCompanyUserAccessToken($customerTransfer);
-
-        /** TEST STUB */
-        $landingUrl = $this->getFactory()->createUrlHandler()->getLoginUrl(
-            $oAuthResponseTransfer->getAccessToken()
-        );
-        /** /TEST STUB */
-    
-        dd($landingUrl);
+        
+        if (!$oAuthResponseTransfer->getIsValid() && $oAuthResponseTransfer->getError()) {
+            throw new AuthenticateException($oAuthResponseTransfer->getError()->getMessage());
+        } elseif (!$oAuthResponseTransfer->getIsValid() || !$oAuthResponseTransfer->getAccessToken()) {
+            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_UNEXPECTED);
+        }
+        
+        $landingUrl = $this->getFactory()
+            ->createUrlHandler()
+            ->getLoginUrl($oAuthResponseTransfer->getAccessToken());
+        
         //Mark Request as Success TRX
         $punchoutCatalogRequestTransfer->setIsSuccess(true);
         
@@ -123,33 +116,40 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     }
     
     /**
-     * @todo: re-use prepared Token Stub
-     * @todo: fix login mode
-     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $connectionTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
+     * @param PunchoutCatalogSetupRequestTransfer         $punchoutCatalogRequestTransfer
+     * @param PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
      *
-     * @return \Generated\Shared\Transfer\CustomerTransfer
+     * @return CustomerTransfer
      */
-    protected function loginDynamicCustomer(
-        PunchoutCatalogConnectionTransfer $connectionTransfer,
+    protected function prepareCustomerTransfer(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer,
         PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
-    ): CustomerTransfer
+    )
     {
-        $documentTransfer->requireCustomer();
-    
-        if (null === $documentTransfer->getCustomer()->getFkCompanyBusinessUnit()) {
-            $documentTransfer->getCustomer()->setFkCompanyBusinessUnit(
-                $connectionTransfer->getSetup()->getFkCompanyBusinessUnit()
-            );
-        }
+        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
         
-        $customerTransfer = $this->getFactory()
-            ->createCustomerMapper()
-            ->mapSetupRequestDocumentCustomerTransferToCustomerTransfer($documentTransfer->getCustomer());
+        if ($connection->getSetup()->getLoginMode() == PunchoutConnectionConstsInterface::CUSTOMER_LOGIN_MODE_DYNAMIC) {
+            $documentTransfer->requireCustomer();
+            $customerStrategy = $this->getFactory()->createCustomerLoginDynamicStrategy();
+        } else {
+            $customerStrategy = $this->getFactory()->createCustomerLoginSingleStrategy();
+        }
+    
+        $impersonationDetails = $this->prepareImpersonalDetails($punchoutCatalogRequestTransfer, $documentTransfer);
+        
+        /** @var CustomerTransfer $customerTransfer */
+        $customerTransfer = $customerStrategy->getCustomerTransfer($connection, $documentTransfer->getCustomer());
+        $customerTransfer->setPunchoutCatalogImpersonationDetails($impersonationDetails);
         
         return $customerTransfer;
     }
     
+    /**
+     * @param PunchoutCatalogSetupRequestTransfer         $punchoutCatalogRequestTransfer
+     * @param PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
+     *
+     * @return array
+     */
     protected function prepareImpersonalDetails(
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer,
         PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
