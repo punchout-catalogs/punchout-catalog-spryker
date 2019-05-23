@@ -153,11 +153,6 @@ class Mapper implements MapperInterface
                 $content = json_encode($content, JSON_PRETTY_PRINT);
             }
             $entityTransfer->setMessage($content);
-    
-            $exceptions = $cartResponseTransfer->getExceptions();
-            if ($exceptions) {
-                $entityTransfer->setErrorMessage(implode("\n", $exceptions));
-            }
             
             if ($context->getPunchoutCatalogConnection()) {
                 $entityTransfer->setFkPunchoutCatalogConnection(
@@ -167,6 +162,11 @@ class Mapper implements MapperInterface
                     $context->getPunchoutCatalogConnection()->getFkCompanyBusinessUnit()
                 );
             }
+        }
+    
+        $exceptions = $cartResponseTransfer->getExceptions();
+        if ($exceptions) {
+            $entityTransfer->setErrorMessage(implode("\n", $exceptions));
         }
         
         return $entityTransfer;
