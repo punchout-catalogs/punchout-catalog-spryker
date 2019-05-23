@@ -103,4 +103,36 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
 
         return $connectionList;
     }
+
+    /**
+     * @module CompanyUser
+     * @module Company
+     * @module CompanyBusinessUnit
+     *
+     * @param int $idCustomer
+     * @param int $idCompanyBusinessUnit
+     *
+     * @return int|null
+     */
+    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompanyBusinessUnit): ?int
+    {
+        $query = $this->getFactory()
+            ->getCompanyUserQuery()
+            ->filterByIsActive(true)
+            ->filterByFkCustomer($idCustomer)
+            ->joinCompany()
+            ->useCompanyQuery()
+                ->joinCompanyBusinessUnit()
+                ->useCompanyBusinessUnitQuery()
+                    ->filterByIdCompanyBusinessUnit($idCompanyBusinessUnit)
+                ->endUse()
+            ->endUse();
+
+        $companyUser = $query->findOne();
+        if ($companyUser === null) {
+            return null;
+        }
+
+        return $companyUser->getIdCompanyUser();
+    }
 }

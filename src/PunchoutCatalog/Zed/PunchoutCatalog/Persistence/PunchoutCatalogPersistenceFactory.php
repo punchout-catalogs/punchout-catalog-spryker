@@ -7,9 +7,12 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Persistence;
 
+use Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCartQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionQuery;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetupQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionQuery;
+use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
 use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\Propel\Mapper\PunchoutCatalogTransactionMapperInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\Propel\Mapper\PunchoutCatalogConnectionMapper;
@@ -69,5 +72,13 @@ class PunchoutCatalogPersistenceFactory extends AbstractPersistenceFactory
     public function createPunchoutCatalogSetupQuery(): PgwPunchoutCatalogConnectionSetupQuery
     {
         return PgwPunchoutCatalogConnectionSetupQuery::create();
+    }
+
+    /**
+     * @return SpyCompanyUserQuery
+     */
+    public function getCompanyUserQuery(): SpyCompanyUserQuery
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::PROPEL_QUERY_COMPANY_USER);
     }
 }
