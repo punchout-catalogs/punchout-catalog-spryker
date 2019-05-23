@@ -110,7 +110,7 @@ interface PunchoutCatalogFacadeInterface
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer
      */
     public function findConnections(PunchoutCatalogConnectionCriteriaTransfer $punchoutCatalogConnectionCriteriaTransfer): PunchoutCatalogConnectionListTransfer;
-
+    
     /**
      * Specification:
      *

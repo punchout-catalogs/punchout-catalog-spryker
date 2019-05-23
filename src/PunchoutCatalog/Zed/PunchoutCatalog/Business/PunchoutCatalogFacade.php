@@ -89,7 +89,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     {
         return $this->getRepository()->findConnections($punchoutCatalogConnectionCriteriaTransfer);
     }
-
+    
     /**
      * {@inheritdoc}
      *

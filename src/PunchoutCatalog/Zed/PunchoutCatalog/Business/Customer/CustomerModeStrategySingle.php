@@ -12,7 +12,6 @@ use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
@@ -49,23 +48,20 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
         $connectionTransfer->requireSetup();
         $connectionTransfer->getSetup()->requireFkCompanyUser();
         $connectionTransfer->getSetup()->requireFkCompanyBusinessUnit();
-        
-        //@todo: load company user by fk_business_unit_id and fk_customer_id
-        /**
-        $searchCompanyUserTransfer = (new CompanyUserTransfer())
-            ->setFkCustomer($connectionTransfer->getSetup()->getFkCompanyUser())
-            ->setFkCompanyBusinessUnit($connectionTransfer->getSetup()->getFkCompanyBusinessUnit());
-            
-        $companyUserTransfer = $this->companyUserFacade->findCompanyBusinessUnitUser($searchCompanyUserTransfer);
-        
-        var_dump('$companyUserTransfer');
-        dd($companyUserTransfer);
-        */
+    
         $companyUserTransfer = (new CompanyUserTransfer())->setIdCompanyUser(11);
+    
+        $companyUserTransfer = $this->companyUserFacade->findCompanyUserById(
+            $connectionTransfer->getSetup()->getFkCompanyUser()
+        );
         
-        $customerTransfer = (new CustomerTransfer())
-            ->setCompanyUserTransfer($companyUserTransfer);
+        if (null === $companyUserTransfer
+            || $companyUserTransfer->getFkCompanyBusinessUnit() != $connectionTransfer->getSetup()->getFkCompanyBusinessUnit()
+        ) {
+            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+        }
         
-        return $customerTransfer;
+        return (new CustomerTransfer())
+            ->setCompanyUserTransfer($companyUserTransfer);;
     }
 }

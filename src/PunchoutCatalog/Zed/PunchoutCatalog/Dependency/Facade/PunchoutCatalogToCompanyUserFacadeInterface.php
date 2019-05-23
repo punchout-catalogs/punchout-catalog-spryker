@@ -12,9 +12,13 @@ use Generated\Shared\Transfer\CompanyUserTransfer;
 interface PunchoutCatalogToCompanyUserFacadeInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
+     * {@inheritdoc}
      *
-     * @return \Generated\Shared\Transfer\CompanyUserTransfer
+     * @api
+     *
+     * @param int $idCompanyUser
+     *
+     * @return \Generated\Shared\Transfer\CompanyUserTransfer|null
      */
-    public function findCompanyBusinessUnitUser(CompanyUserTransfer $companyUserTransfer): CompanyUserTransfer;
+    public function findCompanyUserById(int $idCompanyUser): ?CompanyUserTransfer;
 }
