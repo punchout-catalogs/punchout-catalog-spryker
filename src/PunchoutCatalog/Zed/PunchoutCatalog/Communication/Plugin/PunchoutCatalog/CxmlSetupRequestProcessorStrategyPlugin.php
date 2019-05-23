@@ -102,7 +102,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
         );
 
         $map = (new Decoder())->execute($mappingTransfer, $xmlContent);
-
+        
         return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }
 
