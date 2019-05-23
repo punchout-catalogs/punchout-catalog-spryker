@@ -22,7 +22,7 @@ class CartController extends AbstractController
 {
     protected const REDIRECT_URL = 'cart';
     protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is-not-punchout';
-
+    
     /**
      * Return transferred cart
      */
@@ -32,31 +32,32 @@ class CartController extends AbstractController
             return $this->addErrorMessage(static::ERROR_MESSAGE_IS_NOT_PUNCHOUT)
                 ->redirectResponseInternal(static::REDIRECT_URL);
         }
-
+        
         $quoteTransfer = $this->getFactory()->getQuoteClient()->getQuote();
-
+        
         $punchoutCatalogCartRequestTransfer = $this->getFactory()
             ->getTransferCartMapper()
             ->mapQuoteTransferToPunchoutCatalogCartRequestTransfer(
                 $quoteTransfer,
                 new PunchoutCatalogCartRequestTransfer()
             );
-
+        
         $punchoutCatalogCartRequestTransfer->setContext($this->getPunchoutCatalogCartRequestContext());
-
+        
         /** @var \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer */
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartTransfer($punchoutCatalogCartRequestTransfer);
         
         if ($cartResponseTransfer->getIsSuccess()) {
-            $this->clearQuote();
-            return $this->handleSuccessResponse($cartResponseTransfer);
+            return $this->clearQuote()
+                ->logoutCustomer()
+                ->handleSuccessResponse($cartResponseTransfer);
         } else {
             return $this->handleErrorResponse($cartResponseTransfer);
         }
     }
-
+    
     /**
      * @return bool
      */
@@ -64,7 +65,7 @@ class CartController extends AbstractController
     {
         return ($this->getPunchoutDetails() && $this->getPunchoutDetails()['is_punchout']);
     }
-
+    
     /**
      * @return array|null
      */
@@ -75,10 +76,10 @@ class CartController extends AbstractController
         ) {
             return $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails();
         }
-
+        
         return null;
     }
-
+    
     /**
      * @return PunchoutCatalogCartRequestContextTransfer
      */
@@ -87,17 +88,17 @@ class CartController extends AbstractController
         $impersonalDetails = $this->getFactory()->getCustomerClient()
             ->getCustomer()
             ->getPunchoutCatalogImpersonationDetails();
-
+        
         $context = new PunchoutCatalogCartRequestContextTransfer();
         $context->fromArray([
             'locale' => $this->getCurrentLocale(),
             'punchout_catalog_connection_id' => $impersonalDetails['punchout_catalog_connection_id'],
             'protocol_data' => $impersonalDetails['protocol_data'],
         ]);
-
+        
         return $context;
     }
-
+    
     /**
      * @return string
      */
@@ -105,17 +106,29 @@ class CartController extends AbstractController
     {
         return $this->getFactory()->getStore()->getCurrentLocale();
     }
-
+    
     /**
      * Clear existing quote
      *
-     * @return void
+     * @return $this
      */
     protected function clearQuote()
     {
         $this->getFactory()->getQuoteClient()->clearQuote();
+        return $this;
     }
-
+    
+    /**
+     * Clear existing customer session
+     *
+     * @return $this
+     */
+    protected function logoutCustomer()
+    {
+        $this->getFactory()->getCustomerClient()->logout();
+        return $this;
+    }
+    
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer
      *
@@ -186,8 +199,9 @@ class CartController extends AbstractController
             ->processCartCancel($punchoutCatalogCancelRequestTransfer);
         
         if ($cartResponseTransfer->getIsSuccess()) {
-            $this->clearQuote();
-            return $this->handleSuccessResponse($cartResponseTransfer);
+            return $this->clearQuote()
+                ->logoutCustomer()
+                ->handleSuccessResponse($cartResponseTransfer);
         } else {
             return $this->handleErrorResponse($cartResponseTransfer);
         }

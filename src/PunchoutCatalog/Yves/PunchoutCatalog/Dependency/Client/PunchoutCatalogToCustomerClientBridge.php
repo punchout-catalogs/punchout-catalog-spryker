@@ -31,4 +31,12 @@ class PunchoutCatalogToCustomerClientBridge implements PunchoutCatalogToCustomer
     {
         return $this->customerClient->getCustomer();
     }
+    
+    /**
+     * @return void
+     */
+    public function logout()
+    {
+        $this->customerClient->logout();
+    }
 }
