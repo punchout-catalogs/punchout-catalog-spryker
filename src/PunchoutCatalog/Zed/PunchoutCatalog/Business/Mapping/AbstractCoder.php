@@ -125,7 +125,7 @@ abstract class AbstractCoder
             $this->populateDocument($document, $field->getName(), $result);
         }
 
-        return array_filter($document);
+        return $document;
     }
 
     /**
