@@ -17,6 +17,7 @@ use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Yves\Kernel\Container;
+use Spryker\Yves\Kernel\Plugin\Pimple;
 
 /**
  * @method \PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -31,6 +32,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     public const CLIENT_PUNCHOUT_CATALOG = 'CLIENT_PUNCHOUT_CATALOG';
     public const CLIENT_PRODUCT_STORAGE = 'CLIENT_PRODUCT_STORAGE';
     public const PLUGIN_CART_TRANSFER_MAPPER = 'PLUGIN_CART_TRANSFER_MAPPER';
+    public const APPLICATION = 'APPLICATION';
 
     /**
      * @param \Spryker\Yves\Kernel\Container $container
@@ -47,6 +49,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addPunchoutCatalogClient($container);
         $container = $this->addCustomerClient($container);
         $container = $this->addCartTransferMapperPlugins($container);
+        $container = $this->addApplication($container);
 
         return $container;
     }
@@ -60,22 +63,6 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     {
         $container[static::STORE] = function () {
             return Store::getInstance();
-        };
-
-        return $container;
-    }
-
-    /**
-     * @param \Spryker\Yves\Kernel\Container $container
-     *
-     * @return \Spryker\Yves\Kernel\Container
-     */
-    protected function addProductStorageClient(Container $container): Container
-    {
-        $container[static::CLIENT_PRODUCT_STORAGE] = function (Container $container) {
-            return new PunchoutCatalogToProductStorageClientBridge(
-                $container->getLocator()->productStorage()->client()
-            );
         };
 
         return $container;
@@ -130,11 +117,11 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Yves\Kernel\Container
      */
-    protected function addCustomerClient(Container $container)
+    protected function addProductStorageClient(Container $container): Container
     {
-        $container[static::CLIENT_CUSTOMER] = function (Container $container) {
-            return new PunchoutCatalogToCustomerClientBridge(
-                $container->getLocator()->customer()->client()
+        $container[static::CLIENT_PRODUCT_STORAGE] = function (Container $container) {
+            return new PunchoutCatalogToProductStorageClientBridge(
+                $container->getLocator()->productStorage()->client()
             );
         };
 
@@ -151,6 +138,22 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
         $container[static::CLIENT_PUNCHOUT_CATALOG] = function (Container $container) {
             return new PunchoutCatalogToPunchoutCatalogClientBridge(
                 $container->getLocator()->punchOutCatalog()->client()
+            );
+        };
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addCustomerClient(Container $container)
+    {
+        $container[static::CLIENT_CUSTOMER] = function (Container $container) {
+            return new PunchoutCatalogToCustomerClientBridge(
+                $container->getLocator()->customer()->client()
             );
         };
 
@@ -179,5 +182,19 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
         return [
             new CartTransferMapperDefaultPlugin(),
         ];
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addApplication(Container $container)
+    {
+        $container[static::APPLICATION] = function () {
+            return (new Pimple())->getApplication();
+        };
+
+        return $container;
     }
 }

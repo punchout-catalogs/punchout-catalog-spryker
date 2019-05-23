@@ -15,12 +15,12 @@ use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunc
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapper;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperInterface;
-
+use Spryker\Client\Customer\CustomerClient;
 use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
 use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
-use Spryker\Client\Customer\CustomerClient;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Yves\Kernel\AbstractFactory;
+use Spryker\Yves\Kernel\Application;
 
 /**
  * @method \PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -105,12 +105,30 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_QUOTE);
     }
-    
+
     /**
      * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
      */
     public function getUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
     {
         return new UtilUuidGeneratorService();
+    }
+
+    /**
+     * @return \Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface
+     */
+    public function getTokenStorage()
+    {
+        $application = $this->getApplication();
+
+        return $application['security.token_storage'];
+    }
+
+    /**
+     * @return \Spryker\Yves\Kernel\Application
+     */
+    public function getApplication(): Application
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::APPLICATION);
     }
 }
