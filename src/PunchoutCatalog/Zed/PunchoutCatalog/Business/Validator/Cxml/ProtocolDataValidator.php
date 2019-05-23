@@ -13,6 +13,8 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidator
 class ProtocolDataValidator implements ProtocolDataValidatorInterface
 {
     /**
+     * @todo: probably no need to validate To credentials
+     *
      * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
      * @param bool $validateSharedSecret
      *
