@@ -9,9 +9,9 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step;
 
 use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogConnectionCartQuery;
 use Orm\Zed\PunchoutCatalog\Persistence\Base\PgwPunchoutCatalogConnectionQuery;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet\PunchoutCatalogConnectionCartDataSet;
 use Spryker\Zed\DataImport\Business\Model\DataImportStep\DataImportStepInterface;
 use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\DataSet\PunchoutCatalogConnectionCartDataSet;
 
 class PunchoutCatalogConnectionCartWriterStep implements DataImportStepInterface
 {
@@ -28,6 +28,9 @@ class PunchoutCatalogConnectionCartWriterStep implements DataImportStepInterface
         $connectionEntity = PgwPunchoutCatalogConnectionQuery::create()
             ->findOneByName($dataSet[PunchoutCatalogConnectionCartDataSet::NAME]);
 
+        if ($connectionEntity == null) {
+            return;
+        }
         /** @var \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart $cartEntity */
         $cartEntity = PgwPunchoutCatalogConnectionCartQuery::create()
             ->filterByIdPunchoutCatalogConnectionCart($connectionEntity->getIdPunchoutCatalogConnection())
