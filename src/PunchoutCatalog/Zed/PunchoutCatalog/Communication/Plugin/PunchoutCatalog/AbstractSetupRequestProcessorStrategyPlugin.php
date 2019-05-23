@@ -135,7 +135,9 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
             $customerStrategy = $this->getFactory()->createCustomerLoginSingleStrategy();
         }
     
-        $impersonationDetails = $this->prepareImpersonalDetails($punchoutCatalogRequestTransfer, $documentTransfer);
+        $impersonationDetails = $this->prepareImpersonationDetails(
+            $punchoutCatalogRequestTransfer, $documentTransfer
+        );
         
         /** @var CustomerTransfer $customerTransfer */
         $customerTransfer = $customerStrategy->getCustomerTransfer($connection, $documentTransfer->getCustomer());
@@ -150,7 +152,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      *
      * @return array
      */
-    protected function prepareImpersonalDetails(
+    protected function prepareImpersonationDetails(
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer,
         PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
     )
@@ -159,17 +161,16 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         
         return [
             'is_punchout' => true,
-            //
-            'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData(),
+            'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData()->toArray(),
             'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
-            //
             'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
             'punchout_catalog_connection_cart' => [
                 'default_supplier_id' => $connection->getCart()->getDefaultSupplierId(),
                 'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
             ],
             'punchout_login_mode' => $connection->getSetup()->getLoginMode(),
-            //store it in session - for sake of different customizations
+            //store it in session - for sake of different customizations - currently can't use it as
+            //oAuth token table has 1024 symbold only length for storing all impersonalization details
             //'punchout_data' => $documentTransfer->toArray(),
         ];
     }
