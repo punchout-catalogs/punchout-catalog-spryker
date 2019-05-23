@@ -51,7 +51,16 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
         $connectionTransfer->getSetup()->requireFkCompanyBusinessUnit();
         
         //@todo: load company user by fk_business_unit_id and fk_customer_id
+        /**
+        $searchCompanyUserTransfer = (new CompanyUserTransfer())
+            ->setFkCustomer($connectionTransfer->getSetup()->getFkCompanyUser())
+            ->setFkCompanyBusinessUnit($connectionTransfer->getSetup()->getFkCompanyBusinessUnit());
+            
+        $companyUserTransfer = $this->companyUserFacade->findCompanyBusinessUnitUser($searchCompanyUserTransfer);
         
+        var_dump('$companyUserTransfer');
+        dd($companyUserTransfer);
+        */
         $companyUserTransfer = (new CompanyUserTransfer())->setIdCompanyUser(11);
         
         $customerTransfer = (new CustomerTransfer())
