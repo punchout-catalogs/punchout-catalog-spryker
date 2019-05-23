@@ -50,9 +50,7 @@ class CartController extends AbstractController
             ->processCartTransfer($punchoutCatalogCartRequestTransfer);
         
         if ($cartResponseTransfer->getIsSuccess()) {
-            return $this->clearQuote()
-                ->logoutCustomer()
-                ->handleSuccessResponse($cartResponseTransfer);
+            return $this->handleSuccessResponse($cartResponseTransfer);
         } else {
             return $this->handleErrorResponse($cartResponseTransfer);
         }
@@ -143,7 +141,10 @@ class CartController extends AbstractController
             'submit_url' => $this->getPunchoutDetails()['protocol_data']['cart']['url'],
             'submit_target' => $this->getPunchoutDetails()['protocol_data']['cart']['target'] ?? null,
         ];
-
+    
+        //Should go after the last data getting from customer session
+        $this->clearQuote()->logoutCustomer();
+        
         return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
     }
 
@@ -199,9 +200,7 @@ class CartController extends AbstractController
             ->processCartCancel($punchoutCatalogCancelRequestTransfer);
         
         if ($cartResponseTransfer->getIsSuccess()) {
-            return $this->clearQuote()
-                ->logoutCustomer()
-                ->handleSuccessResponse($cartResponseTransfer);
+            return $this->handleSuccessResponse($cartResponseTransfer);
         } else {
             return $this->handleErrorResponse($cartResponseTransfer);
         }
