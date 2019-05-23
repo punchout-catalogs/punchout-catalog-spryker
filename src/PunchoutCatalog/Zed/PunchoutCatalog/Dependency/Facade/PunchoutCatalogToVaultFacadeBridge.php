@@ -44,6 +44,6 @@ class PunchoutCatalogToVaultFacadeBridge implements PunchoutCatalogToVaultFacade
      */
     public function store(string $dataType, string $dataKey, string $data): bool
     {
-        $this->vaultFacade->store($dataType, $dataKey, $data);
+        return $this->vaultFacade->store($dataType, $dataKey, $data);
     }
 }
