@@ -48,8 +48,9 @@ class CartController extends AbstractController
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartTransfer($punchoutCatalogCartRequestTransfer);
-        $this->clearQuote();
+        
         if ($cartResponseTransfer->getIsSuccess()) {
+            $this->clearQuote();
             return $this->handleSuccessResponse($cartResponseTransfer);
         } else {
             return $this->handleErrorResponse($cartResponseTransfer);
@@ -183,9 +184,9 @@ class CartController extends AbstractController
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartCancel($punchoutCatalogCancelRequestTransfer);
-
-        $this->clearQuote();
+        
         if ($cartResponseTransfer->getIsSuccess()) {
+            $this->clearQuote();
             return $this->handleSuccessResponse($cartResponseTransfer);
         } else {
             return $this->handleErrorResponse($cartResponseTransfer);

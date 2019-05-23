@@ -103,26 +103,36 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
 
         return $connectionList;
     }
-    
+
     /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
+     * @module CompanyUser
+     * @module Company
+     * @module CompanyBusinessUnit
      *
-     * @return \Generated\Shared\Transfer\CompanyUserTransfer
+     * @param int $idCustomer
+     * @param int $idCompanyBusinessUnit
+     *
+     * @return int|null
      */
-    public function findCompanyUserByCustomer(CompanyUserTransfer $companyUserTransfer): bool
+    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompanyBusinessUnit): ?int
     {
-        $companyUserTransfer
-            ->requireFkCompanyBusinessUnit()
-            ->requireFkCustomer();
-        
-        $companyUserQuery = $this->getFactory()
-            ->createCompanyBusinessUnitQuery()
-            ->useCompanyUserQuery();
-        
-        return $companyUserQuery
-            ->filterByFkCustomer($companyUserTransfer->getFkCustomer())
-            ->endUse()
-            ->filterByIdCompanyBusinessUnit($companyUserTransfer->getFkCompanyBusinessUnit())
-            ->exists();
+        $query = $this->getFactory()
+            ->getCompanyUserQuery()
+            ->filterByIsActive(true)
+            ->filterByFkCustomer($idCustomer)
+            ->joinCompany()
+            ->useCompanyQuery()
+                ->joinCompanyBusinessUnit()
+                ->useCompanyBusinessUnitQuery()
+                    ->filterByIdCompanyBusinessUnit($idCompanyBusinessUnit)
+                ->endUse()
+            ->endUse();
+
+        $companyUser = $query->findOne();
+        if ($companyUser === null) {
+            return null;
+        }
+
+        return $companyUser->getIdCompanyUser();
     }
 }
