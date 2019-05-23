@@ -119,11 +119,11 @@ class CxmlSetupRequestProcessorStrategyPlugin
 <cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
     <Response>
         <Status code="200" text="OK"/>
-        <PunchoutSetupResponse>
+        <PunchOutSetupResponse>
             <StartPage>
                 <URL>' . $landingUrl . '</URL>
             </StartPage>
-        </PunchoutSetupResponse>
+        </PunchOutSetupResponse>
     </Response>
 </cXML>';
     }
