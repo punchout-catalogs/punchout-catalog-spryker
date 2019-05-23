@@ -37,7 +37,7 @@ class UrlHandler implements UrlHandlerInterface
         $locale = $locale ?? $this->punchoutCatalogConfig->getDefaultStoreLocale();
 
         $params = [
-            'returnUrl' => $returnUrl ?? '/',
+            'returnUrl' => $returnUrl ?? 'home',
         ];
         
         return $this->punchoutCatalogConfig->getBaseUrlYves()
