@@ -269,7 +269,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         }
 
         $productDescription = $this->limitDescription($productAbstractStorageData['description']);
-        $productLongDescription = $this->limitDescription(join('\n', array_filter($longDescriptionParts)));
+        $productLongDescription = $this->limitDescription(implode("\n", array_filter($longDescriptionParts)));
 
         $documentCartItemTransfer->setInternalId($internalId);
         $documentCartItemTransfer->setSupplierId($supplierId);
