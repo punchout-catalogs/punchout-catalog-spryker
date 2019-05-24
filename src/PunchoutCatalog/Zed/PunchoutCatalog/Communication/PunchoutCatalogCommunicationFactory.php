@@ -50,7 +50,9 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     public function createCustomerLoginDynamicStrategy(): CustomerModeStrategyInterface
     {
         return new CustomerModeStrategyDynamic(
-            $this->getCompanyUserFacade()
+            $this->getRepository(),
+            $this->getCompanyUserFacade(),
+            $this->getCustomerFacade()
         );
     }
     

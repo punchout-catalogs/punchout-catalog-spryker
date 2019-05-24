@@ -12,30 +12,50 @@ use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 
 class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
 {
     /**
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface
+     */
+    protected $punchoutCatalogRepository;
+   
+    /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
      */
     protected $companyUserFacade;
     
     /**
-     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface $companyUserFacade
+     * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface
      */
-    public function __construct(PunchoutCatalogToCompanyUserFacadeInterface $companyUserFacade)
+    protected $customerFacade;
+    
+    /**
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface $punchoutCatalogRepository
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface $companyUserFacade
+     * @param \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface $customerFacade
+     */
+    public function __construct(
+        PunchoutCatalogRepositoryInterface $punchoutCatalogRepository,
+        PunchoutCatalogToCompanyUserFacadeInterface $companyUserFacade,
+        PunchoutCatalogToCustomerFacadeInterface $customerFacade
+    )
     {
+        $this->punchoutCatalogRepository = $punchoutCatalogRepository;
         $this->companyUserFacade = $companyUserFacade;
+        $this->customerFacade = $customerFacade;
     }
     
     /**
-     * @param PunchoutCatalogConnectionTransfer $connectionTransfer
-     * @param PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $connectionTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer
      *
-     * @return CustomerTransfer
+     * @return \Generated\Shared\Transfer\CustomerTransfer
      *
      * @throws AuthenticateException
      */
@@ -46,6 +66,28 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
     {
         $connectionTransfer->requireSetup();
         $connectionTransfer->getSetup()->requireFkCompanyBusinessUnit();
+        
+        if (null === $documentCustomerTransfer) {
+            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+        }
+        $documentCustomerTransfer->requireEmail();
+        $documentCustomerTransfer->setEmail('george.freeman@spryker.com');//@todo: remove
+        
+        $customerId = $this->punchoutCatalogRepository->findCustomerIdByEmail(
+            $documentCustomerTransfer->getEmail()
+        );
+        
+        if (null === $customerId) {
+            die('CREATE NEW CUSTOMER HERE');
+        } else {
+            $customerTransfer = $this->customerFacade->findCustomerById($customerId);
+        }
+        
+        var_dump($customerId);
+        dd($customerTransfer);
+        exit;
+        
+        $companyUserTransfer = $this->customerFacade->findCustomerById();
         
         dd($documentCustomerTransfer);
         $companyUserTransfer = $this->companyUserFacade->findCompanyUserById(
@@ -58,37 +100,6 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
             throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
         }
         
-        return (new CustomerTransfer())
-            ->setCompanyUserTransfer($companyUserTransfer);
-    }
-    
-    /**
-     * @param PunchoutCatalogConnectionTransfer $connectionTransfer
-     * @param PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer
-     *
-     * @return CustomerTransfer
-     */
-    public function getCustomerTransfer2(
-        PunchoutCatalogConnectionTransfer $connectionTransfer,
-        PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer = null
-    ) : CustomerTransfer
-    {
-        $customerTransfer = new CustomerTransfer();
-    
-        $customerTransfer->setIsGuest(false);
-    
-        $customerTransfer->fromArray($documentCustomerTransfer->toArray(), true);
-        
-        $businessUnit = $this->getCompanyBusinessUnit($documentCustomerTransfer->getFkCompanyBusinessUnit());
-
-        $customerTransfer->setCompanyUserTransfer(
-            (new CompanyUserTransfer())
-                 ->setFkCustomer($customerTransfer->getIdCustomer())
-                 ->setFkCompany($businessUnit->getFkCompany())
-                 ->setFkCompanyBusinessUnit($businessUnit->getIdCompanyBusinessUnit())
-                 ->setIsActive(true)
-        );
-    
         return (new CustomerTransfer())
             ->setCompanyUserTransfer($companyUserTransfer);
     }

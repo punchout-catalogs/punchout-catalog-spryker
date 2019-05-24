@@ -33,10 +33,10 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
     }
     
     /**
-     * @param PunchoutCatalogConnectionTransfer $connectionTransfer
-     * @param PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $connectionTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer
      *
-     * @return CustomerTransfer
+     * @return \Generated\Shared\Transfer\CustomerTransfer
      *
      * @throws AuthenticateException
      */
