@@ -182,7 +182,7 @@ Client 1 - cXml - User 2,spryker_sup_3,,urlencoded,"{
       ""name"": {
         ""path"": ""ItemDetail[1]/Description[1]/ShortName""
       },
-      ""description"": {
+      ""long_description"": {
         ""path"": ""ItemDetail[1]/Description[1]""
       },
       ""product_packaging_unit"": {
