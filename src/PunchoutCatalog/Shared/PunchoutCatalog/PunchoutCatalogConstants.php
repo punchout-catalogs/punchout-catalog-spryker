@@ -7,7 +7,7 @@
 
 namespace PunchoutCatalog\Shared\PunchoutCatalog;
 
-interface PunchoutCatalogConfig
+interface PunchoutCatalogConstants
 {
     public const VAULT_PASSWORD_DATA_TYPE = 'punchout-catalog-connection-password';
 }

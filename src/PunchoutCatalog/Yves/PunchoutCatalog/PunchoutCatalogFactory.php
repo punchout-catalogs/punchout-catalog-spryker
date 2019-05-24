@@ -131,4 +131,12 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::APPLICATION);
     }
+
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig
+     */
+    public function getModuleConfig(): PunchoutCatalogConfig
+    {
+        return $this->getConfig();
+    }
 }

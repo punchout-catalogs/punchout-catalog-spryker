@@ -17,7 +17,7 @@ use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
 class PunchoutCatalogConnectionWriterStep implements DataImportStepInterface
 {
     /**
-     * @uses \PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConfig::VAULT_PASSWORD_DATA_TYPE
+     * @uses \PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstants::VAULT_PASSWORD_DATA_TYPE
      */
     protected const VAULT_PASSWORD_DATA_TYPE = 'punchout-catalog-connection-password';
 

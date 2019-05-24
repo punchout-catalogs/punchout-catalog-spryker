@@ -12,7 +12,7 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 
-use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConfig;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstants;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlRequestProtocolStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciRequestProtocolStrategyPlugin;
@@ -147,7 +147,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
         }
 
         $connectionPassword = $this->vaultFacade->retrieve(
-            PunchoutCatalogConfig::VAULT_PASSWORD_DATA_TYPE,
+            PunchoutCatalogConstants::VAULT_PASSWORD_DATA_TYPE,
             $connection->getIdPunchoutCatalogConnection()
         );
 
