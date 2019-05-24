@@ -50,7 +50,7 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     public function createCustomerLoginDynamicStrategy(): CustomerModeStrategyInterface
     {
         return new CustomerModeStrategyDynamic(
-            $this->getCompanyBusinessUnitFacade()
+            $this->getCompanyUserFacade()
         );
     }
     
@@ -60,14 +60,6 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     public function getCompanyUserFacade(): PunchoutCatalogToCompanyUserFacadeInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_USER);
-    }
-    
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
-     */
-    public function getCompanyBusinessUnitFacade(): PunchoutCatalogToCompanyBusinessUnitFacadeInterface
-    {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_BUSINESS_UNIT);
     }
     
     /**

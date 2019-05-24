@@ -158,6 +158,7 @@ class RequestProcessor implements RequestProcessorInterface
         
         if ($exception->getPrevious()) {
             $response->addException("Original Exception:\n" . $exception->getPrevious()->getMessage());
+            $response->addException($exception->getPrevious()->getTraceAsString());
         }
         
         return $response;

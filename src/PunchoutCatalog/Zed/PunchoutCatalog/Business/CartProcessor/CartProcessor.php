@@ -143,6 +143,7 @@ class CartProcessor implements CartProcessorInterface
     
             if ($e->getPrevious()) {
                 $punchoutCatalogResponseTransfer->addException("Original Exception:\n" . $e->getPrevious()->getMessage());
+                $punchoutCatalogResponseTransfer->addException($e->getPrevious()->getTraceAsString());
             }
             
             return $punchoutCatalogResponseTransfer;
