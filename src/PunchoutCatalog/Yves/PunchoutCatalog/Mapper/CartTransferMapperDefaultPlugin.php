@@ -45,6 +45,21 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected $customerClient;
 
     /**
+     * @var array
+     */
+    protected $cartMapping = [];
+
+    /**
+     * @var array
+     */
+    protected $cartItemMapping = [];
+
+    /**
+     * @var array
+     */
+    protected $cartCustomerMapping = [];
+
+    /**
      * CartTransferMapperDefaultPlugin constructor.
      */
     public function __construct()
@@ -54,6 +69,10 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $this->productStorageClient = $this->getFactory()->getProductStorageClient();
         $this->customerClient = $this->getFactory()->getCustomerClient();
         $this->currentLocale = $this->getFactory()->getStore()->getCurrentLocale();
+
+        $this->cartMapping = array_merge($this->cartMapping, $this->getFactory()->getModuleConfig()->getCustomCartMapping());
+        $this->cartItemMapping = array_merge($this->cartItemMapping, $this->getFactory()->getModuleConfig()->getCustomCartItemMapping());
+        $this->cartCustomerMapping = array_merge($this->cartCustomerMapping, $this->getFactory()->getModuleConfig()->getCustomCartCustomerMapping());
     }
 
     /**
@@ -74,7 +93,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $this->prepareHeader($quoteTransfer, $cartRequestTransfer);
         $this->prepareCustomer($quoteTransfer, $cartRequestTransfer);
         $this->prepareLineItems($quoteTransfer, $cartRequestTransfer);
+        $cartRequestTransfer->setCart($this->processMapping($quoteTransfer, $cartRequestTransfer->getCart(), $this->cartMapping));
 
+        dd($quoteTransfer,[],$cartRequestTransfer->getCart(), $cartRequestTransfer->getCartItem(), $cartRequestTransfer->getCustomer());
         return $cartRequestTransfer;
     }
 
@@ -193,6 +214,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
             $cartRequestTransfer->setCustomer($customer);
         }
+
+        $cartRequestTransfer->setCustomer($this->processMapping($quoteTransfer->getCustomer(),
+            $cartRequestTransfer->getCustomer(), $this->cartCustomerMapping, [$quoteTransfer]));
         return $cartRequestTransfer;
     }
 
@@ -218,6 +242,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                     $quoteItemTransfer,
                     $documentCartItemTransfer
                 );
+
+                $documentCartItemTransfer = $this->processMapping($quoteItemTransfer, $documentCartItemTransfer,
+                    $this->cartItemMapping, [$quoteTransfer]);
 
                 $cartRequestTransfer->addCartItem($documentCartItemTransfer);
 
@@ -402,5 +429,55 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         return $this->getFactory()
             ->getUtilUuidGeneratorService()
             ->generateUuid5FromObjectId($internalId);
+    }
+
+    /**
+     * Convert underscore_text to CamelCase
+     * @param $string
+     * @param string $separator
+     * @return string
+     */
+    protected function underscoreToCamelCase($string, $separator = '_')
+    {
+        $explodedString = explode($separator, $string);
+
+        $result = '';
+
+        foreach ($explodedString as $part) {
+            $result .= ucfirst($part);
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param QuoteTransfer | QuoteItemTransfer $inputTransfer
+     * @param PunchoutCatalogCartRequestTransfer|PunchoutCatalogDocumentCartItemTransfer $outputTransfer
+     * @param array $mapping
+     * @param array $getterArgs
+     * @return PunchoutCatalogCartRequestTransfer|PunchoutCatalogDocumentCartItemTransfer|mixed|string
+     */
+    protected function processMapping($inputTransfer, $outputTransfer, array $mapping, array $getterArgs = [])
+    {
+        foreach ($mapping as $field => $value) {
+            if (is_string($value)) {
+                $getter = 'get' . $this->underscoreToCamelCase($value);
+                if (method_exists($inputTransfer, $getter)) {
+                    $value = call_user_func([$inputTransfer, $getter]);
+                }
+            } elseif (is_callable($value)) {
+                $value = call_user_func_array($value, array_merge([$inputTransfer, $outputTransfer], $getterArgs, [$this]));
+            }
+
+            if (is_string($field)) {
+                $setter = 'set' . $this->underscoreToCamelCase($field);
+                if (method_exists($outputTransfer, $setter)) {
+                    call_user_func_array([$outputTransfer, $setter], [$value]);
+                }
+            } else {
+                $outputTransfer = $value;
+            }
+        }
+        return $outputTransfer;
     }
 }

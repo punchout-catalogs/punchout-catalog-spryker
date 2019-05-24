@@ -11,4 +11,27 @@ use Spryker\Yves\Kernel\AbstractBundleConfig;
 
 class PunchoutCatalogConfig extends AbstractBundleConfig
 {
+    /**
+     * @return array
+     */
+    public function getCustomCartMapping()
+    {
+        return $this->get(PunchoutCatalogConstants::CUSTOM_CART_TRANSFER_MAPPING, []);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomCartItemMapping()
+    {
+        return $this->get(PunchoutCatalogConstants::CUSTOM_CART_ITEM_TRANSFER_MAPPING, []);
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomCartCustomerMapping()
+    {
+        return $this->get(PunchoutCatalogConstants::CUSTOM_CART_CUSTOMER_TRANSFER_MAPPING, []);
+    }
 }
