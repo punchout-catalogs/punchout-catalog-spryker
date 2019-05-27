@@ -53,17 +53,17 @@ interface PunchoutCatalogRepositoryInterface
      * @return int|null
      */
     public function findCustomerIdByEmail(string $email): ?int;
-    
+
     /**
      * @module CompanyUser
      * @module Company
      * @module Customer
      * @module CompanyBusinessUnit
      *
-     * @param string $email
-     * @param int $idCompanyBusinessUnit
+     * @param int $idCustomer
+     * @param int $idCompany
      *
      * @return int|null
      */
-    public function findIdCompanyUserInCompany(string $email, int $idCompanyBusinessUnit): ?int;
+    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompany): ?int;
 }

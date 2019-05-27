@@ -9,6 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
 use Spryker\Zed\Customer\Business\CustomerFacadeInterface;
 use Generated\Shared\Transfer\CustomerTransfer;
+use Generated\Shared\Transfer\CustomerResponseTransfer;
 
 class PunchoutCatalogToCustomerFacadeBridge implements PunchoutCatalogToCustomerFacadeInterface
 {
@@ -36,4 +37,19 @@ class PunchoutCatalogToCustomerFacadeBridge implements PunchoutCatalogToCustomer
             ->setIdCustomer($idCustomer);
         return $this->customerFacade->findCustomerById($customerTransfer);
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
+     *
+     * @return \Generated\Shared\Transfer\CustomerResponseTransfer
+     */
+    public function addCustomer(CustomerTransfer $customerTransfer): CustomerResponseTransfer
+    {
+        return $this->customerFacade->addCustomer($customerTransfer);
+    }
+
 }
