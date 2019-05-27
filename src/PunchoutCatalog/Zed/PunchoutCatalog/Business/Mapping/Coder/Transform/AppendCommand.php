@@ -23,7 +23,7 @@ class AppendCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        if (null === $transform->getParams()) {
+        if (null === $transform->getParams() || null === $transform->getParams()->getValue()) {
             return $value;
         }
         
@@ -34,8 +34,6 @@ class AppendCommand extends AbstractCommand implements ITransform
             }
             return $value;
         } elseif (!is_string($value) && !is_int($value) && !is_float($value)) {
-            return $value;
-        } elseif (null === $transform->getParams()->getValue()) {
             return $value;
         }
         

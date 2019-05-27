@@ -23,7 +23,7 @@ class DefaultCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        if (null === $transform->getParams()) {
+        if (null === $transform->getParams() || null === $transform->getParams()->getValue()) {
             return $value;
         }
         
@@ -48,21 +48,8 @@ class DefaultCommand extends AbstractCommand implements ITransform
     {
         $default = false;
         if ($value === '' || $value === false) {
-            $default = $this->_getDefaultValue($transform);
+            $default = $this->_fixValue($transform->getParams()->getValue());
         }
         return ($default !== false) ? $default : $value;
-    }
-
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogMappingTransformTransfer $transform
-     *
-     * @return mixed|string
-     */
-    protected function _getDefaultValue(PunchoutCatalogMappingTransformTransfer $transform)
-    {
-        if (null !== $transform->getParams()->getValue()) {
-            return $this->_fixValue($transform->getParams()->getValue());
-        }
-        return false;
     }
 }
