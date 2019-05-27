@@ -27,7 +27,7 @@ class Decoder extends AbstractCoder implements DecoderInterface
     public function execute(PunchoutCatalogMappingTransfer $mapping, $source)
     {
         if (!$this->validate($source)) {
-            throw new InvalidArgumentException('Invalid source data');
+            throw new InvalidArgumentException('punchout-catalog.error.invalid.source.data');
         }
 
         $this->document = [];

@@ -23,6 +23,10 @@ class MapCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
+        if (null === $transform->getParams()) {
+            return $value;
+        }
+        
         if (is_array($value)) {
             //fix some phantoms and don't cause PHP warnings
             foreach ($value as &$_val) {
@@ -46,9 +50,10 @@ class MapCommand extends AbstractCommand implements ITransform
      */
     protected function _getValue(PunchoutCatalogMappingTransformTransfer $transform)
     {
-        $params = $transform->getParams();
-        $value = (!empty($params['value']) && is_string($params['value'])) ? $params['value'] : false;
-        return $this->_fixValue($value);
+        if (null !== $transform->getParams()->getValue()) {
+            return $this->_fixValue($transform->getParams()->getValue());
+        }
+        return false;
     }
 
     /**
@@ -58,8 +63,9 @@ class MapCommand extends AbstractCommand implements ITransform
      */
     protected function _getResult(PunchoutCatalogMappingTransformTransfer $transform)
     {
-        $params = $transform->getParams();
-        $value = (!empty($params['result']) && is_string($params['result'])) ? $params['result'] : false;
-        return $this->_fixValue($value);
+        if (null !== $transform->getParams()->getResult()) {
+            return $this->_fixValue($transform->getParams()->getResult());
+        }
+        return false;
     }
 }

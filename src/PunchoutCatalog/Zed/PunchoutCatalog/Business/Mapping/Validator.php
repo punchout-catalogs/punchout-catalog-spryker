@@ -21,11 +21,11 @@ class Validator
     public function validate($mapping = null): bool
     {
         if (!is_array($mapping)) {
-            throw new InvalidArgumentException('Invalid mapping source');
+            throw new InvalidArgumentException('punchout-catalog.error.invalid.mapping.source');
         }
 
         if (!$this->validateMapping($mapping)) {
-            throw new InvalidArgumentException('Invalid mapping format');
+            throw new InvalidArgumentException('punchout-catalog.error.invalid.mapping.format');
         }
 
         return true;

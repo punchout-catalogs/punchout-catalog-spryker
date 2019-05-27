@@ -42,7 +42,7 @@ class Encoder extends AbstractCoder implements EncoderInterface
     public function execute(PunchoutCatalogMappingTransfer $mapping, TransferInterface $transferData, ?SimpleXMLElement $document = null)
     {
         if (($document !== null) && !($document instanceof SimpleXMLElement)) {
-            throw new InvalidArgumentException('Invalid document data');
+            throw new InvalidArgumentException('punchout-catalog.error.invalid.document.data');
         }
 
         $transferData = $this->toAssociativeArray($transferData);

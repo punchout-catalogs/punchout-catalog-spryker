@@ -29,7 +29,7 @@ class Encoder extends AbstractCoder implements EncoderInterface
     public function execute(PunchoutCatalogMappingTransfer $mapping, TransferInterface $transferData, ?array $document = null)
     {
         if ($document !== null && !is_array($document)) {
-            throw new InvalidArgumentException('Invalid document data');
+            throw new InvalidArgumentException('punchout-catalog.error.invalid.document.data');
         }
 
         $transferData = $this->toAssociativeArray($transferData);

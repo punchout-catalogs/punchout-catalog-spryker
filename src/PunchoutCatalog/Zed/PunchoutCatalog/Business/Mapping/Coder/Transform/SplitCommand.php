@@ -23,7 +23,9 @@ class SplitCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        $params = $transform->getParams();
+        if (null === $transform->getParams()) {
+            return $value;
+        }
 
         if (is_array($value)) {
             //fix some phantoms and don't cause PHP warnings
@@ -37,8 +39,8 @@ class SplitCommand extends AbstractCommand implements ITransform
         if ($sep === false || $sep === '') {
             return $value;
         }
-
-        $idx = (!empty($params['index']) && is_string($params['index'])) ? $params['index'] : 1;
+    
+        $idx = (string)$transform->getParams()->getIndex();
 
         $exploded = explode($sep, $value);
         $value = $this->_filter($exploded);

@@ -274,7 +274,20 @@
 
     <transfer name="PunchoutCatalogMappingTransform">
         <property name="name" type="string"/>
-        <property name="params" type="array"/>
+        <property name="params" type="PunchoutCatalogMappingTransformParams"/>
+    </transfer>
+    <transfer name="PunchoutCatalogMappingTransformParams">
+        <!-- for split/join -->
+        <property name="sep" type="string"/>
+        <property name="index" type="string"/><!-- should be string -->
+        <!-- for cut -->
+        <property name="len" type="int"/>
+        <property name="start" type="int"/>
+        <!-- for round -->
+        <property name="precision" type="int"/>
+        <!-- for map -->
+        <property name="value" type="string"/>
+        <property name="result" type="string"/>
     </transfer>
     <!--/ MAPPING -->
 
