@@ -23,6 +23,10 @@ class RoundCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
+        if (null === $transform->getParams()) {
+            return $value;
+        }
+        
         if (is_array($value)) {
             //fix some phantoms and don't cause PHP warnings
             foreach ($value as &$_val) {
@@ -42,9 +46,10 @@ class RoundCommand extends AbstractCommand implements ITransform
      */
     protected function _getPrecision(PunchoutCatalogMappingTransformTransfer $transform)
     {
-        $params = $transform->getParams();
-        $value = (!empty($params['precision']) && is_string($params['precision'])) ? $params['precision'] : 4;
-        return (int)$value;
+        if (null !== $transform->getParams()->getPrecision()) {
+            return (int)$transform->getParams()->getPrecision();
+        }
+        return 0;
     }
 
     /**

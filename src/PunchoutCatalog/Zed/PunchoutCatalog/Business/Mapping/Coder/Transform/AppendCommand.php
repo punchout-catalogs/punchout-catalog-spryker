@@ -23,20 +23,20 @@ class AppendCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        $params = $transform->getParams();
-
+        if (null === $transform->getParams() || null === $transform->getParams()->getValue()) {
+            return $value;
+        }
+        
+        //fix some phantoms and don't cause PHP warnings
         if (is_array($value)) {
-            //fix some phantoms and don't cause PHP warnings
             foreach ($value as &$_val) {
                 $_val = $this->_execute($transform, $_val);
             }
             return $value;
         } elseif (!is_string($value) && !is_int($value) && !is_float($value)) {
             return $value;
-        } elseif (empty($params['value'])) {
-            return $value;
         }
-
-        return ((string)$value) . ((string)$params['value']);
+        
+        return ((string)$value) . ((string)$transform->getParams()->getValue());
     }
 }

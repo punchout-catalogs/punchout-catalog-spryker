@@ -49,9 +49,10 @@ abstract class AbstractCommand
      */
     protected function _getDelimiter(PunchoutCatalogMappingTransformTransfer $transform)
     {
-        $params = $transform->getParams();
-        $sep = (!empty($params['sep']) && is_string($params['sep'])) ? $params['sep'] : false;
-        return $this->_fixValue($sep);
+        if (null !== $transform->getParams()) {
+            return $this->_fixValue($transform->getParams()->getSep());
+        }
+        return false;
     }
 
     /**
@@ -61,7 +62,7 @@ abstract class AbstractCommand
      */
     protected function _fixValue($value)
     {
-        if ($value !== false && is_string($value)) {
+        if ($value !== null && $value !== false && is_string($value)) {
             $value = str_replace('\\\n', "\n", $value);//New Line
             $value = str_replace('\\n', "\n", $value);//New Line
 

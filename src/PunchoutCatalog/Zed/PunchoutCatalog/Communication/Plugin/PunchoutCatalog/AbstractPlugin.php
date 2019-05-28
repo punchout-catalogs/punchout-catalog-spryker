@@ -32,9 +32,9 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     /**
      * @param string $mapping
      *
-     * @return array
+     * @return array|null
      */
-    protected function convertToArray(string $mapping): array
+    protected function convertToArray(string $mapping): ?array
     {
         return json_decode(trim($mapping), true);
     }

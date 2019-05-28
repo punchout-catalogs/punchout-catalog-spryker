@@ -31,12 +31,14 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      *
      * @return array
      */
-    protected function convertToArray(string $mapping): array
+    protected function convertToArray(string $mapping): ?array
     {
         $mapping = parent::convertToArray($mapping);
-        if (!empty($mapping['cart_item']) && empty($mapping['multi_lines'])) {
+        
+        if (is_array($mapping) && !empty($mapping['cart_item']) && empty($mapping['multi_lines'])) {
             $mapping['cart_item']['multi_lines'] = true;
         }
+        
         return $mapping;
     }
     

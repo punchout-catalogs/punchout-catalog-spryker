@@ -23,7 +23,9 @@ class PrependCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        $params = $transform->getParams();
+        if (null === $transform->getParams() || null === $transform->getParams()->getValue()) {
+            return $value;
+        }
 
         if (is_array($value)) {
             //fix some phantoms and don't cause PHP warnings
@@ -33,10 +35,8 @@ class PrependCommand extends AbstractCommand implements ITransform
             return $value;
         } elseif (!is_string($value) && !is_int($value) && !is_float($value)) {
             return $value;
-        } elseif (empty($params['value'])) {
-            return $value;
         }
 
-        return ((string)$params['value']) . ((string)$value);
+        return ((string)$transform->getParams()->getValue()) . ((string)$value);
     }
 }

@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingObjectFieldTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransformTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogMappingTransformParamsTransfer;
 
 class Converter
 {
@@ -130,8 +131,11 @@ class Converter
             $transformName = key($transform);
             $transformParams = current($transform);
 
+            $transformParamsTransfer = new PunchoutCatalogMappingTransformParamsTransfer();
+            $transformParamsTransfer->fromArray($transformParams, true);
+            
             $transformTransfer->setName(strtolower($transformName));
-            $transformTransfer->setParams($transformParams);
+            $transformTransfer->setParams($transformParamsTransfer);
         }
 
         return $transformTransfer;

@@ -23,10 +23,12 @@ class CutCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        $params = $transform->getParams();
-
+        if (null === $transform->getParams()) {
+            return $value;
+        }
+        
+        //fix some phantoms and don't cause PHP warnings
         if (is_array($value)) {
-            //fix some phantoms and don't cause PHP warnings
             foreach ($value as &$_val) {
                 $_val = $this->_execute($transform, $_val);
             }
@@ -34,12 +36,12 @@ class CutCommand extends AbstractCommand implements ITransform
         } elseif (!is_string($value) && !is_int($value) && !is_float($value)) {
             return $value;
         }
-
-        $len = !empty($params['len']) ? (int)$params['len'] : 0;
+        
+        $len = (int)$transform->getParams()->getLen();
         $len = $len ? $len : null;
-
-        $start = !empty($params['start']) ? (int)$params['start'] : 0;
-
+        
+        $start = (int)$transform->getParams()->getStart();
+        
         if (abs($len) < 1 && abs($start) < 1) {
             return $value;
         } elseif ($start < 0) {
