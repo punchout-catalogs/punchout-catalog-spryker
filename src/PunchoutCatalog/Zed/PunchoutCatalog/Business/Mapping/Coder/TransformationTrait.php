@@ -8,7 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder;
 
 use Generated\Shared\Transfer\PunchoutCatalogMappingObjectFieldTransfer;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AmountCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AmountFormattedCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AppendCommand;
@@ -84,7 +84,7 @@ trait TransformationTrait
     /**
      * @param string $name
      *
-     * @throws \Spryker\Zed\ProductStorage\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\ITransform
      */

@@ -8,7 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci;
 
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\SnippetTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransformationTrait;

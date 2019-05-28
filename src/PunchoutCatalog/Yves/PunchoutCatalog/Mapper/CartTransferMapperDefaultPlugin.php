@@ -94,8 +94,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $this->prepareCustomer($quoteTransfer, $cartRequestTransfer);
         $this->prepareLineItems($quoteTransfer, $cartRequestTransfer);
         $cartRequestTransfer->setCart($this->processMapping($quoteTransfer, $cartRequestTransfer->getCart(), $this->cartMapping));
-
-        dd($quoteTransfer,[],$cartRequestTransfer->getCart(), $cartRequestTransfer->getCartItem(), $cartRequestTransfer->getCustomer());
+        
         return $cartRequestTransfer;
     }
 

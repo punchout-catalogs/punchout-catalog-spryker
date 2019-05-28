@@ -7,15 +7,16 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeBridge;
-use Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery;
-use Spryker\Zed\DataImport\DataImportDependencyProvider;
 use Spryker\Zed\Kernel\Container;
+use Spryker\Zed\DataImport\DataImportDependencyProvider;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeBridge;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeBridge;
+use Orm\Zed\Customer\Persistence\SpyCustomerQuery;
+use Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -28,8 +29,8 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     public const FACADE_CUSTOMER = 'FACADE_CUSTOMER';
     public const FACADE_VAULT = 'FACADE_VAULT';
     public const FACADE_OAUTH_COMPANY_USER = 'FACADE_OAUTH_COMPANY_USER';
-
     public const PROPEL_QUERY_COMPANY_USER = 'PROPEL_QUERY_COMPANY_USER';
+    public const PROPEL_QUERY_CUSTOMER = 'PROPEL_QUERY_CUSTOMER';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -57,8 +58,9 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     public function providePersistenceLayerDependencies(Container $container)
     {
         $container = parent::provideBusinessLayerDependencies($container);
+        $container = $this->addPropelCustomerQuery($container);
         $container = $this->addPropelCompanyUserQuery($container);
-
+        
         return $container;
     }
     
@@ -165,8 +167,20 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     }
 
     /**
-     * @todo: review it
+     * @param \Spryker\Zed\Kernel\Container $container
      *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addPropelCustomerQuery(Container $container): Container
+    {
+        $container[static::PROPEL_QUERY_CUSTOMER] = function (): SpyCustomerQuery {
+            return SpyCustomerQuery::create();
+        };
+
+        return $container;
+    }
+    
+    /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
      * @return \Spryker\Zed\Kernel\Container
@@ -176,7 +190,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container[static::PROPEL_QUERY_COMPANY_USER] = function (): SpyCompanyUserQuery {
             return SpyCompanyUserQuery::create();
         };
-
+        
         return $container;
     }
 }

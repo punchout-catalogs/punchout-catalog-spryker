@@ -7,14 +7,14 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping;
 
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 
 class Validator
 {
     /**
      * @param null $mapping
      *
-     * @throws \Spryker\Zed\ProductStorage\Exception\InvalidArgumentException
+     * @throws \InvalidArgumentException
      *
      * @return bool
      */

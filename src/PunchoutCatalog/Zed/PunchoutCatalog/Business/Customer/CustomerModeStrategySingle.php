@@ -33,10 +33,10 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
     }
     
     /**
-     * @param PunchoutCatalogConnectionTransfer $connectionTransfer
-     * @param PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer $connectionTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer $documentCustomerTransfer
      *
-     * @return CustomerTransfer
+     * @return \Generated\Shared\Transfer\CustomerTransfer
      *
      * @throws AuthenticateException
      */
@@ -49,8 +49,6 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
         $connectionTransfer->getSetup()->requireFkCompanyUser();
         $connectionTransfer->getSetup()->requireFkCompanyBusinessUnit();
     
-        $companyUserTransfer = (new CompanyUserTransfer())->setIdCompanyUser(11);
-    
         $companyUserTransfer = $this->companyUserFacade->findCompanyUserById(
             $connectionTransfer->getSetup()->getFkCompanyUser()
         );
@@ -62,6 +60,6 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
         }
         
         return (new CustomerTransfer())
-            ->setCompanyUserTransfer($companyUserTransfer);;
+            ->setCompanyUserTransfer($companyUserTransfer);
     }
 }

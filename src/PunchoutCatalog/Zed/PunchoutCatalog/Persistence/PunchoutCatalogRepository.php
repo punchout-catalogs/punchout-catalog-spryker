@@ -103,30 +103,55 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
 
         return $connectionList;
     }
-
+    
     /**
-     * @module CompanyUser
-     * @module Company
-     * @module CompanyBusinessUnit
+     * @module Customer
      *
-     * @param int $idCustomer
-     * @param int $idCompanyBusinessUnit
+     * @param string $email
      *
      * @return int|null
      */
-    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompanyBusinessUnit): ?int
+    public function findCustomerIdByEmail(string $email): ?int
+    {
+        $query = $this->getFactory()
+            ->getCustomerQuery()
+            //->filterByIsActive(true)
+            ->filterByEmail($email)
+            //->joinCompany()
+            //->useCompanyQuery()
+            //->joinCompanyBusinessUnit()
+            //->useCompanyBusinessUnitQuery()
+            //->filterByIdCompanyBusinessUnit($idCompanyBusinessUnit)
+            //->endUse()
+            //->endUse()
+        ;
+    
+        $customer = $query->findOne();
+        if ($customer === null) {
+            return null;
+        }
+    
+        return $customer->getIdCustomer();
+    }
+    
+    /**
+     * @module CompanyUser
+     * @module Company
+     * @module Customer
+     * @module CompanyBusinessUnit
+     *
+     * @param int $idCustomer
+     * @param int $idCompany
+     *
+     * @return int|null
+     */
+    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompany): ?int
     {
         $query = $this->getFactory()
             ->getCompanyUserQuery()
             ->filterByIsActive(true)
             ->filterByFkCustomer($idCustomer)
-            ->joinCompany()
-            ->useCompanyQuery()
-                ->joinCompanyBusinessUnit()
-                ->useCompanyBusinessUnitQuery()
-                    ->filterByIdCompanyBusinessUnit($idCompanyBusinessUnit)
-                ->endUse()
-            ->endUse();
+            ->filterByFkCompany($idCompany);
 
         $companyUser = $query->findOne();
         if ($companyUser === null) {

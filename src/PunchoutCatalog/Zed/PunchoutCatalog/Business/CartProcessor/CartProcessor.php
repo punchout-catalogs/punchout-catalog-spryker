@@ -23,7 +23,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\Cxm
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciCartProcessorStrategyPlugin;
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\TransferredCartException;
 
 /**
@@ -143,6 +143,7 @@ class CartProcessor implements CartProcessorInterface
     
             if ($e->getPrevious()) {
                 $punchoutCatalogResponseTransfer->addException("Original Exception:\n" . $e->getPrevious()->getMessage());
+                $punchoutCatalogResponseTransfer->addException($e->getPrevious()->getTraceAsString());
             }
             
             return $punchoutCatalogResponseTransfer;
