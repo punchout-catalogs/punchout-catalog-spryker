@@ -56,7 +56,7 @@
 
         <column name="fk_company_user" type="INTEGER" required="false"/>
 
-        <column name="login_mode" type="VARCHAR" size="64" required="true"/>
+        <column name="login_mode" type="VARCHAR" size="32" required="true"/>
 
         <foreign-key name="pgw_punchout_catalog_connection_setup-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
             <reference local="id_punchout_catalog_connection_setup" foreign="id_punchout_catalog_connection"/>
@@ -75,6 +75,8 @@
         <column name="encoding" type="VARCHAR" size="16" required="false"/>
 
         <column name="mapping" type="LONGVARCHAR" required="false"/>
+
+        <column name="bundle_mode" type="VARCHAR" size="32" required="true"/>
 
         <foreign-key name="pgw_punchout_catalog_connection_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
             <reference local="id_punchout_catalog_connection_cart" foreign="id_punchout_catalog_connection"/>
