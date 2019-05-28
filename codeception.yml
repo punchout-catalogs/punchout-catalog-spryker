@@ -9,6 +9,13 @@ coverage:
     enabled: true
     whitelist: { include: ['src/*'] }
 
+settings:
+    bootstrap: _bootstrap.php
+    suite_class: \PHPUnit_Framework_TestSuite
+    colors: true
+    memory_limit: 1024M
+    log: true
+
 include:
     - tests/PunchoutCatalogTest/Zed/PunchoutCatalog
 actor_suffix: Tester

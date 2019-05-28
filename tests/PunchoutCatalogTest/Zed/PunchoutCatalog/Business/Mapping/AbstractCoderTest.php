@@ -25,10 +25,10 @@ class AbstractCoderTest extends Unit
     /**
      *
      */
-    protected function _setUp()
+    public function setUp()
     {
         $this->decoder = new Decoder();
-        return parent::_setUp();
+        return parent::setUp();
     }
 
 }
