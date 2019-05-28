@@ -22,7 +22,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInt
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 class ConnectionAuthenticator implements ConnectionAuthenticatorInterface

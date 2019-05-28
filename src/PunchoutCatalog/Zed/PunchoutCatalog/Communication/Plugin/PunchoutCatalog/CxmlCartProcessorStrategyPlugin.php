@@ -17,7 +17,7 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;

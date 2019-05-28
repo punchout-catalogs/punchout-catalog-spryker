@@ -44,12 +44,26 @@ interface PunchoutCatalogRepositoryInterface
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer
      */
     public function findConnections(PunchoutCatalogConnectionCriteriaTransfer $punchoutCatalogConnectionCriteriaTransfer): PunchoutCatalogConnectionListTransfer;
-
+    
     /**
-     * @param int $idCustomer
-     * @param int $idCompanyBusinessUnit
+     * @module Customer
+     *
+     * @param string $email
      *
      * @return int|null
      */
-    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompanyBusinessUnit): ?int;
+    public function findCustomerIdByEmail(string $email): ?int;
+
+    /**
+     * @module CompanyUser
+     * @module Company
+     * @module Customer
+     * @module CompanyBusinessUnit
+     *
+     * @param int $idCustomer
+     * @param int $idCompany
+     *
+     * @return int|null
+     */
+    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompany): ?int;
 }

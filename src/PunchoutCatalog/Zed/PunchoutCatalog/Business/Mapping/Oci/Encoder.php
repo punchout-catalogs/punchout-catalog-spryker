@@ -10,7 +10,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci;
 use Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Spryker\Shared\Kernel\Transfer\TransferInterface;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransferDataTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransformationTrait;
