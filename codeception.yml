@@ -1,0 +1,17 @@
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+
+coverage:
+    enabled: true
+    whitelist: { include: ['src/*'] }
+
+include:
+    - tests/PunchoutCatalogTest/Zed/PunchoutCatalog
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed
