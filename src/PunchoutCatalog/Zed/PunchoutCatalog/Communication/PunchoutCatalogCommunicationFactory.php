@@ -8,7 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication;
 
 use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;

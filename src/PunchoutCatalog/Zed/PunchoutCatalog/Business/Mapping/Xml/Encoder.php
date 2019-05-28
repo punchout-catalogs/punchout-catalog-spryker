@@ -11,7 +11,7 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use SimpleXMLElement;
 use Spryker\Shared\Kernel\Transfer\TransferInterface;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\SnippetTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransferDataTrait;

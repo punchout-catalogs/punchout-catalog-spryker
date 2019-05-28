@@ -9,7 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml;
 
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use SimpleXMLElement;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\SnippetTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransformationTrait;

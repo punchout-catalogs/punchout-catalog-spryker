@@ -23,7 +23,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\Cxm
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciCartProcessorStrategyPlugin;
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\TransferredCartException;
 
 /**
