@@ -40,4 +40,7 @@ interface PunchoutConnectionConstsInterface
     
     public const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
     public const CUSTOMER_LOGIN_MODE_DYNAMIC = 'dynamic_user';
+    
+    public const BUNDLE_MODE_SINGLE = 'single';
+    public const BUNDLE_MODE_COMPOSITE = 'composite';
 }

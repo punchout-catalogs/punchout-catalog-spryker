@@ -21,7 +21,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\Cxm
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciSetupRequestProcessorStrategyPlugin;
 
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use Spryker\Zed\ProductStorage\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 /**
@@ -158,6 +158,7 @@ class RequestProcessor implements RequestProcessorInterface
         
         if ($exception->getPrevious()) {
             $response->addException("Original Exception:\n" . $exception->getPrevious()->getMessage());
+            $response->addException($exception->getPrevious()->getTraceAsString());
         }
         
         return $response;

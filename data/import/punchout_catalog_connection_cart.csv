@@ -1,5 +1,5 @@
-connection_name,default_supplier_id,max_description_length,encoding,mapping
-Client 1 - cXml - User 1,spryker_sup_3,100,base64,"{
+connection_name,default_supplier_id,max_description_length,bundle_mode,encoding,mapping
+Client 1 - cXml - User 1,spryker_sup_3,100,composite,base64,"{
   ""cart"": {
     ""fields"": {
       ""cart_note"": {
@@ -76,7 +76,7 @@ Client 1 - cXml - User 1,spryker_sup_3,100,base64,"{
     }
   }
 }"
-Client 1 - Oci - User 1,spryker_sup_1,128,,"
+Client 1 - Oci - User 1,spryker_sup_1,128,composite,,"
 {
   ""cart_item"": {
     ""fields"": {
@@ -113,7 +113,7 @@ Client 1 - Oci - User 1,spryker_sup_1,128,,"
     }
   }
 }"
-Client 1 - cXml - User 2,spryker_sup_3,,urlencoded,"{
+Client 1 - cXml - User 2,spryker_sup_3,,single,urlencoded,"{
   ""cart"": {
     ""fields"": {
       ""cart_note"": {
@@ -236,5 +236,5 @@ Client 1 - cXml - User 2,spryker_sup_3,,urlencoded,"{
     }
   }
 }"
-Client 2 - cXml - User 1,spryker_sup_2,,urlencoded,{}
-Client 3 - cXml - User 3,spryker_sup_3,,base64,{}
+Client 2 - cXml - User 1,spryker_sup_2,,composite,urlencoded,{}
+Client 3 - cXml - User 3,spryker_sup_3,,composite,base64,{}
