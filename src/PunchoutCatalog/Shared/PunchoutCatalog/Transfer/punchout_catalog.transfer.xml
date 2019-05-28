@@ -199,6 +199,11 @@
 
     <transfer name="PunchoutCatalogDocumentCartItem">
         <property name="lineNumber" type="int"/>
+
+        <property name="parentLineNumber" type="int"/>
+        <property name="itemType" type="string"/>
+        <property name="compositeItemType" type="string"/>
+
         <property name="locale" type="string"/>
 
         <property name="internalId" type="string"/>
