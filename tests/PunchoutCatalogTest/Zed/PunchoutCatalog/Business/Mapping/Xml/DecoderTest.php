@@ -11,7 +11,6 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder;
 
 class DecoderTest extends Unit
 {
-    use Helper;
     /**
      * @var Decoder
      */
@@ -24,6 +23,35 @@ class DecoderTest extends Unit
         $document = $this->decoder->execute($mapping, $source);
 
         $this->assertEquals($this->getSetupRequestData(), $document, 'Should be the same data');
+    }
+
+    /**
+     * @return PunchoutCatalogMappingTransfer
+     */
+    protected function createMapping(): PunchoutCatalogMappingTransfer
+    {
+        return (new PunchoutCatalogMappingTransfer())
+            ->addObject(
+                (new PunchoutCatalogMappingObjectTransfer())
+                    ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
+                        ->setName('first_name')
+                        ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name=\'FirstName\']']))
+                    ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
+                        ->setName('last_name')
+                        ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name=\'LastName\']']))
+                    ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
+                        ->setName('email')
+                        ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name=\'UserEmail\']']))
+                    ->setName('customer')
+            )
+            ->addObject(
+                (new PunchoutCatalogMappingObjectTransfer())
+                    ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
+                        ->setName('internal_id')
+                        ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/ItemOut/ItemID[1]/SupplierPartAuxiliaryID']))
+                    ->setName('cart_item')
+                    ->setIsMultiple(true)
+            );
     }
 
     /**
@@ -123,7 +151,9 @@ class DecoderTest extends Unit
                 'email' => 'cxml@punchoutcatalogs.net',
             ],
             'cart_item' => [
-                'internal_id' => 'fakeInternalId',
+                [
+                    'internal_id' => 'fakeInternalId',
+                ],
             ],
         ];
     }
