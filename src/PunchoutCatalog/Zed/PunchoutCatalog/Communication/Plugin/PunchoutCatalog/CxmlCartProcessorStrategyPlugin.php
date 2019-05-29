@@ -27,12 +27,14 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartPro
 use SimpleXMLElement;
 
 /**
+ * @see: http://xml.cxml.org/current/ReleaseNotes.html
+ *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
 class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutCatalogCartProcessorStrategyPluginInterface
 {
-    protected const CXML_VERSION = '1.2.021';
+    protected const CXML_VERSION = '1.2.023';//1.2.021
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer

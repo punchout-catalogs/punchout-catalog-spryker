@@ -169,6 +169,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
             'punchout_catalog_connection_cart' => [
                 'default_supplier_id' => $connection->getCart()->getDefaultSupplierId(),
                 'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
+                'bundle_mode' => $connection->getCart()->getBundleMode(),
             ],
             'punchout_login_mode' => $connection->getSetup()->getLoginMode(),
             //store it in session - for sake of different customizations - currently can't use it as
