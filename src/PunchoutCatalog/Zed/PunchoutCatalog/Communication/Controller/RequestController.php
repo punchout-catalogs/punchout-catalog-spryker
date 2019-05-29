@@ -72,9 +72,10 @@ class RequestController extends AbstractController
         } else {
             $punchoutCatalogRequestTransfer->setContent($request->getContent());//RAW BODY
         }
+        
         //@todo: remove it
-        $punchoutCatalogRequestTransfer->setContentType('text/xml');
-        $punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
+        //$punchoutCatalogRequestTransfer->setContentType('text/xml');
+        //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestCxml());
     
         //$punchoutCatalogRequestTransfer->setContentType('multipart/form-data');
         //$punchoutCatalogRequestTransfer->setContent($this->getFakeSetupRequestOci());
