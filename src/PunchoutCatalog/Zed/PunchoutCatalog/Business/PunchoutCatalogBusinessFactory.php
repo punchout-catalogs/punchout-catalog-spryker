@@ -7,6 +7,10 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessor;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessorInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
 use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
 use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
@@ -206,5 +210,21 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
     {
         return new UtilUuidGeneratorService();
+    }
+
+    /**
+     * @return OciContentProcessorInterface
+     */
+    public function createOciContentProcessor(): OciContentProcessorInterface
+    {
+        return new OciContentProcessor();
+    }
+
+    /**
+     * @return ProtocolDataValidatorInterface
+     */
+    public function createOciProtocolDataValidator(): ProtocolDataValidatorInterface
+    {
+        return new ProtocolDataValidator();
     }
 }

@@ -8,37 +8,27 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use PunchoutCatalog\Service\UtilOci\UtilOciService;
 
 /**
- * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacadeInterface getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
 class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements PunchoutCatalogProtocolStrategyPluginInterface
 {
     /**
-     * @api
+     * {@inheritdoc}
+     * - Returns true if provided content has a multipart/form-data content type with a non-empty OCI content.
+     * - Returns false otherwise.
      *
-     * @var \PunchoutCatalog\Service\UtilOci\UtilOciServiceInterface
-     */
-    protected $utilOciService;
-
-    public function __construct()
-    {
-        $this->utilOciService = new UtilOciService();
-    }
-
-    /**
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
@@ -49,16 +39,23 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
     {
         if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
             return false;
-        } elseif (empty($punchoutCatalogRequestTransfer->getContent())) {
+        }
+
+        if (empty($punchoutCatalogRequestTransfer->getContent()) || !is_array($punchoutCatalogRequestTransfer->getContent())) {
             return false;
         }
 
-        return (is_array($punchoutCatalogRequestTransfer->getContent())
-            && $this->utilOciService->isOci($punchoutCatalogRequestTransfer->getContent())
-        );
+        /** @var array $content */
+        $content = $punchoutCatalogRequestTransfer->getContent();
+
+        return $this->getFacade()->isOciContent($content);
     }
 
     /**
+     * {@inheritdoc}
+     * - Sets protocol type, protocol operation and "protocol data property".
+     * - Throws exception if any mandatory data is missing.
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
@@ -70,32 +67,27 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
     ): PunchoutCatalogSetupRequestTransfer
     {
-        $protocolData = $this->utilOciService->fetchHeaderAsArray($punchoutCatalogRequestTransfer->getContent());
-        $protocolOperation = $this->utilOciService->getOperation($punchoutCatalogRequestTransfer->getContent());
+        /** @var array $content */
+        $content = $punchoutCatalogRequestTransfer->getContent();
+
+        $protocolData = $this->getFacade()->fetchOciHeader($content);
+        $protocolOperation = $this->getFacade()->fetchOciOperation($content);
 
         $punchoutCatalogRequestTransfer
             ->setProtocolType(PunchoutConnectionConstsInterface::FORMAT_OCI)
             ->setProtocolOperation($protocolOperation)
-            ->setProtocolData(
-                (new PunchoutCatalogProtocolDataTransfer())->fromArray($protocolData)
-            );
-        
-        try {
-            $punchoutCatalogRequestTransfer->requireProtocolOperation();
-            
-            (new ProtocolDataValidator())->validate(
-                $punchoutCatalogRequestTransfer->getProtocolData()
-            );
-        } catch (RequiredTransferPropertyException $e) {
-            throw new AuthenticateException(
-                PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
-            );
-        }
+            ->setProtocolData($protocolData);
+
+        $this->assertOciRequestData($punchoutCatalogRequestTransfer);
 
         return $punchoutCatalogRequestTransfer;
     }
 
     /**
+     * {@inheritdoc}
+     * - Requires context to be set.
+     * - Searches and sets connection by credential.
+     *
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
@@ -108,47 +100,80 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
     {
         $punchoutCatalogRequestTransfer->requireContext();
         
-        $type = $this->mapProtocolOperationToConnectionType($punchoutCatalogRequestTransfer->getProtocolOperation());
+        $connectionType = $this->mapProtocolOperationToConnectionType($punchoutCatalogRequestTransfer->getProtocolOperation());
+        $punchoutCatalogConnectionTransfer = $this->findConnectionByCredential($connectionType, $punchoutCatalogRequestTransfer);
 
-        $credentialSearchTransfer = new PunchoutCatalogConnectionCredentialSearchTransfer();
-        $credentialSearchTransfer->setFkCompanyBusinessUnit(
-            $punchoutCatalogRequestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
-        );
-        
-        $credentialSearchTransfer->setFormat($punchoutCatalogRequestTransfer->getProtocolType());
-        $credentialSearchTransfer->setType($type);
-
-        $credentialSearchTransfer->setUsername(
-            $punchoutCatalogRequestTransfer->getProtocolData()
-                ->getOciCredentials()
-                ->getUsername()
-        );
-        $credentialSearchTransfer->setPassword(
-            $punchoutCatalogRequestTransfer->getProtocolData()
-                ->getOciCredentials()
-                ->getPassword()
-        );
-    
-        $punchoutCatalogConnectionTransfer = $this->getFacade()->findConnectionByCredential($credentialSearchTransfer);
-        $punchoutCatalogRequestTransfer->getContext()->setPunchoutCatalogConnection(
-            $punchoutCatalogConnectionTransfer
-        );
+        $punchoutCatalogRequestTransfer
+            ->getContext()
+            ->setPunchoutCatalogConnection($punchoutCatalogConnectionTransfer);
     
         return $punchoutCatalogRequestTransfer;
     }
 
     /**
-     * @param $protocolOperation
+     * @param string|null $protocolOperation
      *
      * @return string|null
      */
-    protected function mapProtocolOperationToConnectionType($protocolOperation): ?string
+    protected function mapProtocolOperationToConnectionType(?string $protocolOperation): ?string
     {
         switch ($protocolOperation) {
             case PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST:
                 return PunchoutConnectionConstsInterface::CONNECTION_TYPE_SETUP_REQUEST;
             default:
                 return null;
+        }
+    }
+
+    /**
+     * @param null|string $connectionType
+     * @param PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer|null
+     */
+    protected function findConnectionByCredential(?string $connectionType, PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): ?PunchoutCatalogConnectionTransfer
+    {
+        $credentialSearchTransfer = (new PunchoutCatalogConnectionCredentialSearchTransfer())
+            ->setFormat($punchoutCatalogRequestTransfer->getProtocolType())
+            ->setType($connectionType)
+            ->setFkCompanyBusinessUnit(
+                $punchoutCatalogRequestTransfer
+                    ->getCompanyBusinessUnit()
+                    ->getIdCompanyBusinessUnit()
+            )
+            ->setUsername(
+                $punchoutCatalogRequestTransfer
+                    ->getProtocolData()
+                    ->getOciCredentials()
+                    ->getUsername()
+            )
+            ->setPassword(
+                $punchoutCatalogRequestTransfer
+                    ->getProtocolData()
+                    ->getOciCredentials()
+                    ->getPassword()
+            );
+
+        return $this->getFacade()->findConnectionByCredential($credentialSearchTransfer);
+    }
+
+    /**
+     * @throws AuthenticateException
+     *
+     * @param PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+     *
+     * @return void
+     */
+    protected function assertOciRequestData(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): void
+    {
+        try {
+            $punchoutCatalogRequestTransfer->requireProtocolOperation();
+
+            $this->getFacade()->assertOciProtocolData($punchoutCatalogRequestTransfer->getProtocolData());
+        } catch (RequiredTransferPropertyException $e) {
+            throw new AuthenticateException(
+                PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
+            );
         }
     }
 }

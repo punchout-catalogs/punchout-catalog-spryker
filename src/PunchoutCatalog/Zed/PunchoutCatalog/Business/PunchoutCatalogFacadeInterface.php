@@ -16,11 +16,14 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReportTransfer;
+use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 
 interface PunchoutCatalogFacadeInterface
 {
@@ -143,4 +146,55 @@ interface PunchoutCatalogFacadeInterface
      * @return \Generated\Shared\Transfer\DataImporterReportTransfer
      */
     public function importCart(?DataImporterConfigurationTransfer $dataImporterConfigurationTransfer = null): DataImporterReportTransfer;
+
+
+    /**
+     * Specification:
+     * - Decides if the provided content is OCI.
+     *
+     * @api
+     *
+     * @param array $content
+     *
+     * @return bool
+     */
+    public function isOciContent(array $content): bool;
+
+    /**
+     * Specification:
+     * - Fetches header as protocol data from an OCI content.
+     *
+     * @api
+     *
+     * @param array $content
+     *
+     * @return PunchoutCatalogProtocolDataTransfer
+     */
+    public function fetchOciHeader(array $content): PunchoutCatalogProtocolDataTransfer;
+
+    /**
+     * Specification:
+     * - Fetches operation name from an OCI content.
+     *
+     * @api
+     *
+     * @param array $content
+     *
+     * @return string
+     */
+    public function fetchOciOperation(array $content): string;
+
+    /**
+     * Specification:
+     * - Asserts that all mandatory properties are present in the provided OCI "ProtocolDataTransfer".
+     *
+     * @api
+     *
+     * @throws RequiredTransferPropertyException
+     *
+     * @param PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer
+     *
+     * @return void
+     */
+    public function assertOciProtocolData(PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer): void;
 }

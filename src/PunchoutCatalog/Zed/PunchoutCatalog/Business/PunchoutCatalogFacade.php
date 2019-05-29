@@ -17,11 +17,13 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReportTransfer;
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
 
 /**
@@ -224,5 +226,71 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         return $this->getFactory()
             ->createUtilUuidGeneratorService()
             ->generateUuid5FromObjectId($id);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param array $content
+     *
+     * @return bool
+     */
+    public function isOciContent(array $content): bool
+    {
+        return $this->getFactory()
+            ->createOciContentProcessor()
+            ->isOciContent($content);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param array $content
+     *
+     * @return PunchoutCatalogProtocolDataTransfer
+     */
+    public function fetchOciHeader(array $content): PunchoutCatalogProtocolDataTransfer
+    {
+        return $this->getFactory()
+            ->createOciContentProcessor()
+            ->fetchHeader($content);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param array $content
+     *
+     * @return string
+     */
+    public function fetchOciOperation(array $content): string
+    {
+        return $this->getFactory()
+            ->createOciContentProcessor()
+            ->fetchOperation($content);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @throws RequiredTransferPropertyException
+     *
+     * @param PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer
+     *
+     * @return void
+     */
+    public function assertOciProtocolData(PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer): void
+    {
+        $this->getFactory()
+            ->createOciProtocolDataValidator()
+            ->validate($punchoutCatalogProtocolDataTransfer);
     }
 }
