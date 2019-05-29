@@ -20,6 +20,11 @@ use Spryker\Yves\Kernel\AbstractPlugin;
 class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTransferMapperPluginInterface
 {
     /**
+     * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
+     */
+    protected $cartItemTransformerPlugins;
+    
+    /**
      * @var string
      */
     protected $currentLocale;
@@ -58,12 +63,14 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
      * @var array
      */
     protected $cartCustomerMapping = [];
-
+    
     /**
-     * CartTransferMapperDefaultPlugin constructor.
+     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[] $cartItemTransformerPlugins
      */
-    public function __construct()
+    public function __construct(array $cartItemTransformerPlugins = [])
     {
+        $this->cartItemTransformerPlugins = $cartItemTransformerPlugins;
+        
         $this->glossaryStorageClient = $this->getFactory()->getGlossaryStorageClient();
         $this->moneyClient = $this->getFactory()->getMoneyClient();
         $this->productStorageClient = $this->getFactory()->getProductStorageClient();
@@ -231,8 +238,10 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     ): PunchoutCatalogCartRequestTransfer
     {
         $totalQty = 0;
-        if ($quoteTransfer->getItems()) {
-            foreach ($quoteTransfer->getItems() as $idx => $quoteItemTransfer) {
+        
+        $cartItems = $this->getCartItems($quoteTransfer);
+        if ($cartItems) {
+            foreach ($cartItems as $idx => $quoteItemTransfer) {
                 $documentCartItemTransfer = new PunchoutCatalogDocumentCartItemTransfer();
                 $documentCartItemTransfer->setLineNumber($idx + 1);
                 $documentCartItemTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
@@ -478,5 +487,23 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             }
         }
         return $outputTransfer;
+    }
+    
+    /**
+     * @see: \SprykerShop\Yves\CartPage\Model\CartItemReader
+     * 
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function getCartItems(QuoteTransfer $quoteTransfer): array
+    {
+        $cartItems = $quoteTransfer->getItems()->getArrayCopy();
+        
+        foreach ($this->cartItemTransformerPlugins as $cartItemTransformerPlugin) {
+            $cartItems = $cartItemTransformerPlugin->transformCartItems($cartItems, $quoteTransfer);
+        }
+        
+        return $cartItems;
     }
 }
