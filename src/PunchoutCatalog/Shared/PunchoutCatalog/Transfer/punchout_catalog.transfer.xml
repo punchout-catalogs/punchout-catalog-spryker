@@ -215,7 +215,6 @@
 
         <property name="internalId" type="string"/>
         <property name="supplierId" type="string"/>
-        <property name="manufacturerName" type="string"/>
 
         <property name="sku" type="string"/>
         <property name="groupKey" type="string"/>
@@ -226,6 +225,7 @@
         <property name="longDescription" type="string"/>
 
         <property name="imageUrl" type="string"/>
+        <property name="images" type="string[]" singular="image"/>
 
         <property name="productPackagingUnit" type="string"/>
         <property name="unspsc" type="string"/>
