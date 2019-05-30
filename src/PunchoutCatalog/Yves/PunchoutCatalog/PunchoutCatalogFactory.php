@@ -7,14 +7,17 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog;
 
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductBundleClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientInterface;
+
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapper;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperInterface;
+
 use Spryker\Client\Customer\CustomerClient;
 use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
 use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
@@ -138,5 +141,13 @@ class PunchoutCatalogFactory extends AbstractFactory
     public function getModuleConfig(): PunchoutCatalogConfig
     {
         return $this->getConfig();
+    }
+    
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductBundleClientInterface
+     */
+    public function getProductBundleClient(): PunchoutCatalogToProductBundleClientInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_PRODUCT_BUNDLE);
     }
 }

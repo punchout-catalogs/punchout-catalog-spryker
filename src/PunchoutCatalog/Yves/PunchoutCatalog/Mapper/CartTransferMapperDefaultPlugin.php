@@ -20,6 +20,11 @@ use Spryker\Yves\Kernel\AbstractPlugin;
 class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTransferMapperPluginInterface
 {
     /**
+     * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
+     */
+    protected $cartItemTransformerPlugins;
+    
+    /**
      * @var string
      */
     protected $currentLocale;
@@ -58,12 +63,14 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
      * @var array
      */
     protected $cartCustomerMapping = [];
-
+    
     /**
-     * CartTransferMapperDefaultPlugin constructor.
+     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[] $cartItemTransformerPlugins
      */
-    public function __construct()
+    public function __construct(array $cartItemTransformerPlugins = [])
     {
+        $this->cartItemTransformerPlugins = $cartItemTransformerPlugins;
+        
         $this->glossaryStorageClient = $this->getFactory()->getGlossaryStorageClient();
         $this->moneyClient = $this->getFactory()->getMoneyClient();
         $this->productStorageClient = $this->getFactory()->getProductStorageClient();
@@ -220,6 +227,8 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
+     * @todo: improve this method to cover bundle products: single + composite modes
+     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $cartRequestTransfer
      *
@@ -231,8 +240,10 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     ): PunchoutCatalogCartRequestTransfer
     {
         $totalQty = 0;
-        if ($quoteTransfer->getItems()) {
-            foreach ($quoteTransfer->getItems() as $idx => $quoteItemTransfer) {
+        
+        $cartItems = $this->getCartItems($quoteTransfer);
+        if ($cartItems) {
+            foreach ($cartItems as $idx => $quoteItemTransfer) {
                 $documentCartItemTransfer = new PunchoutCatalogDocumentCartItemTransfer();
                 $documentCartItemTransfer->setLineNumber($idx + 1);
                 $documentCartItemTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
@@ -271,9 +282,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     {
         $internalId = $this->getQuoteItemInternalId($quoteItemTransfer);
         $supplierId = $this->getDefaultSupplierId();
-
+    
         $productAbstractStorageData = $this->productStorageClient->getProductAbstractStorageData($quoteItemTransfer->getIdProductAbstract(), $this->currentLocale);
-
+    
         $longDescriptionParts = [$productAbstractStorageData['description']];
         foreach ($quoteItemTransfer->getProductOptions() as $option) {
             $value = $this->glossaryStorageClient->translate($option->getValue(), $this->currentLocale);
@@ -288,51 +299,55 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             $image = $quoteItemTransfer->getImages()[0];
             $imageUrl = $image->getExternalUrlSmall();
         }
-
+    
         $brand = '';
         if (!empty($productAbstractStorageData['attributes']['brand'])) {
             $brand = $productAbstractStorageData['attributes']['brand'];
         }
-
+    
         $productDescription = $this->limitDescription($productAbstractStorageData['description']);
         $productLongDescription = $this->limitDescription(implode("\n", array_filter($longDescriptionParts)));
-
+    
         $documentCartItemTransfer->setInternalId($internalId);
         $documentCartItemTransfer->setSupplierId($supplierId);
         $documentCartItemTransfer->setLocale($this->toLang($this->currentLocale));
-
+    
         $documentCartItemTransfer->setQuantity($quoteItemTransfer->getQuantity());
         $documentCartItemTransfer->setProductPackagingUnit($quoteItemTransfer->getProductPackagingUnit());
         $documentCartItemTransfer->setBrand($brand);
         $documentCartItemTransfer->setSku($quoteItemTransfer->getSku());
         $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
-
+    
         $documentCartItemTransfer->setName(trim($quoteItemTransfer->getName()));
         $documentCartItemTransfer->setDescription(trim($productDescription));
         $documentCartItemTransfer->setLongDescription(trim($productLongDescription));
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
         $documentCartItemTransfer->setImageUrl($imageUrl);
-
+    
         //
         //PRICING & RATES
         $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
-
+    
         $documentCartItemTransfer->setUnitPrice(
             $this->toAmount($quoteItemTransfer->getUnitPrice(), $documentCartItemTransfer->getCurrency())
         );
-
+    
         $documentCartItemTransfer->setSumPrice(
             $this->toAmount($quoteItemTransfer->getSumPrice(), $documentCartItemTransfer->getCurrency())
         );
-
-        $documentCartItemTransfer->setSumTaxAmount(
-            $this->toAmount($quoteItemTransfer->getSumTaxAmount(), $documentCartItemTransfer->getCurrency())
-        );
-
-        $documentCartItemTransfer->setSumDiscountAmount(
-            $this->toAmount($quoteItemTransfer->getSumDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
-        );
+    
+        if (null !== $quoteItemTransfer->getSumTaxAmount()) {
+            $documentCartItemTransfer->setSumTaxAmount(
+                $this->toAmount($quoteItemTransfer->getSumTaxAmount(), $documentCartItemTransfer->getCurrency())
+            );
+        }
+    
+        if (null !== $quoteItemTransfer->getSumDiscountAmountAggregation()) {
+            $documentCartItemTransfer->setSumDiscountAmount(
+                $this->toAmount($quoteItemTransfer->getSumDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
+            );
+        }
 
         if ($quoteItemTransfer->getProductOptions()) {
             $options = new ArrayObject();
@@ -478,5 +493,23 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             }
         }
         return $outputTransfer;
+    }
+    
+    /**
+     * @see: \SprykerShop\Yves\CartPage\Model\CartItemReader
+     * 
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return \Generated\Shared\Transfer\ItemTransfer[]
+     */
+    public function getCartItems(QuoteTransfer $quoteTransfer): array
+    {
+        $cartItems = $quoteTransfer->getItems()->getArrayCopy();
+        
+        foreach ($this->cartItemTransformerPlugins as $cartItemTransformerPlugin) {
+            $cartItems = $cartItemTransformerPlugin->transformCartItems($cartItems, $quoteTransfer);
+        }
+        
+        return $cartItems;
     }
 }
