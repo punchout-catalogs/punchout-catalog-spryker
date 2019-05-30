@@ -16,6 +16,11 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\ITransform;
 class AmountCommand extends AbstractCommand implements ITransform
 {
     /**
+     * @var string
+     */
+    protected $_thousandsSeparator = ',';
+
+    /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogMappingTransformTransfer $transform
      * @param $value
      *
@@ -23,6 +28,9 @@ class AmountCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
+        if ($transform->getParams() !== null && $transform->getParams()->getThousandsSep() !== null) {
+            $this->_thousandsSeparator = $transform->getParams()->getThousandsSep();
+        }
         if (is_array($value)) {
             //fix some phantoms and don't cause PHP warnings
             foreach ($value as &$_val) {
@@ -42,7 +50,7 @@ class AmountCommand extends AbstractCommand implements ITransform
      */
     protected function toAmount($value): ?string
     {
-        $value = str_replace(",", "", (string)$value);//fix numbers like 21,444.19
+        $value = str_replace($this->_thousandsSeparator, '', (string)$value);//fix numbers like 21,444.19
         return (float)$value;
     }
 }

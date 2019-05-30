@@ -295,6 +295,8 @@
         <!-- for map -->
         <property name="value" type="string"/>
         <property name="result" type="string"/>
+        <!-- for amount -->
+        <property name="thousandsSep" type="string"/>
     </transfer>
     <!--/ MAPPING -->
 
