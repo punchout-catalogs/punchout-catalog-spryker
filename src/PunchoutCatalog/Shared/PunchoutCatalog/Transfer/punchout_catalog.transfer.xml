@@ -21,6 +21,10 @@
         <property name="code" type="string" />
     </transfer>
 
+    <transfer name="Item">
+        <property name="childBundleItems" type="Item[]" />
+    </transfer>
+
     <!-- SETUP REQUEST / RESPONSE-->
     <transfer name="PunchoutCatalogSetupRequest">
         <property name="contentType" type="string" />
