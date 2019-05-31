@@ -227,7 +227,7 @@
         <property name="imageUrl" type="string"/>
         <property name="images" type="string[]" singular="image"/>
 
-        <property name="productPackagingUnit" type="string"/>
+        <property name="uom" type="string"/>
         <property name="unspsc" type="string"/>
         <property name="brand" type="string"/>
         <property name="cartNote" type="string"/>

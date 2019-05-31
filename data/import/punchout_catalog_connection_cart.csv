@@ -64,7 +64,7 @@ Client 1 - cXml - User 1,spryker_sup_3,100,composite,base64,"{
       ""long_description"": {
         ""path"": ""ItemDetail[1]/Description[1]""
       },
-      ""product_packaging_unit"": {
+      ""uom"": {
         ""path"": ""ItemDetail[1]/UnitOfMeasure[1]"",
         ""transform"": [{
           ""default"": {
@@ -136,7 +136,7 @@ Client 1 - Oci - User 1,spryker_sup_1,128,composite,,"
       ""long_description"": {
         ""path"": ""NEW_ITEM-LONGTEXT_%line_number%:132[]""
       },
-      ""product_packaging_unit"": {
+      ""uom"": {
         ""path"": ""NEW_ITEM-UNIT[%line_number%]"",
         ""transform"": [{
           ""default"": {
@@ -234,7 +234,7 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,urlencoded,"{
       ""long_description"": {
         ""path"": ""ItemDetail[1]/Description[1]""
       },
-      ""product_packaging_unit"": {
+      ""uom"": {
         ""path"": ""ItemDetail[1]/UnitOfMeasure[1]"",
         ""transform"": [{
           ""default"": {
@@ -338,7 +338,7 @@ Client 2 - Oci - User 2,spryker_sup_1,,single,,"
       ""long_description"": {
         ""path"": ""NEW_ITEM-LONGTEXT_%line_number%:132[]""
       },
-      ""product_packaging_unit"": {
+      ""uom"": {
         ""path"": ""NEW_ITEM-UNIT[%line_number%]"",
         ""transform"": [{
           ""default"": {
