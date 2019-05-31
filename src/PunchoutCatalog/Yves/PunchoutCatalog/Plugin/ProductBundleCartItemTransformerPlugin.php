@@ -33,6 +33,16 @@ class ProductBundleCartItemTransformerPlugin extends AbstractPlugin implements C
                 $transformedCartItems[] = $groupedItem;
                 continue;
             }
+    
+            // Punchout Specific Code
+            // Reset array and fix bug with multiplying
+            $groupedItem['bundleProduct']->setChildBundleItems(new ArrayObject());
+            if (!empty($groupedItem['bundleItems'])) {
+                foreach ($groupedItem['bundleItems'] as $bundleItem) {
+                    $groupedItem['bundleProduct']->addChildBundleItem($bundleItem);
+                }
+            }
+            // Punchout Specific Code
             
             $transformedCartItems[] = $groupedItem['bundleProduct'];
         }

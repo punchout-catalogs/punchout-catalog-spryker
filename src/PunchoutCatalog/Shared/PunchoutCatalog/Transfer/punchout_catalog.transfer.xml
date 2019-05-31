@@ -21,6 +21,10 @@
         <property name="code" type="string" />
     </transfer>
 
+    <transfer name="Item">
+        <property name="childBundleItems" type="Item[]" singular="childBundleItem"/>
+    </transfer>
+
     <!-- SETUP REQUEST / RESPONSE-->
     <transfer name="PunchoutCatalogSetupRequest">
         <property name="contentType" type="string" />
@@ -199,19 +203,18 @@
 
     <transfer name="PunchoutCatalogDocumentCartItem">
         <property name="lineNumber" type="int"/>
+        <property name="internalId" type="string"/>
+        <property name="quantity" type="int"/>
 
         <!-- PARENT/CHILD IDENTIFIER -->
         <property name="parentLineNumber" type="int"/>
         <property name="itemType" type="string"/>
         <property name="compositeItemType" type="string"/>
+        <property name="parentInternalId" type="string"/>
         <!--/PARENT/CHILD IDENTIFIER -->
 
-        <property name="quantity" type="int"/>
         <property name="locale" type="string"/>
-
-        <property name="internalId" type="string"/>
         <property name="supplierId" type="string"/>
-        <property name="manufacturerName" type="string"/>
 
         <property name="sku" type="string"/>
         <property name="groupKey" type="string"/>
@@ -222,6 +225,7 @@
         <property name="longDescription" type="string"/>
 
         <property name="imageUrl" type="string"/>
+        <property name="images" type="string[]" singular="image"/>
 
         <property name="productPackagingUnit" type="string"/>
         <property name="unspsc" type="string"/>
