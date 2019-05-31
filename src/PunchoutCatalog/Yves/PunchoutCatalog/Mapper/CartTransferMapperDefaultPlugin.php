@@ -483,6 +483,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
+        $documentCartItemTransfer->setUom('EA');//@todo: get a real value
         return $documentCartItemTransfer;
     }
     
