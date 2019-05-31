@@ -20,8 +20,7 @@ business-unit-regular-1,user_1,user_1_pass,,1,setup_request,cxml,Client 1 - cXml
       }
     }
   }
-}
-"
+}"
 business-unit-regular-1,user_1,user_1_pass,,1,setup_request,oci,Client 1 - Oci - User 1,"{
   ""customer"": {
     ""fields"": {
@@ -70,8 +69,7 @@ business-unit-regular-1,user_2,user_2_pass,,1,setup_request,cxml,Client 1 - cXml
       }
     }
   }
-}
-"
+}"
 business-unit-regular-1,user_1,user_1_pass,,1,setup_request,cxml,Client 2 - cXml - User 1,{}
 business-unit-mitte-1,user_3,user_3_pass,,1,setup_request,cxml,Client 3 - cXml - User 3,{}
 business-unit-regular-1,user_2,user_2_pass,,1,setup_request,oci,Client 2 - Oci - User 2,"{
