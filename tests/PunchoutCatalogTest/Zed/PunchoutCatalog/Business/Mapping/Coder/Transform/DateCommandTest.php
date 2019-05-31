@@ -35,11 +35,10 @@ class DateCommandTest extends Unit
             '1999-03-02 23:56:00',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new DateCommand();
         parent::setUp();
     }
-
 }

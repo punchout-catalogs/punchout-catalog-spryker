@@ -13,11 +13,9 @@ class ValidatorTest extends Unit
      */
     protected $validator;
 
-    protected function _setUp()
+    protected function _setUp(): void
     {
         $this->validator = new Validator();
-        return parent::_setUp();
+        parent::_setUp();
     }
-
-
 }

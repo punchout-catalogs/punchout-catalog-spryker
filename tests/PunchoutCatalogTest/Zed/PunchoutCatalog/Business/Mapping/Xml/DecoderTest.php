@@ -161,9 +161,9 @@ class DecoderTest extends Unit
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->decoder = new Decoder();
-        return parent::setUp();
+        parent::setUp();
     }
 }

@@ -30,11 +30,10 @@ class RoundCommandTest extends Unit
         $result = $this->command->execute($transform, $value);
         $this->assertEquals(21444.2, $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new RoundCommand();
         parent::setUp();
     }
-
 }

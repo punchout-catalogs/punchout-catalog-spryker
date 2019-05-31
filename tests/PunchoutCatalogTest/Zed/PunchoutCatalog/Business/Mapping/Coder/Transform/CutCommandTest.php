@@ -37,11 +37,10 @@ class CutCommandTest extends Unit
             'some2',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new CutCommand();
         parent::setUp();
     }
-
 }

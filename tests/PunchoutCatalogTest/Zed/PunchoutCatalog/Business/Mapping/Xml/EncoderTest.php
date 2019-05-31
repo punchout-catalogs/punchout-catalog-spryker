@@ -161,9 +161,9 @@ class EncoderTest extends Unit
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->encoder = new Encoder();
-        return parent::setUp();
+        parent::setUp();
     }
 }

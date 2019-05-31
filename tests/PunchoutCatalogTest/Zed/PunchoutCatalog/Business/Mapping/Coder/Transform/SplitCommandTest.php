@@ -40,11 +40,10 @@ class SplitCommandTest extends Unit
         $result = $this->command->execute($transform, $value);
         $this->assertEquals('c', $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new SplitCommand();
         parent::setUp();
     }
-
 }

@@ -44,8 +44,8 @@ class DefaultCommandTest extends Unit
             'default_value',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new DefaultCommand();
         parent::setUp();

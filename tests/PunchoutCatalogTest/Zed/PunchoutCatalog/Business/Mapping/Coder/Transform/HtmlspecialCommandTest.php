@@ -35,11 +35,10 @@ class HtmlspecialCommandTest extends Unit
             'text',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new HtmlspecialCommand();
         parent::setUp();
     }
-
 }

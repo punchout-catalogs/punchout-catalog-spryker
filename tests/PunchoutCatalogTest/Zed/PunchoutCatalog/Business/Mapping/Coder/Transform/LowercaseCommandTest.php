@@ -38,11 +38,10 @@ class LowercaseCommandTest extends Unit
             '',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new LowercaseCommand();
         parent::setUp();
     }
-
 }

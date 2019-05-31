@@ -31,10 +31,9 @@ class AmountCommandTest extends Unit
         $this->assertEquals(22444.55, $result);
     }
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->command = new AmountCommand();
         parent::setUp();
     }
-
 }

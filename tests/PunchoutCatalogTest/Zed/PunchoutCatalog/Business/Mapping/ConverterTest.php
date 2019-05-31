@@ -16,10 +16,10 @@ class ConverterTest extends Unit
     /**
      *
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->converter = new Converter();
-        return parent::setUp();
+        parent::setUp();
     }
 
     public function testConvert()

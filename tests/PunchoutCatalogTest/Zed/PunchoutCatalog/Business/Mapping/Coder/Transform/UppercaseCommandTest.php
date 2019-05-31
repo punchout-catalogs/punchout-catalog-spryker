@@ -38,11 +38,10 @@ class UppercaseCommandTest extends Unit
             '',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new UppercaseCommand();
         parent::setUp();
     }
-
 }

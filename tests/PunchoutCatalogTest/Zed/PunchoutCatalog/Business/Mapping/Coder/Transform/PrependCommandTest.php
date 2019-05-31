@@ -37,11 +37,10 @@ class PrependCommandTest extends Unit
             'prepend_value2',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new PrependCommand();
         parent::setUp();
     }
-
 }

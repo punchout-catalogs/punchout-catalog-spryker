@@ -46,11 +46,10 @@ class JoinCommandTest extends Unit
         $result = $this->command->execute($transform, $value);
         $this->assertEquals('value', $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new JoinCommand();
         parent::setUp();
     }
-
 }

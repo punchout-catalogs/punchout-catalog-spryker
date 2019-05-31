@@ -42,11 +42,10 @@ class MapCommandTest extends Unit
             1
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new MapCommand();
         parent::setUp();
     }
-
 }

@@ -37,11 +37,10 @@ class AppendCommandTest extends Unit
             'value2_append',
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new AppendCommand();
         parent::setUp();
     }
-
 }

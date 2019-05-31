@@ -21,11 +21,10 @@ class StripCommandTest extends Unit
         $result = $this->command->execute($transform, $value);
         $this->assertEquals('Test paragraph. Other text', $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new StripCommand();
         parent::setUp();
     }
-
 }

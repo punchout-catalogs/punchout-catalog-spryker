@@ -30,11 +30,10 @@ class AmountFormattedCommandTest extends Unit
         $result = $this->command->execute($transform, $value);
         $this->assertEquals('22444.19', $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new AmountFormattedCommand();
         parent::setUp();
     }
-
 }

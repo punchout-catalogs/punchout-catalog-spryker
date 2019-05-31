@@ -51,11 +51,10 @@ class NotCommandTest extends Unit
             true,
         ], $result);
     }
-
-    public function setUp()
+    
+    public function setUp(): void
     {
         $this->command = new NotCommand();
         parent::setUp();
     }
-
 }
