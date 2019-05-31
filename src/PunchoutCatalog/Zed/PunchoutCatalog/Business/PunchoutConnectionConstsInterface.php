@@ -43,4 +43,8 @@ interface PunchoutConnectionConstsInterface
     
     public const BUNDLE_MODE_SINGLE = 'single';
     public const BUNDLE_MODE_COMPOSITE = 'composite';
+    
+    public const BUNDLE_COMPOSITE_PRICE_LEVEL = 'groupLevel';
+    public const BUNDLE_COMPOSITE_ITEM_TYPE = 'composite';
+    public const BUNDLE_CHILD_ITEM_TYPE = 'item';
 }

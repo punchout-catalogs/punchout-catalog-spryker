@@ -34,6 +34,15 @@ Client 1 - cXml - User 1,spryker_sup_3,100,composite,base64,"{
       ""line_number"": {
         ""path"": ""@lineNumber""
       },
+						""parent_line_number"": {
+        ""path"": ""@parentLineNumber""
+      },
+						""item_type"": {
+        ""path"": ""@itemType""
+      },
+						""composite_item_type"": {
+        ""path"": ""@compositeItemType""
+      },
       ""quantity"": {
         ""path"": ""@quantity""
       },
@@ -56,7 +65,12 @@ Client 1 - cXml - User 1,spryker_sup_3,100,composite,base64,"{
         ""path"": ""ItemDetail[1]/Description[1]""
       },
       ""product_packaging_unit"": {
-        ""path"": ""ItemDetail[1]/UnitOfMeasure[1]""
+        ""path"": ""ItemDetail[1]/UnitOfMeasure[1]"",
+        ""transform"": [{
+          ""default"": {
+            ""value"": ""EA""
+          }
+        }]
       },
       ""brand"": {
         ""path"": ""ItemDetail[1]/ManufacturerName[1]""
@@ -86,6 +100,27 @@ Client 1 - Oci - User 1,spryker_sup_1,128,composite,,"
       ""internal_id"": {
         ""path"": ""NEW_ITEM-EXT_PRODUCT_ID[%line_number%]""
       },
+      ""parent_line_number"": {
+        ""path"": ""NEW_ITEM-PARENT_ID[%line_number%]""
+      },
+      ""item_type"": {
+        ""path"": ""NEW_ITEM-ITEM_TYPE[%line_number%]"",
+        ""transform"":
+								[
+										{
+												""map"": {
+														""value"": ""composite"",
+														""result"": ""R""
+												}
+										},
+										{
+												""map"": {
+														""value"": ""item"",
+														""result"": ""O""
+												}
+										}
+        ]
+      },
       ""sku"": {
         ""path"": ""NEW_ITEM-VENDORMAT[%line_number%],NEW_ITEM-MANUFACTMAT[%line_number%]""
       },
@@ -102,7 +137,12 @@ Client 1 - Oci - User 1,spryker_sup_1,128,composite,,"
         ""path"": ""NEW_ITEM-LONGTEXT_%line_number%:132[]""
       },
       ""product_packaging_unit"": {
-        ""path"": ""NEW_ITEM-UNIT[%line_number%]""
+        ""path"": ""NEW_ITEM-UNIT[%line_number%]"",
+        ""transform"": [{
+          ""default"": {
+            ""value"": ""EA""
+          }
+        }]
       },
       ""unspsc"": {
         ""path"": ""NEW_ITEM-MATGROUP[%line_number%]""
@@ -164,6 +204,15 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,urlencoded,"{
       ""line_number"": {
         ""path"": ""@lineNumber""
       },
+						""parent_line_number"": {
+        ""path"": ""@parentLineNumber""
+      },
+						""item_type"": {
+        ""path"": ""@itemType""
+      },
+						""composite_item_type"": {
+        ""path"": ""@compositeItemType""
+      },
       ""quantity"": {
         ""path"": ""@quantity""
       },
@@ -186,7 +235,12 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,urlencoded,"{
         ""path"": ""ItemDetail[1]/Description[1]""
       },
       ""product_packaging_unit"": {
-        ""path"": ""ItemDetail[1]/UnitOfMeasure[1]""
+        ""path"": ""ItemDetail[1]/UnitOfMeasure[1]"",
+        ""transform"": [{
+          ""default"": {
+            ""value"": ""EA""
+          }
+        }]
       },
       ""brand"": {
         ""path"": ""ItemDetail[1]/ManufacturerName[1]""

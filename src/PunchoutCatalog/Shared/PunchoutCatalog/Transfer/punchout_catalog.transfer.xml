@@ -22,7 +22,7 @@
     </transfer>
 
     <transfer name="Item">
-        <property name="childBundleItems" type="Item[]" />
+        <property name="childBundleItems" type="Item[]" singular="childBundleItem"/>
     </transfer>
 
     <!-- SETUP REQUEST / RESPONSE-->
@@ -203,17 +203,17 @@
 
     <transfer name="PunchoutCatalogDocumentCartItem">
         <property name="lineNumber" type="int"/>
+        <property name="internalId" type="string"/>
+        <property name="quantity" type="int"/>
 
         <!-- PARENT/CHILD IDENTIFIER -->
         <property name="parentLineNumber" type="int"/>
         <property name="itemType" type="string"/>
         <property name="compositeItemType" type="string"/>
+        <property name="parentInternalId" type="string"/>
         <!--/PARENT/CHILD IDENTIFIER -->
 
-        <property name="quantity" type="int"/>
         <property name="locale" type="string"/>
-
-        <property name="internalId" type="string"/>
         <property name="supplierId" type="string"/>
 
         <property name="sku" type="string"/>
