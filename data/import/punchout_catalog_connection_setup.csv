@@ -4,3 +4,4 @@ Client 1 - Oci - User 1,business-unit-regular-1,BoB--1,single_user
 Client 1 - cXml - User 2,business-unit-regular-1,BoB--1,single_user
 Client 2 - cXml - User 1,,,dynamic_user
 Client 3 - cXml - User 3,business-unit-mitte-1,BoB--1,single_user
+Client 2 - Oci - User 2,business-unit-regular-1,BoB--1,single_user
