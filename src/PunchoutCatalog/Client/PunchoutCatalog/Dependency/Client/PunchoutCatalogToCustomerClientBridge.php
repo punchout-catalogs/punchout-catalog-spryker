@@ -8,7 +8,7 @@ class PunchoutCatalogToCustomerClientBridge implements PunchoutCatalogToCustomer
      * @var \Spryker\Client\Customer\CustomerClientInterface
      */
     protected $customerClient;
-    
+
     /**
      * @param \Spryker\Client\Customer\CustomerClientInterface $customerClient
      */
@@ -16,7 +16,7 @@ class PunchoutCatalogToCustomerClientBridge implements PunchoutCatalogToCustomer
     {
         $this->customerClient = $customerClient;
     }
-    
+
     /**
      * @return \Generated\Shared\Transfer\CustomerTransfer|null
      */
