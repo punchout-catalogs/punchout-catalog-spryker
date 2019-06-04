@@ -114,6 +114,10 @@
             <reference local="fk_company_business_unit" foreign="id_company_business_unit"/>
         </foreign-key>
 
+        <index name="index-pgw_punchout_catalog_transaction-fk_company_business_unit">
+            <index-column name="fk_company_business_unit"/>
+        </index>
+
         <id-method-parameter value="pgw_punchout_catalog_transaction_pk_seq"/>
     </table>
 </database>

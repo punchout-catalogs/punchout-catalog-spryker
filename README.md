@@ -28,7 +28,7 @@ $config[PunchoutCatalogConstants::CUSTOM_CART_TRANSFER_MAPPING] = [
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin
+     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
      */
     function ($quoteTransfer, $cartRequestTransfer, $plugin) {
         $cartRequestTransfer->setCoupon('Coupon for ' . $quoteTransfer->getName());
@@ -46,7 +46,7 @@ $config[PunchoutCatalogConstants::CUSTOM_CART_ITEM_TRANSFER_MAPPING] = [
      * @param \Generated\Shared\Transfer\ItemTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
      * @param \Generated\Shared\Transfer\QuoteTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin
+     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
      */
     'tax_description' => function () {
         return 'test description';
@@ -56,7 +56,7 @@ $config[PunchoutCatalogConstants::CUSTOM_CART_ITEM_TRANSFER_MAPPING] = [
      * @param \Generated\Shared\Transfer\ItemTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
      * @param \Generated\Shared\Transfer\QuoteTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin
+     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
      */
     function ($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin) {
         $name = trim($quoteItemTransfer->getName());
@@ -77,7 +77,7 @@ $config[PunchoutCatalogConstants::CUSTOM_CART_CUSTOMER_TRANSFER_MAPPING] = [
      * @param \Generated\Shared\Transfer\CustomerTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer
      * @param \Generated\Shared\Transfer\QuoteTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin
+     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
      */
     function ($quoteCustomerTransfer, $documentCartCustomerTransfer, $quoteTransfer, $plugin) {
         return $documentCartCustomerTransfer;

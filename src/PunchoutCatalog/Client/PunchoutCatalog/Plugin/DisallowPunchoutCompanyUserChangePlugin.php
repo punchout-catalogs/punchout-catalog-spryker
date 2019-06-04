@@ -26,7 +26,6 @@ class DisallowPunchoutCompanyUserChangePlugin extends AbstractPlugin implements 
     {
         $impersonationDetails = $customerTransfer->getPunchoutCatalogImpersonationDetails();
 
-        // @todo Recommendation: use shared constant to ensure key matching
         return empty($impersonationDetails['is_punchout']);
     }
 }
