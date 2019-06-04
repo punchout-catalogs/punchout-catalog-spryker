@@ -16,7 +16,7 @@ interface CxmlContentProcessorInterface
      *
      * @return string|null
      */
-    public function getOperation(string $content): ?string;
+    public function fetchOperation(string $content): ?string;
 
     /**
      * @param string $content

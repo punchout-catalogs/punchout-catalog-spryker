@@ -42,7 +42,7 @@ class CxmlContentProcessor implements CxmlContentProcessorInterface
      *
      * @return string|null
      */
-    public function getOperation(string $content): ?string
+    public function fetchOperation(string $content): ?string
     {
         $xml = $this->findXml($content);
         if ($xml && $xml->Request && $xml->Request->children()[0] && $xml->Request->children()[0]->getName()) {

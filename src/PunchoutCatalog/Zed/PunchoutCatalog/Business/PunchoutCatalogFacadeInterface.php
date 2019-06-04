@@ -197,4 +197,40 @@ interface PunchoutCatalogFacadeInterface
      * @return void
      */
     public function assertOciProtocolData(PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer): void;
+
+    /**
+     * Specification:
+     * - Decides if the provided content is cXML.
+     *
+     * @api
+     *
+     * @param string $content
+     *
+     * @return bool
+     */
+    public function isCXmlContent(string $content): bool;
+
+    /**
+     * Specification:
+     * - Fetches header as protocol data from a cXML content.
+     *
+     * @api
+     *
+     * @param string $content
+     *
+     * @return array
+     */
+    public function fetchCXmlHeaderAsArray(string $content): array;
+
+    /**
+     * Specification:
+     * - Fetches operation name from an OCI content.
+     *
+     * @api
+     *
+     * @param string $content
+     *
+     * @return string|null
+     */
+    public function fetchCXmlOperation(string $content): ?string;
 }

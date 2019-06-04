@@ -7,6 +7,8 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentProcessor;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
@@ -218,6 +220,14 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createOciContentProcessor(): OciContentProcessorInterface
     {
         return new OciContentProcessor();
+    }
+
+    /**
+     * @return CxmlContentProcessorInterface
+     */
+    public function createCxmlContentProcessor(): CxmlContentProcessorInterface
+    {
+        return new CxmlContentProcessor();
     }
 
     /**

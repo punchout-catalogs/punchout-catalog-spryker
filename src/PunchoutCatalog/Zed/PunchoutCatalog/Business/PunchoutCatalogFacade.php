@@ -293,4 +293,52 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
             ->createOciProtocolDataValidator()
             ->validate($punchoutCatalogProtocolDataTransfer);
     }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param string $content
+     *
+     * @return bool
+     */
+    public function isCXmlContent(string $content): bool
+    {
+        return $this->getFactory()
+            ->createCxmlContentProcessor()
+            ->isCXmlContent($content);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param string $content
+     *
+     * @return array
+     */
+    public function fetchCXmlHeaderAsArray(string $content): array
+    {
+        return $this->getFactory()
+            ->createCxmlContentProcessor()
+            ->fetchHeaderAsArray($content);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param string $content
+     *
+     * @return string|null
+     */
+    public function fetchCXmlOperation(string $content): ?string
+    {
+        return $this->getFactory()
+            ->createCxmlContentProcessor()
+            ->fetchOperation($content);
+    }
 }

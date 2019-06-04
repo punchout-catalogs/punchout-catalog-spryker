@@ -18,7 +18,6 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtoco
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use PunchoutCatalog\Service\UtilCxml\UtilCxmlService;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -26,18 +25,6 @@ use PunchoutCatalog\Service\UtilCxml\UtilCxmlService;
  */
 class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements PunchoutCatalogProtocolStrategyPluginInterface
 {
-    /**
-     * @api
-     *
-     * @var \PunchoutCatalog\Service\UtilCxml\UtilCxmlServiceInterface
-     */
-    protected $utilCxmlService;
-
-    public function __construct()
-    {
-        $this->utilCxmlService = new UtilCxmlService();
-    }
-
     /**
      * @api
      *
@@ -54,7 +41,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         }
 
         return (is_string($punchoutCatalogRequestTransfer->getContent())
-            && $this->utilCxmlService->isCXml($punchoutCatalogRequestTransfer->getContent())
+            && $this->getFacade()->isCXmlContent($punchoutCatalogRequestTransfer->getContent())
         );
     }
 
@@ -70,8 +57,8 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
     ): PunchoutCatalogSetupRequestTransfer
     {
-        $protocolData = $this->utilCxmlService->fetchHeaderAsArray($punchoutCatalogRequestTransfer->getContent());
-        $protocolOperation = $this->utilCxmlService->getOperation($punchoutCatalogRequestTransfer->getContent());
+        $protocolData = $this->getFacade()->fetchCXmlHeaderAsArray($punchoutCatalogRequestTransfer->getContent());
+        $protocolOperation = $this->getFacade()->fetchCXmlOperation($punchoutCatalogRequestTransfer->getContent());
 
         $punchoutCatalogRequestTransfer
             ->setProtocolType(PunchoutConnectionConstsInterface::FORMAT_CXML)
