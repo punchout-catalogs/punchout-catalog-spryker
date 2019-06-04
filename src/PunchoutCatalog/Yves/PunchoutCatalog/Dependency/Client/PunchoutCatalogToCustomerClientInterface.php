@@ -13,7 +13,7 @@ interface PunchoutCatalogToCustomerClientInterface
      * @return \Generated\Shared\Transfer\CustomerTransfer|null
      */
     public function getCustomer();
-    
+
     /**
      * @return void
      */

@@ -8,7 +8,6 @@
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Controller;
 
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestContext;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
@@ -25,14 +24,15 @@ class CartController extends AbstractController
     protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is-not-punchout';
 
     /**
-     * Return transferred cart
+     * Returns transferred cart
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse | \Symfony\Component\HttpFoundation\Response
      */
     public function transferAction(Request $request)
     {
-        if (!$this->isPunchout()) {
+        if (!$this->isPunchoutCustomer()) {
             return $this->addErrorMessage(static::ERROR_MESSAGE_IS_NOT_PUNCHOUT)
                 ->redirectResponseInternal(static::REDIRECT_URL);
         }
@@ -63,15 +63,15 @@ class CartController extends AbstractController
     /**
      * @return bool
      */
-    protected function isPunchout()
+    protected function isPunchoutCustomer(): bool
     {
-        return ($this->getPunchoutDetails() && $this->getPunchoutDetails()['is_punchout']);
+        return ($this->getPunchoutImpersonationDetails() && $this->getPunchoutImpersonationDetails()['is_punchout']);
     }
 
     /**
      * @return array|null
      */
-    protected function getPunchoutDetails()
+    protected function getPunchoutImpersonationDetails(): ?array
     {
         if ($this->getFactory()->getCustomerClient()->getCustomer()
             && $this->getFactory()->getCustomerClient()->getCustomer()->getPunchoutCatalogImpersonationDetails()
@@ -83,9 +83,9 @@ class CartController extends AbstractController
     }
 
     /**
-     * @return PunchoutCatalogCartRequestContextTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer
      */
-    protected function getPunchoutCatalogCartRequestContext()
+    protected function getPunchoutCatalogCartRequestContext(): PunchoutCatalogCartRequestContextTransfer
     {
         $impersonalDetails = $this->getFactory()->getCustomerClient()
             ->getCustomer()
@@ -93,20 +93,12 @@ class CartController extends AbstractController
 
         $context = new PunchoutCatalogCartRequestContextTransfer();
         $context->fromArray([
-            'locale' => $this->getCurrentLocale(),
+            'locale' => $this->getFactory()->getStore()->getCurrentLocale(),
             'punchout_catalog_connection_id' => $impersonalDetails['punchout_catalog_connection_id'],
             'protocol_data' => $impersonalDetails['protocol_data'],
         ]);
 
         return $context;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCurrentLocale()
-    {
-        return $this->getFactory()->getStore()->getCurrentLocale();
     }
 
     /**
@@ -121,14 +113,12 @@ class CartController extends AbstractController
 
         $viewData = [
             'fields' => $cartResponseTransfer->getFields(),
-            'submit_url' => $this->getPunchoutDetails()['protocol_data']['cart']['url'],
-            'submit_target' => $this->getPunchoutDetails()['protocol_data']['cart']['target'] ?? null,
+            'submit_url' => $this->getPunchoutImpersonationDetails()['protocol_data']['cart']['url'],
+            'submit_target' => $this->getPunchoutImpersonationDetails()['protocol_data']['cart']['target'] ?? null,
         ];
 
         //Should go after the last data getting from customer session
-        $this->clearQuote()->logoutCustomer();
-        $request->getSession()->invalidate();
-        $this->getFactory()->getTokenStorage()->setToken(null);
+        $this->logoutCustomer($request);
 
         return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
     }
@@ -149,30 +139,24 @@ class CartController extends AbstractController
 
     /**
      * Clear existing customer session
-     *
-     * @return $this
-     */
-    protected function logoutCustomer()
-    {
-        $this->getFactory()->getCustomerClient()->logout();
-        return $this;
-    }
-
-    /**
      * Clear existing quote
      *
-     * @return $this
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @return void
      */
-    protected function clearQuote()
+    protected function logoutCustomer(Request $request): void
     {
         $this->getFactory()->getQuoteClient()->clearQuote();
-        return $this;
+        $this->getFactory()->getCustomerClient()->logout();
+        $request->getSession()->invalidate();
+        $this->getFactory()->getTokenStorage()->setToken(null);
     }
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer
      *
-     * @return Response
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     protected function handleErrorResponse(PunchoutCatalogCartResponseTransfer $cartResponseTransfer): Response
     {
@@ -192,11 +176,12 @@ class CartController extends AbstractController
      * Return empty transferred cart
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
+     *
      * @return \Symfony\Component\HttpFoundation\RedirectResponse | \Symfony\Component\HttpFoundation\Response
      */
     public function cancelAction(Request $request)
     {
-        if (!$this->isPunchout()) {
+        if (!$this->isPunchoutCustomer()) {
             return $this->addErrorMessage(static::ERROR_MESSAGE_IS_NOT_PUNCHOUT)
                 ->redirectResponseInternal(static::REDIRECT_URL);
         }

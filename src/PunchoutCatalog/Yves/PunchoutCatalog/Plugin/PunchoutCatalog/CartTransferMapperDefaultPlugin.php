@@ -1,11 +1,10 @@
 <?php
 
-namespace PunchoutCatalog\Yves\PunchoutCatalog\Mapper;
+namespace PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog;
 
 use ArrayObject;
 use Generated\Shared\Transfer\ItemTransfer as QuoteItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartCustomerTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
@@ -59,9 +58,6 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
      */
     protected $cartCustomerMapping = [];
 
-    /**
-     * CartTransferMapperDefaultPlugin constructor.
-     */
     public function __construct()
     {
         $this->glossaryStorageClient = $this->getFactory()->getGlossaryStorageClient();
@@ -70,6 +66,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $this->customerClient = $this->getFactory()->getCustomerClient();
         $this->currentLocale = $this->getFactory()->getStore()->getCurrentLocale();
 
+        // @todo Discuss
         $this->cartMapping = array_merge($this->cartMapping, $this->getFactory()->getModuleConfig()->getCustomCartMapping());
         $this->cartItemMapping = array_merge($this->cartItemMapping, $this->getFactory()->getModuleConfig()->getCustomCartItemMapping());
         $this->cartCustomerMapping = array_merge($this->cartCustomerMapping, $this->getFactory()->getModuleConfig()->getCustomCartCustomerMapping());
@@ -94,7 +91,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $this->prepareCustomer($quoteTransfer, $cartRequestTransfer);
         $this->prepareLineItems($quoteTransfer, $cartRequestTransfer);
         $cartRequestTransfer->setCart($this->processMapping($quoteTransfer, $cartRequestTransfer->getCart(), $this->cartMapping));
-        
+
         return $cartRequestTransfer;
     }
 
@@ -107,8 +104,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected function prepareHeader(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer
-    {
+    ): PunchoutCatalogCartRequestTransfer {
         $documentCartTransfer = $cartRequestTransfer->getCart();
 
         $documentCartTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
@@ -163,9 +159,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
-     * @param $locale
+     * @param string $locale
      *
-     * @return mixed
+     * @return string
      */
     protected function toLang($locale)
     {
@@ -202,8 +198,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected function prepareCustomer(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer
-    {
+    ): PunchoutCatalogCartRequestTransfer {
         if ($quoteTransfer->getCustomer()) {
             $customer = new PunchoutCatalogDocumentCartCustomerTransfer();
             $customer->setEmail($quoteTransfer->getCustomer()->getEmail());
@@ -214,8 +209,13 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             $cartRequestTransfer->setCustomer($customer);
         }
 
-        $cartRequestTransfer->setCustomer($this->processMapping($quoteTransfer->getCustomer(),
-            $cartRequestTransfer->getCustomer(), $this->cartCustomerMapping, [$quoteTransfer]));
+        $cartRequestTransfer->setCustomer($this->processMapping(
+            $quoteTransfer->getCustomer(),
+            $cartRequestTransfer->getCustomer(),
+            $this->cartCustomerMapping,
+            [$quoteTransfer]
+        ));
+
         return $cartRequestTransfer;
     }
 
@@ -228,8 +228,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected function prepareLineItems(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer
-    {
+    ): PunchoutCatalogCartRequestTransfer {
         $totalQty = 0;
         if ($quoteTransfer->getItems()) {
             foreach ($quoteTransfer->getItems() as $idx => $quoteItemTransfer) {
@@ -242,8 +241,12 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                     $documentCartItemTransfer
                 );
 
-                $documentCartItemTransfer = $this->processMapping($quoteItemTransfer, $documentCartItemTransfer,
-                    $this->cartItemMapping, [$quoteTransfer]);
+                $documentCartItemTransfer = $this->processMapping(
+                    $quoteItemTransfer,
+                    $documentCartItemTransfer,
+                    $this->cartItemMapping,
+                    [$quoteTransfer]
+                );
 
                 $cartRequestTransfer->addCartItem($documentCartItemTransfer);
 
@@ -267,8 +270,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     public function mapQuoteItemTransferToPunchoutCatalogDocumentCartItemTransfer(
         QuoteItemTransfer $quoteItemTransfer,
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
-    ): PunchoutCatalogDocumentCartItemTransfer
-    {
+    ): PunchoutCatalogDocumentCartItemTransfer {
         $internalId = $this->getQuoteItemInternalId($quoteItemTransfer);
         $supplierId = $this->getDefaultSupplierId();
 
@@ -314,7 +316,6 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
         $documentCartItemTransfer->setImageUrl($imageUrl);
 
-        //
         //PRICING & RATES
         $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
 
@@ -360,6 +361,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected function getDefaultSupplierId(): string
     {
         $cartDetails = $this->getPunchoutCartDetails();
+
         return $cartDetails['default_supplier_id'] ?? null;
     }
 
@@ -376,16 +378,19 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
-     * @param $description
-     * @return mixed
+     * @param string $description
+     *
+     * @return string
      */
     protected function limitDescription($description)
     {
         $cartDetails = $this->getPunchoutCartDetails();
         if (!empty($cartDetails['max_description_length'])) {
-            $length = intval($cartDetails['max_description_length']);
+            $length = (int)($cartDetails['max_description_length']);
+
             return mb_substr($description, 0, $length);
         }
+
         return $description;
     }
 
@@ -412,7 +417,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
         return $attributeTransfer;
     }
-    
+
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
      *
@@ -425,6 +430,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             . '_' . microtime(true)
             . '_' . uniqid('', true)
         );
+
         return $this->getFactory()
             ->getUtilUuidGeneratorService()
             ->generateUuid5FromObjectId($internalId);
@@ -432,8 +438,10 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
     /**
      * Convert underscore_text to CamelCase
-     * @param $string
+     *
+     * @param string $string
      * @param string $separator
+     *
      * @return string
      */
     protected function underscoreToCamelCase($string, $separator = '_')
@@ -450,11 +458,12 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
-     * @param QuoteTransfer | QuoteItemTransfer $inputTransfer
-     * @param PunchoutCatalogCartRequestTransfer|PunchoutCatalogDocumentCartItemTransfer $outputTransfer
+     * @param \Spryker\Shared\Kernel\Transfer\TransferInterface $inputTransfer
+     * @param \Spryker\Shared\Kernel\Transfer\TransferInterface $outputTransfer
      * @param array $mapping
      * @param array $getterArgs
-     * @return PunchoutCatalogCartRequestTransfer|PunchoutCatalogDocumentCartItemTransfer|mixed|string
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer|\Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer|mixed|string
      */
     protected function processMapping($inputTransfer, $outputTransfer, array $mapping, array $getterArgs = [])
     {
@@ -477,6 +486,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                 $outputTransfer = $value;
             }
         }
+
         return $outputTransfer;
     }
 }

@@ -13,7 +13,8 @@ use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMone
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientBridge;
-use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin;
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceBridge;
+use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Yves\Kernel\Container;
@@ -31,6 +32,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     public const CLIENT_CUSTOMER = 'CLIENT_CUSTOMER';
     public const CLIENT_PUNCHOUT_CATALOG = 'CLIENT_PUNCHOUT_CATALOG';
     public const CLIENT_PRODUCT_STORAGE = 'CLIENT_PRODUCT_STORAGE';
+    public const SERVICE_UTIL_UUID_GENERATOR = 'SERVICE_UTIL_UUID_GENERATOR';
     public const PLUGIN_CART_TRANSFER_MAPPER = 'PLUGIN_CART_TRANSFER_MAPPER';
     public const APPLICATION = 'APPLICATION';
 
@@ -50,6 +52,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addCustomerClient($container);
         $container = $this->addCartTransferMapperPlugins($container);
         $container = $this->addApplication($container);
+        $container = $this->addUtilUuidGeneratorService($container);
 
         return $container;
     }
@@ -149,7 +152,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Yves\Kernel\Container
      */
-    protected function addCustomerClient(Container $container)
+    protected function addCustomerClient(Container $container): Container
     {
         $container[static::CLIENT_CUSTOMER] = function (Container $container) {
             return new PunchoutCatalogToCustomerClientBridge(
@@ -165,7 +168,23 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Yves\Kernel\Container
      */
-    protected function addCartTransferMapperPlugins(Container $container)
+    protected function addUtilUuidGeneratorService(Container $container): Container
+    {
+        $container[static::SERVICE_UTIL_UUID_GENERATOR] = function (Container $container) {
+            return new PunchoutCatalogToUtilUuidGeneratorServiceBridge(
+                $container->getLocator()->utilUuidGenerator()->service()
+            );
+        };
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addCartTransferMapperPlugins(Container $container): Container
     {
         $container[self::PLUGIN_CART_TRANSFER_MAPPER] = function () {
             return $this->getCartTransferMapperPlugins();
@@ -189,7 +208,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Yves\Kernel\Container
      */
-    protected function addApplication(Container $container)
+    protected function addApplication(Container $container): Container
     {
         $container[static::APPLICATION] = function () {
             return (new Pimple())->getApplication();

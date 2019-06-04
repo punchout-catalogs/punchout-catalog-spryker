@@ -17,12 +17,6 @@ interface PunchoutCatalogToQuoteClientInterface
     public function getQuote(): QuoteTransfer;
 
     /**
-     * Specification:
-     * - Empty existing quote and store to session.
-     * - In case of persistent strategy the quote is also deleted from database.
-     *
-     * @api
-     *
      * @return void
      */
     public function clearQuote();

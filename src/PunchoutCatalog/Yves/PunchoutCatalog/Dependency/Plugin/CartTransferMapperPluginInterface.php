@@ -2,8 +2,8 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin;
 
-use Generated\Shared\Transfer\QuoteTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
+use Generated\Shared\Transfer\QuoteTransfer;
 
 interface CartTransferMapperPluginInterface
 {

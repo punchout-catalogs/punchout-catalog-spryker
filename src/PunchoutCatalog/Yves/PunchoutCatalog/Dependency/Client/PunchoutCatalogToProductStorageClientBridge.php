@@ -7,8 +7,6 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client;
 
-use Generated\Shared\Transfer\ProductConcreteTransfer;
-
 class PunchoutCatalogToProductStorageClientBridge implements PunchoutCatalogToProductStorageClientInterface
 {
     /**
@@ -25,14 +23,14 @@ class PunchoutCatalogToProductStorageClientBridge implements PunchoutCatalogToPr
     }
 
     /**
-     * @param $idProductAbstract
-     * @param $localeName
+     * @param int $idProductAbstract
+     * @param string $localeName
      *
-     * @return mixed
+     * @return array
      */
     public function getProductAbstractStorageData($idProductAbstract, $localeName): array
     {
+        // @todo this is a deprecated method
         return $this->productStorageClient->getProductAbstractStorageData($idProductAbstract, $localeName);
     }
-
 }

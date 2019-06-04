@@ -8,18 +8,17 @@
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Mapper;
 
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 
 class CartTransferMapper implements CartTransferMapperInterface
 {
     /**
-     * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface[] | CartTransferMapperDefaultPlugin[]
+     * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface[]
      */
     protected $cartTransferMapperPlugins;
 
     /**
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface[]
+     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface[] $cartTransferMapperPlugins
      */
     public function __construct(array $cartTransferMapperPlugins)
     {
@@ -35,8 +34,7 @@ class CartTransferMapper implements CartTransferMapperInterface
     public function mapQuoteTransferToPunchoutCatalogCartRequestTransfer(
         QuoteTransfer $quoteTransfer,
         PunchoutCatalogCartRequestTransfer $cartRequestTransfer
-    ): PunchoutCatalogCartRequestTransfer
-    {
+    ): PunchoutCatalogCartRequestTransfer {
         foreach ($this->cartTransferMapperPlugins as $plugin) {
             $cartRequestTransfer = $plugin->mapQuoteTransferToPunchoutCatalogCartRequestTransfer($quoteTransfer, $cartRequestTransfer);
         }
