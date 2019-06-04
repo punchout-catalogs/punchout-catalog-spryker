@@ -52,7 +52,7 @@ class CartController extends AbstractController
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartTransfer($punchoutCatalogCartRequestTransfer);
-
+        //dd($punchoutCatalogCartRequestTransfer);
         if ($cartResponseTransfer->getIsSuccess()) {
             return $this->handleSuccessResponse($cartResponseTransfer, $request);
         } else {

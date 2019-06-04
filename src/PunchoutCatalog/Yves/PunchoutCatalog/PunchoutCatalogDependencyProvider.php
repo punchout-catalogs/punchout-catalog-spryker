@@ -10,11 +10,11 @@ namespace PunchoutCatalog\Yves\PunchoutCatalog;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientBridge;
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductBundleClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientBridge;
-use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceBridge;
-use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin;
+use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Yves\Kernel\AbstractBundleDependencyProvider;
 use Spryker\Yves\Kernel\Container;
@@ -28,10 +28,12 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     public const STORE = 'STORE';
     public const CLIENT_GLOSSARY_STORAGE = 'CLIENT_GLOSSARY_STORAGE';
     public const CLIENT_QUOTE = 'CLIENT_QUOTE';
+    public const CLIENT_CART_PAGE = 'CLIENT_CART_PAGE';
     public const CLIENT_MONEY = 'CLIENT_MONEY';
     public const CLIENT_CUSTOMER = 'CLIENT_CUSTOMER';
     public const CLIENT_PUNCHOUT_CATALOG = 'CLIENT_PUNCHOUT_CATALOG';
     public const CLIENT_PRODUCT_STORAGE = 'CLIENT_PRODUCT_STORAGE';
+    public const CLIENT_PRODUCT_BUNDLE = 'CLIENT_PRODUCT_BUNDLE';
     public const SERVICE_UTIL_UUID_GENERATOR = 'SERVICE_UTIL_UUID_GENERATOR';
     public const PLUGIN_CART_TRANSFER_MAPPER = 'PLUGIN_CART_TRANSFER_MAPPER';
     public const APPLICATION = 'APPLICATION';
@@ -44,6 +46,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     public function provideDependencies(Container $container)
     {
         $container = $this->provideStore($container);
+        $container = $this->addProductBundleClient($container);
         $container = $this->addGlossaryStorageClient($container);
         $container = $this->addMoneyClient($container);
         $container = $this->addQuoteClient($container);
@@ -168,6 +171,20 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
      *
      * @return \Spryker\Yves\Kernel\Container
      */
+    protected function addProductBundleClient(Container $container): Container
+    {
+        $container[self::CLIENT_PRODUCT_BUNDLE] = function (Container $container) {
+            return new PunchoutCatalogToProductBundleClientBridge($container->getLocator()->productBundle()->client());
+        };
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
     protected function addUtilUuidGeneratorService(Container $container): Container
     {
         $container[static::SERVICE_UTIL_UUID_GENERATOR] = function (Container $container) {
@@ -194,13 +211,21 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     }
 
     /**
-     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface[]
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
      */
     protected function getCartTransferMapperPlugins(): array
     {
         return [
-            new CartTransferMapperDefaultPlugin(),
+            new CartTransferMapperDefaultPlugin($this->getCartItemTransformerPlugins()),
         ];
+    }
+
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
+     */
+    protected function getCartItemTransformerPlugins(): array
+    {
+        return [];
     }
 
     /**

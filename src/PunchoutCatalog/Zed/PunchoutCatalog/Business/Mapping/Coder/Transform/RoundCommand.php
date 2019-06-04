@@ -13,7 +13,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\ITransform;
 /**
  * Class RoundCommand
  */
-class RoundCommand extends AbstractCommand implements ITransform
+class RoundCommand extends AmountCommand implements ITransform
 {
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogMappingTransformTransfer $transform
@@ -23,10 +23,6 @@ class RoundCommand extends AbstractCommand implements ITransform
      */
     protected function _execute(PunchoutCatalogMappingTransformTransfer $transform, $value)
     {
-        if (null === $transform->getParams()) {
-            return $value;
-        }
-        
         if (is_array($value)) {
             //fix some phantoms and don't cause PHP warnings
             foreach ($value as &$_val) {
@@ -46,7 +42,7 @@ class RoundCommand extends AbstractCommand implements ITransform
      */
     protected function _getPrecision(PunchoutCatalogMappingTransformTransfer $transform)
     {
-        if (null !== $transform->getParams()->getPrecision()) {
+        if (null !== $transform->getParams() && null !== $transform->getParams()->getPrecision()) {
             return (int)$transform->getParams()->getPrecision();
         }
         return 0;
@@ -60,7 +56,7 @@ class RoundCommand extends AbstractCommand implements ITransform
      */
     protected function toAmount($value, $precision = 0): ?string
     {
-        $value = str_replace(",", "", (string)$value);//fix numbers like 21,444.19
+        $value = parent::toAmount($value);
         $value = (float)$value;
         return round($value, $precision);
     }

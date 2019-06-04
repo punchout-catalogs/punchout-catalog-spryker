@@ -1,0 +1,24 @@
+paths:
+    tests: tests
+    output: tests/_output
+    data: tests/_data
+    support: tests/_support
+    envs: tests/_envs
+
+coverage:
+    enabled: true
+    whitelist: { include: ['src/*'] }
+
+settings:
+    bootstrap: _bootstrap.php
+    suite_class: \PHPUnit_Framework_TestSuite
+    colors: true
+    memory_limit: 1024M
+    log: true
+
+include:
+    - tests/PunchoutCatalogTest/Zed/PunchoutCatalog
+actor_suffix: Tester
+extensions:
+    enabled:
+        - Codeception\Extension\RunFailed

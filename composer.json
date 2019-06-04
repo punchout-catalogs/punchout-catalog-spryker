@@ -6,6 +6,7 @@
     "php": ">=7.1",
     "ext-json": "*",
     "ext-mbstring": "*",
+    "ext-simplexml": "*",
     "spryker/kernel": "^3.0.0",
     "spryker-shop/customer-page": "*",
     "spryker/cart": "^4.3.0 || ^5.0.0",
