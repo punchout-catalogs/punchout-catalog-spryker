@@ -118,6 +118,14 @@
             <index-column name="fk_company_business_unit"/>
         </index>
 
+        <foreign-key name="pgw_punchout_catalog_transaction-fk_punchout_catalog_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PunchoutCatalogConnection">
+            <reference local="fk_punchout_catalog_connection" foreign="id_punchout_catalog_connection"/>
+        </foreign-key>
+
+        <index name="index-pgw_punchout_catalog_transaction-fk_punchout_catalog_connection">
+            <index-column name="fk_punchout_catalog_connection"/>
+        </index>
+
         <id-method-parameter value="pgw_punchout_catalog_transaction_pk_seq"/>
     </table>
 </database>
