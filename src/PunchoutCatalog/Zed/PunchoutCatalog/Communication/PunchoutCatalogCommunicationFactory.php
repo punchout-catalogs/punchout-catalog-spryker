@@ -7,23 +7,24 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication;
 
-use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
-use InvalidArgumentException;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandler;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDynamic;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategySingle;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDynamic;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
+use Spryker\Zed\Kernel\Communication\AbstractCommunicationFactory;
 
+/**
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface getRepository()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogEntityManagerInterface getEntityManager()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacadeInterface getFacade()
+ */
 class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
 {
     /**
@@ -33,7 +34,7 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     {
         return new UrlHandler($this->getConfig());
     }
-    
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface
      */
@@ -43,7 +44,7 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
             $this->getCompanyUserFacade()
         );
     }
-    
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface
      */
@@ -56,7 +57,7 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
             $this->getCompanyBusinessUnitFacade()
         );
     }
-    
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
      */
@@ -64,7 +65,7 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_USER);
     }
-    
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface
      */
@@ -72,7 +73,7 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_CUSTOMER);
     }
-    
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface
      */

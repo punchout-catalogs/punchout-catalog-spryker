@@ -7,16 +7,16 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
-use Spryker\Zed\Kernel\Container;
-use Spryker\Zed\DataImport\DataImportDependencyProvider;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeBridge;
+use Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery;
+use Orm\Zed\Customer\Persistence\SpyCustomerQuery;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeBridge;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeAdapter;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeBridge;
-use Orm\Zed\Customer\Persistence\SpyCustomerQuery;
-use Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery;
+use Spryker\Zed\DataImport\DataImportDependencyProvider;
+use Spryker\Zed\Kernel\Container;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -60,10 +60,10 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = parent::provideBusinessLayerDependencies($container);
         $container = $this->addPropelCustomerQuery($container);
         $container = $this->addPropelCompanyUserQuery($container);
-        
+
         return $container;
     }
-    
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -78,10 +78,10 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = $this->addCustomerFacade($container);//@todo: review dependency
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
-        
+
         return $container;
     }
-    
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -90,12 +90,12 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     protected function addGlossaryFacade(Container $container): Container
     {
         $container[self::FACADE_GLOSSARY] = function (Container $container) {
-            return new PunchoutCatalogToGlossaryFacadeBridge($container->getLocator()->glossary()->facade());
+            return new PunchoutCatalogToGlossaryFacadeAdapter($container->getLocator()->glossary()->facade());
         };
-        
+
         return $container;
     }
-    
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -109,7 +109,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
 
         return $container;
     }
-    
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -120,10 +120,10 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container[static::FACADE_COMPANY_USER] = function (Container $container) {
             return new PunchoutCatalogToCompanyUserFacadeBridge($container->getLocator()->companyUser()->facade());
         };
-        
+
         return $container;
     }
-    
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -134,10 +134,10 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container[static::FACADE_CUSTOMER] = function (Container $container) {
             return new PunchoutCatalogToCustomerFacadeBridge($container->getLocator()->customer()->facade());
         };
-        
+
         return $container;
     }
-    
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -179,7 +179,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
 
         return $container;
     }
-    
+
     /**
      * @param \Spryker\Zed\Kernel\Container $container
      *
@@ -190,7 +190,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container[static::PROPEL_QUERY_COMPANY_USER] = function (): SpyCompanyUserQuery {
             return SpyCompanyUserQuery::create();
         };
-        
+
         return $container;
     }
 }

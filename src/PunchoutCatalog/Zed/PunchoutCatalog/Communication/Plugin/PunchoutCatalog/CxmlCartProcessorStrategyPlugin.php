@@ -27,6 +27,8 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartPro
 use SimpleXMLElement;
 
 /**
+ * @todo Difficult extension (facade)
+ *
  * @see: http://xml.cxml.org/current/ReleaseNotes.html
  *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -58,7 +60,8 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
         $context = $punchoutCatalogCartRequestTransfer->getContext()
             ->requireProtocolData()
             ->requirePunchoutCatalogConnection();
-    
+
+        // @todo factory
         (new ProtocolDataValidator())->validate(
             $context->getProtocolData(),
             false

@@ -10,8 +10,8 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Persistence\Propel\Mapper;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionSetupTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup;
 
 interface PunchoutCatalogConnectionMapperInterface

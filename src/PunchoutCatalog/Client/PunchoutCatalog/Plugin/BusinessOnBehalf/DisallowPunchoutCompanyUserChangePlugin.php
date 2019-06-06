@@ -1,6 +1,6 @@
 <?php
 
-namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin;
+namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin\BusinessOnBehalf;
 
 use Generated\Shared\Transfer\CustomerTransfer;
 use Spryker\Client\BusinessOnBehalfExtension\Dependency\Plugin\CompanyUserChangeAllowedCheckPluginInterface;

@@ -10,8 +10,8 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Persistence\Propel\Mapper;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionSetupTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection;
+use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionCart;
 use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnectionSetup;
 
 class PunchoutCatalogConnectionMapper implements PunchoutCatalogConnectionMapperInterface
@@ -26,11 +26,11 @@ class PunchoutCatalogConnectionMapper implements PunchoutCatalogConnectionMapper
         PunchoutCatalogConnectionTransfer $punchoutCatalogConnectionTransfer,
         PgwPunchoutCatalogConnection $pgwPunchoutCatalogConnection
     ): PgwPunchoutCatalogConnection {
-        
+
         $pgwPunchoutCatalogConnection->fromArray(
             $punchoutCatalogConnectionTransfer->modifiedToArray(false)
         );
-        
+
         return $pgwPunchoutCatalogConnection;
     }
 
@@ -109,6 +109,7 @@ class PunchoutCatalogConnectionMapper implements PunchoutCatalogConnectionMapper
         $pgwPunchoutCatalogCart->fromArray(
             $punchoutCatalogConnectionCartTransfer->modifiedToArray(false)
         );
+
         return $pgwPunchoutCatalogCart;
     }
 
@@ -125,6 +126,7 @@ class PunchoutCatalogConnectionMapper implements PunchoutCatalogConnectionMapper
         $pgwPunchoutCatalogSetup->fromArray(
             $punchoutCatalogConnectionSetupTransfer->modifiedToArray(false)
         );
+
         return $pgwPunchoutCatalogSetup;
     }
 }

@@ -24,7 +24,7 @@ class PunchoutCatalogToCompanyBusinessUnitFacadeBridge implements PunchoutCatalo
     {
         $this->companyBusinessUnitFacade = $companyBusinessUnitFacade;
     }
-    
+
     /**
      * @param int $idCompanyBusinessUnit
      *

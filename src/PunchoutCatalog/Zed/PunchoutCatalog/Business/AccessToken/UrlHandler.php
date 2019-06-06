@@ -34,7 +34,7 @@ class UrlHandler implements UrlHandlerInterface
      */
     public function getLoginUrl(string $accessToken, string $locale = null, string $returnUrl = null): string
     {
-        $locale = $locale ?? $this->punchoutCatalogConfig->getDefaultStoreLocale();
+        $locale = $locale ?? $this->punchoutCatalogConfig->getDefaultLocale();
 
         $params = [
             'returnUrl' => $returnUrl ?? 'home',

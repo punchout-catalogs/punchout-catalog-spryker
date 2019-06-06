@@ -119,7 +119,7 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
                 throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
             }
         } else {
-            $customerTransfer = $this->customerFacade->findCustomerById($customerId);
+            $customerTransfer = $this->customerFacade->findCustomerById((new CustomerTransfer())->setIdCustomer($customerId));
 
             //Check if customer connected with current company
             //Omit case if user assign to another BU

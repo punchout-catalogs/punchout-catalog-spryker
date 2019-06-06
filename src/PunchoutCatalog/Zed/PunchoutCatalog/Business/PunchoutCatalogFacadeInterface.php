@@ -7,10 +7,11 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
+use Generated\Shared\Transfer\DataImporterReportTransfer;
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
-
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
@@ -19,11 +20,6 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-
-use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
-use Generated\Shared\Transfer\DataImporterReportTransfer;
-use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
-use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 
 interface PunchoutCatalogFacadeInterface
 {
@@ -89,7 +85,7 @@ interface PunchoutCatalogFacadeInterface
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCart(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): PunchoutCatalogCartResponseTransfer;
-    
+
     /**
      * Specification:
      * -
@@ -101,7 +97,7 @@ interface PunchoutCatalogFacadeInterface
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
      */
     public function processCancel(PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer): PunchoutCatalogCartResponseTransfer;
-    
+
     /**
      * Specification:
      * -
@@ -113,7 +109,7 @@ interface PunchoutCatalogFacadeInterface
      * @return \Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer
      */
     public function findConnections(PunchoutCatalogConnectionCriteriaTransfer $punchoutCatalogConnectionCriteriaTransfer): PunchoutCatalogConnectionListTransfer;
-    
+
     /**
      * Specification:
      *
@@ -147,7 +143,6 @@ interface PunchoutCatalogFacadeInterface
      */
     public function importCart(?DataImporterConfigurationTransfer $dataImporterConfigurationTransfer = null): DataImporterReportTransfer;
 
-
     /**
      * Specification:
      * - Decides if the provided content is OCI.
@@ -168,7 +163,7 @@ interface PunchoutCatalogFacadeInterface
      *
      * @param array $content
      *
-     * @return PunchoutCatalogProtocolDataTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer
      */
     public function fetchOciHeader(array $content): PunchoutCatalogProtocolDataTransfer;
 
@@ -190,9 +185,9 @@ interface PunchoutCatalogFacadeInterface
      *
      * @api
      *
-     * @throws RequiredTransferPropertyException
+     * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer
      *
-     * @param PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer
+     * @throws \Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException
      *
      * @return void
      */

@@ -7,12 +7,13 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
+use Generated\Shared\Transfer\DataImporterReportTransfer;
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
-
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
@@ -20,10 +21,6 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-
-use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
-use Generated\Shared\Transfer\DataImporterReportTransfer;
-use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use Spryker\Zed\Kernel\Business\AbstractFacade;
 
 /**
@@ -47,7 +44,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         return $this->getEntityManager()
             ->saveTransaction($punchoutCatalogRequest);
     }
-    
+
     /**
      * {@inheritdoc}
      *
@@ -91,7 +88,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     {
         return $this->getRepository()->findConnections($punchoutCatalogConnectionCriteriaTransfer);
     }
-    
+
     /**
      * {@inheritdoc}
      *
@@ -105,25 +102,26 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     {
         $context = new PunchoutCatalogCommonContextTransfer();
         $context->setPunchoutSessionId($this->generateSessionId());
-        
+
         $punchoutCatalogRequestTransfer->setContext($context);
-        
+
         $transactionMapper = $this->getFactory()->createTransactionMapper();
 
         $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer(
             $punchoutCatalogRequestTransfer
         );
         $this->getEntityManager()->saveTransaction($requestTransaction);
-        
+
         $punchoutCatalogResponseTransfer = $this->getFactory()
             ->createRequestProcessor()
             ->processRequest($punchoutCatalogRequestTransfer);
-    
+
         $requestTransaction = $transactionMapper->mapRequestTransferToEntityTransfer(
-            $punchoutCatalogRequestTransfer, $requestTransaction
+            $punchoutCatalogRequestTransfer,
+            $requestTransaction
         );
         $this->getEntityManager()->saveTransaction($requestTransaction);
-        
+
         $responseTransaction = $transactionMapper->mapResponseTransferToEntityTransfer(
             $punchoutCatalogResponseTransfer
         );
@@ -146,7 +144,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         $punchoutCatalogCartResponseTransfer = $this->getFactory()
             ->createCartProcessor()
             ->processCart($punchoutCatalogCartRequestTransfer);
-        
+
         $responseTransaction = $this->getFactory()->createTransactionMapper()
             ->mapCartResponseTransferToEntityTransfer($punchoutCatalogCartResponseTransfer);
 
@@ -154,7 +152,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
 
         return $punchoutCatalogCartResponseTransfer;
     }
-    
+
     /**
      * {@inheritdoc}
      *
@@ -169,16 +167,15 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         $punchoutCatalogCartResponseTransfer = $this->getFactory()
             ->createCartProcessor()
             ->processCancel($punchoutCatalogCancelRequestTransfer);
-        
+
         $responseTransaction = $this->getFactory()->createTransactionMapper()
             ->mapCartResponseTransferToEntityTransfer($punchoutCatalogCartResponseTransfer);
-        
+
         $this->getEntityManager()->saveTransaction($responseTransaction);
-        
+
         return $punchoutCatalogCartResponseTransfer;
     }
-    
-    
+
     /**
      * {@inheritdoc}
      *
@@ -216,13 +213,14 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     {
         return $this->getFactory()->getPunchoutCatalogCartDataImport()->import($dataImporterConfigurationTransfer);
     }
-    
+
     /**
      * @return string
      */
     protected function generateSessionId(): string
     {
         $id = microtime(true) . '_' . uniqid('', true);
+
         return $this->getFactory()
             ->createUtilUuidGeneratorService()
             ->generateUuid5FromObjectId($id);
@@ -251,7 +249,7 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      *
      * @param array $content
      *
-     * @return PunchoutCatalogProtocolDataTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer
      */
     public function fetchOciHeader(array $content): PunchoutCatalogProtocolDataTransfer
     {
@@ -281,9 +279,9 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
      *
      * @api
      *
-     * @throws RequiredTransferPropertyException
+     * @throws \Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException
      *
-     * @param PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $punchoutCatalogProtocolDataTransfer
      *
      * @return void
      */

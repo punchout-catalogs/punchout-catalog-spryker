@@ -12,6 +12,8 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin as CoreAbstractPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter as MappingConverter;
 
 /**
+ * @todo The methods in this class are not open for extension + they are fake abstract methods (facade)
+ *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
@@ -24,6 +26,7 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
      */
     protected function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
     {
+        // @todo factory
         return (new MappingConverter())->convert(
             $this->convertToArray($mapping)
         );
@@ -36,10 +39,13 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
      */
     protected function convertToArray(string $mapping): ?array
     {
+        // @todo UtilEncoding
         return json_decode(trim($mapping), true);
     }
     
     /**
+     * @todo This is method does not belong to the abstract class (+SRP violation)
+     *
      * @api
      *
      * @return string
@@ -55,6 +61,8 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     }
 
     /**
+     * @todo This is method does not belong to the abstract class (+SRP violation)
+     *
      * @return string
      */
     public function getTimestamp(): string

@@ -147,7 +147,7 @@ class RequestProcessor implements RequestProcessorInterface
             }
         }
     
-        $message = $this->translate($code, $this->punchoutCatalogConfig->getDefaultLocale());
+        $message = $this->translate($code, $this->punchoutCatalogConfig->getDefaultLocaleName());
         
         $messageTransfer = (new MessageTransfer())->setValue($message)->setCode($code);
     

@@ -162,7 +162,7 @@ class CartProcessor implements CartProcessorInterface
         ) {
             return str_replace('-', '_', $punchoutCatalogCartRequestTransfer->getContext()->getLocale());
         }
-        return $this->punchoutCatalogConfig->getDefaultLocale();
+        return $this->punchoutCatalogConfig->getDefaultLocaleName();
     }
     
     /**

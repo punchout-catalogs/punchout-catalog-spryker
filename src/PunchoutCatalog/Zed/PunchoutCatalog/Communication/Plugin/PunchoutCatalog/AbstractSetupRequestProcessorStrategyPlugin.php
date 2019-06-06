@@ -21,8 +21,11 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterfa
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 /**
+ * @todo The methods in this class are not open for extension + some of them are fake abstract methods (facade)
+ *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  */
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {

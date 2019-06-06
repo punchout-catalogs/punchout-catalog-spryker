@@ -7,43 +7,32 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticator;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessor;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessorInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
-use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
-use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
-
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\MapperInterface;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandler;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticator;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessor;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessorInterface;
-
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessorInterface;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\MapperInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
+use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
+use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
+use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -89,13 +78,13 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return MapperInterface|Mapper
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\MapperInterface|\PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper
      */
     public function createTransactionMapper(): MapperInterface
     {
         return new Mapper();
     }
-    
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface
      */
@@ -103,7 +92,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_GLOSSARY);
     }
-    
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
      */
@@ -183,7 +172,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Step\PunchoutCatalogConnectionWriterStep
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep
      */
     public function createPunchoutCatalogConnectionWriterStep(): PunchoutCatalogConnectionWriterStep
     {
@@ -191,22 +180,24 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Step\PunchoutCatalogConnectionSetupWriterStep
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep
      */
-    public function createPunchoutCatalogConnectionSetupWriterStep()
+    public function createPunchoutCatalogConnectionSetupWriterStep(): PunchoutCatalogConnectionSetupWriterStep
     {
         return new PunchoutCatalogConnectionSetupWriterStep();
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Step\PunchoutCatalogConnectionSetupWriterStep
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep
      */
-    public function createPunchoutCatalogConnectionCartWriterStep()
+    public function createPunchoutCatalogConnectionCartWriterStep(): PunchoutCatalogConnectionCartWriterStep
     {
         return new PunchoutCatalogConnectionCartWriterStep();
     }
-    
+
     /**
+     * @todo Proper injection
+     *
      * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
      */
     public function createUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
@@ -215,7 +206,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return OciContentProcessorInterface
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessorInterface
      */
     public function createOciContentProcessor(): OciContentProcessorInterface
     {
@@ -223,7 +214,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return CxmlContentProcessorInterface
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentProcessorInterface
      */
     public function createCxmlContentProcessor(): CxmlContentProcessorInterface
     {
@@ -231,7 +222,7 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return ProtocolDataValidatorInterface
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface
      */
     public function createOciProtocolDataValidator(): ProtocolDataValidatorInterface
     {

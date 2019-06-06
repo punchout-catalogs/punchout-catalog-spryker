@@ -9,17 +9,16 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\OauthResponseTransfer;
-use Spryker\Zed\OauthCompanyUser\Business\OauthCompanyUserFacadeInterface;
 
 class PunchoutCatalogToOauthCompanyUserFacadeBridge implements PunchoutCatalogToOauthCompanyUserFacadeInterface
 {
     /**
-     * @var OauthCompanyUserFacadeInterface
+     * @var \Spryker\Zed\OauthCompanyUser\Business\OauthCompanyUserFacadeInterface
      */
     protected $oauthCompanyUserFacade;
 
     /**
-     * @param OauthCompanyUserFacadeInterface $oAuthCustomerFacade
+     * @param \Spryker\Zed\OauthCompanyUser\Business\OauthCompanyUserFacadeInterface $oAuthCustomerFacade
      */
     public function __construct($oAuthCustomerFacade)
     {

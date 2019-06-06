@@ -7,17 +7,15 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
-use Spryker\Zed\Vault\Business\VaultFacadeInterface;
-
 class PunchoutCatalogToVaultFacadeBridge implements PunchoutCatalogToVaultFacadeInterface
 {
     /**
-     * @var VaultFacadeInterface
+     * @var \Spryker\Zed\Vault\Business\VaultFacadeInterface
      */
     protected $vaultFacade;
 
     /**
-     * @param VaultFacadeInterface $vaultFacade
+     * @param \Spryker\Zed\Vault\Business\VaultFacadeInterface $vaultFacade
      */
     public function __construct($vaultFacade)
     {

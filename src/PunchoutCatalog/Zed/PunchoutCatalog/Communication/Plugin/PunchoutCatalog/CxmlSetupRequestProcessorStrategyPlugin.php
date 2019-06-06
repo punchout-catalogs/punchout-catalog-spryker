@@ -162,6 +162,6 @@ class CxmlSetupRequestProcessorStrategyPlugin
      */
     protected function getDefaultLocale(): string
     {
-        return str_replace('_', '-', $this->getConfig()->getDefaultLocale());
+        return str_replace('_', '-', $this->getConfig()->getDefaultLocaleName());
     }
 }

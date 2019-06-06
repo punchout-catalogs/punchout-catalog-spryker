@@ -7,6 +7,9 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+/**
+ * @todo Recommendation SRP violation
+ */
 interface PunchoutConnectionConstsInterface
 {
     public const FORMAT_CXML = 'cxml';

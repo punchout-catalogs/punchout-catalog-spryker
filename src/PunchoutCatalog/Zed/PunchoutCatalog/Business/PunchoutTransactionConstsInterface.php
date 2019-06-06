@@ -7,6 +7,9 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+/**
+ * @todo Recommendation 1 time used constants
+ */
 interface PunchoutTransactionConstsInterface
 {
     public const TRANSACTION_TYPE_SETUP_REQUEST  = 'setup_request';
