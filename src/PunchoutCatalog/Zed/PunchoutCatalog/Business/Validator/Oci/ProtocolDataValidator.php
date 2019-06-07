@@ -31,10 +31,12 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
             ->getCart()
                 ->requireUrl()
                 ->requireOperation();
-
+        
         $protocolDataTransfer
             ->getOciCredentials()
                 ->requireUsername()
                 ->requirePassword();
+        
+        return true;
     }
 }
