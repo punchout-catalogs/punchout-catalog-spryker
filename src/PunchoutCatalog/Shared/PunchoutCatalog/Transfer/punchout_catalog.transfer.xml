@@ -17,8 +17,11 @@
         <property name="punchoutCatalogImpersonationDetails" type="array" />
     </transfer>
 
+    <!-- @todo: The "value" needs to hold the untranslated glossary key and we could introduce "defaultTranslation" to store the translated value -->
     <transfer name="Message">
         <property name="code" type="string" />
+        <property name="value" type="string"/>
+        <property name="parameters" type="array"/>
     </transfer>
 
     <transfer name="Item">
@@ -39,9 +42,6 @@
         <property name="customer" type="Customer" />
 
         <property name="isSuccess" type="bool"/>
-        <!--
-        <property name="messages" type="Message[]" singular="message"/>
-        -->
         <property name="context" type="PunchoutCatalogCommonContext"/>
     </transfer>
 
@@ -49,9 +49,6 @@
         <property name="contentType" type="string" />
         <property name="content" type="string" />
         <property name="isSuccess" type="bool"/>
-        <!--
-        <property name="messages" type="Message[]" singular="message"/>
-        -->
         <property name="exceptions" type="string[]" singular="exception"/>
 
         <property name="context" type="PunchoutCatalogCommonContext"/>

@@ -7,15 +7,13 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client;
 
-use Generated\Shared\Transfer\ProductConcreteTransfer;
-
 interface PunchoutCatalogToProductStorageClientInterface
 {
     /**
-     * @param $idProductAbstract
-     * @param $localeName
-     * @return mixed
+     * @param int $idProductAbstract
+     * @param string $localeName
+     *
+     * @return array
      */
     public function getProductAbstractStorageData($idProductAbstract, $localeName): array;
-
 }

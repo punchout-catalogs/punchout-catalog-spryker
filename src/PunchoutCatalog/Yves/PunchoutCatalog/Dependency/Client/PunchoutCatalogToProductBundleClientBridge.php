@@ -15,7 +15,7 @@ class PunchoutCatalogToProductBundleClientBridge implements PunchoutCatalogToPro
      * @var \Spryker\Client\ProductBundle\ProductBundleClientInterface
      */
     protected $productBundleClient;
-    
+
     /**
      * @param \Spryker\Client\ProductBundle\ProductBundleClientInterface $productBundleClient
      */
@@ -23,7 +23,7 @@ class PunchoutCatalogToProductBundleClientBridge implements PunchoutCatalogToPro
     {
         $this->productBundleClient = $productBundleClient;
     }
-    
+
     /**
      * @param \ArrayObject|\Generated\Shared\Transfer\ItemTransfer[] $items
      * @param \ArrayObject|\Generated\Shared\Transfer\ItemTransfer[] $bundleItems

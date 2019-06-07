@@ -7,11 +7,11 @@
 
 namespace PunchoutCatalog\Client\PunchoutCatalog;
 
-use Spryker\Client\Kernel\AbstractFactory;
-use PunchoutCatalog\Client\PunchoutCatalog\Dependency\Client\PunchoutCatalogToZedRequestClientInterface;
 use PunchoutCatalog\Client\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface;
+use PunchoutCatalog\Client\PunchoutCatalog\Dependency\Client\PunchoutCatalogToZedRequestClientInterface;
 use PunchoutCatalog\Client\PunchoutCatalog\Zed\PunchoutCatalogStub;
 use PunchoutCatalog\Client\PunchoutCatalog\Zed\PunchoutCatalogStubInterface;
+use Spryker\Client\Kernel\AbstractFactory;
 
 class PunchoutCatalogFactory extends AbstractFactory
 {
@@ -30,7 +30,7 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_ZED_REQUEST);
     }
-    
+
     /**
      * @return \PunchoutCatalog\Client\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface
      */

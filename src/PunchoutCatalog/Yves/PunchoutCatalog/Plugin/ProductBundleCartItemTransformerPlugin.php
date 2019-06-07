@@ -1,16 +1,13 @@
 <?php
 
-/**
- *
- */
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Plugin;
 
 use ArrayObject;
 use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
-use Spryker\Yves\Kernel\AbstractPlugin;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface;
+use Spryker\Yves\Kernel\AbstractPlugin;
 
 /**
  * @method \PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogFactory getFactory()
@@ -26,14 +23,14 @@ class ProductBundleCartItemTransformerPlugin extends AbstractPlugin implements C
     public function transformCartItems(array $cartItems, QuoteTransfer $quoteTransfer): array
     {
         $transformedCartItems = [];
-        
+
         $groupedItems = $this->getGroupedItems($cartItems, $quoteTransfer);
         foreach ($groupedItems as $groupedItem) {
             if ($groupedItem instanceof ItemTransfer) {
                 $transformedCartItems[] = $groupedItem;
                 continue;
             }
-    
+
             // Punchout Specific Code
             // Reset array and fix bug with multiplying
             $groupedItem['bundleProduct']->setChildBundleItems(new ArrayObject());
@@ -43,13 +40,13 @@ class ProductBundleCartItemTransformerPlugin extends AbstractPlugin implements C
                 }
             }
             // Punchout Specific Code
-            
+
             $transformedCartItems[] = $groupedItem['bundleProduct'];
         }
-        
+
         return $transformedCartItems;
     }
-    
+
     /**
      * @param array $cartItems
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer

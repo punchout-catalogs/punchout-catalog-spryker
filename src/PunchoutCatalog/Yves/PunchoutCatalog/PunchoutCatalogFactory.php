@@ -7,20 +7,16 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog;
 
-use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductBundleClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCustomerClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToGlossaryStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToMoneyClientInterface;
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductBundleClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientInterface;
-
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapper;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperInterface;
-
-use Spryker\Client\Customer\CustomerClient;
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
 use Spryker\Shared\Kernel\Store;
 use Spryker\Yves\Kernel\AbstractFactory;
 use Spryker\Yves\Kernel\Application;
@@ -44,12 +40,7 @@ class PunchoutCatalogFactory extends AbstractFactory
     public function getTransferCartMapper(): CartTransferMapperInterface
     {
         return new CartTransferMapper(
-            $this->getCartTransferMapperPlugins(),
-            $this->getGlossaryStorageClient(),
-            $this->getMoneyClient(),
-            $this->getProductStorageClient(),
-            $this->getCustomerClient(),
-            $this->getStore()->getCurrentLocale()
+            $this->getCartTransferMapperPlugins()
         );
     }
 
@@ -110,11 +101,11 @@ class PunchoutCatalogFactory extends AbstractFactory
     }
 
     /**
-     * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceInterface
      */
-    public function getUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
+    public function getUtilUuidGeneratorService(): PunchoutCatalogToUtilUuidGeneratorServiceInterface
     {
-        return new UtilUuidGeneratorService();
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::SERVICE_UTIL_UUID_GENERATOR);
     }
 
     /**
@@ -142,7 +133,7 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getConfig();
     }
-    
+
     /**
      * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductBundleClientInterface
      */

@@ -12,9 +12,9 @@ use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 interface ProtocolDataValidatorInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
-     *
      * @throws \Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException
+     *
+     * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $protocolDataTransfer*
      *
      * @return bool
      */
