@@ -19,6 +19,7 @@ use Spryker\Yves\Kernel\AbstractPlugin;
  */
 class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTransferMapperPluginInterface
 {
+    const CHILD_DESCRIPTION_SEPARATOR = ' x ';
     /**
      * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
      */
@@ -461,7 +462,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             && $this->getBundleMode() == PunchoutConnectionConstsInterface::BUNDLE_MODE_SINGLE
         ) {
             foreach ($quoteItemTransfer->getChildBundleItems() as $childCartItem) {
-                $childrenDescriptions[] = $this->prepareChildDescription($childCartItem);
+                $childrenDescriptions[] = $this->prepareChildDescription($childCartItem, $documentCartItemTransfer);
             }
         }
 
@@ -515,13 +516,15 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
      *
      * @return string
      */
-    protected function prepareChildDescription(QuoteItemTransfer $quoteItemTransfer)
+    protected function prepareChildDescription(QuoteItemTransfer $quoteItemTransfer, PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer)
     {
         $desc = [];
-        $desc[] = sprintf('%s x %s', $quoteItemTransfer->getQuantity(), $quoteItemTransfer->getName());
+        $amount = $this->toAmount($quoteItemTransfer->getUnitPrice(), $documentCartItemTransfer->getCurrency());
+        $desc[] = implode(self::CHILD_DESCRIPTION_SEPARATOR, [$quoteItemTransfer->getQuantity(), $amount, $quoteItemTransfer->getName()]);
 
         foreach ($quoteItemTransfer->getProductOptions() as $option) {
             $value = $this->glossaryStorageClient->translate($option->getValue(), $this->currentLocale);
