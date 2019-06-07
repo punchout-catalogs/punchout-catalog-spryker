@@ -1,7 +1,7 @@
 <?php
 
 
-namespace PunchoutCatalog\Yves\PunchoutCatalog\Plugin;
+namespace PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog;
 
 use ArrayObject;
 use Generated\Shared\Transfer\ItemTransfer;
