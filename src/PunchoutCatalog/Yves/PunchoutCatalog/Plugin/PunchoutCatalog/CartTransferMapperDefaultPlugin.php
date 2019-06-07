@@ -354,26 +354,53 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             $documentCartItemTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
         }
 
-        //PRICING & RATES
-        $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
-
+        //PRICING
         $documentCartItemTransfer->setUnitPrice(
             $this->toAmount($quoteItemTransfer->getUnitPrice(), $documentCartItemTransfer->getCurrency())
         );
-
         $documentCartItemTransfer->setSumPrice(
             $this->toAmount($quoteItemTransfer->getSumPrice(), $documentCartItemTransfer->getCurrency())
         );
-
+        $documentCartItemTransfer->setUnitTotal(
+            $this->toAmount($quoteItemTransfer->getUnitSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
+        );
+        $documentCartItemTransfer->setSumTotal(
+            $this->toAmount($quoteItemTransfer->getSumSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
+        );
+        
+        //Taxes
+        $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
+        
+        if ($quoteItemTransfer->getUnitTaxAmount() !== null) {
+            $documentCartItemTransfer->setUnitTaxAmount(
+                $this->toAmount($quoteItemTransfer->getUnitTaxAmount(), $documentCartItemTransfer->getCurrency())
+            );
+        }
         if ($quoteItemTransfer->getSumTaxAmount() !== null) {
             $documentCartItemTransfer->setSumTaxAmount(
                 $this->toAmount($quoteItemTransfer->getSumTaxAmount(), $documentCartItemTransfer->getCurrency())
             );
         }
-
+        if ($quoteItemTransfer->getUnitTaxAmountFullAggregation() !== null) {
+            $documentCartItemTransfer->setUnitTaxTotal(
+                $this->toAmount($quoteItemTransfer->getUnitTaxAmountFullAggregation(), $documentCartItemTransfer->getCurrency())
+            );
+        }
+        if ($quoteItemTransfer->getSumTaxAmountFullAggregation() !== null) {
+            $documentCartItemTransfer->setSumTaxTotal(
+                $this->toAmount($quoteItemTransfer->getSumTaxAmountFullAggregation(), $documentCartItemTransfer->getCurrency())
+            );
+        }
+        
+        //Discounts
         if ($quoteItemTransfer->getSumDiscountAmountAggregation() !== null) {
-            $documentCartItemTransfer->setSumDiscountAmount(
+            $documentCartItemTransfer->setSumDiscountTotal(
                 $this->toAmount($quoteItemTransfer->getSumDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
+            );
+        }
+        if ($quoteItemTransfer->getUnitDiscountAmountAggregation() !== null) {
+            $documentCartItemTransfer->setUnitDiscountTotal(
+                $this->toAmount($quoteItemTransfer->getUnitDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
             );
         }
 
