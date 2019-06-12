@@ -495,6 +495,20 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
+     * @param $value
+     * @return mixed
+     */
+    protected function convertUom($value)
+    {
+        $units = [
+            'KILO' => 'KGM',
+            'ITEM' => 'EA',
+        ];
+
+        return $units[$value] ?? $value;
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
@@ -515,7 +529,8 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
-        $documentCartItemTransfer->setUom('EA');//@todo: get a real value
+        $code = $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit()->getCode();
+        $documentCartItemTransfer->setUom($this->convertUom($code));
 
         return $documentCartItemTransfer;
     }
