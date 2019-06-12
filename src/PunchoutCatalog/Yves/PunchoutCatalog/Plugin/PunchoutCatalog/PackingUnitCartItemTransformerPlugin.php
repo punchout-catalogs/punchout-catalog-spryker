@@ -3,6 +3,7 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog;
 
+use ArrayObject;
 use Generated\Shared\Transfer\ItemTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface;
@@ -14,7 +15,27 @@ use Spryker\Yves\Kernel\AbstractPlugin;
 class PackingUnitCartItemTransformerPlugin extends AbstractPlugin implements CartItemTransformerPluginInterface
 {
     /**
-     * @param \Generated\Shared\Transfer\ItemTransfer[] $cartItems
+     * @var string
+     */
+    protected $currentLocale;
+
+    /**
+     * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface
+     */
+    protected $productStorageClient;
+
+    /**
+     * PackingUnitCartItemTransformerPlugin constructor.
+     * @throws \Spryker\Shared\Kernel\Locale\LocaleNotFoundException
+     */
+    public function __construct()
+    {
+        $this->currentLocale = $this->getFactory()->getStore()->getCurrentLocale();
+        $this->productStorageClient = $this->getFactory()->getProductStorageClient();
+    }
+
+    /**
+     *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return \Generated\Shared\Transfer\ItemTransfer[]
@@ -24,7 +45,34 @@ class PackingUnitCartItemTransformerPlugin extends AbstractPlugin implements Car
         $transformedCartItems = [];
 
         foreach ($cartItems as $cartItem) {
-            $transformedCartItems[] = $cartItem;
+            $amountSalesUnit = $cartItem->getAmountSalesUnit();
+            $amountLeadProduct = $cartItem->getAmountLeadProduct();
+            if ($amountSalesUnit && $amountLeadProduct) {
+                $data[] = $cartItem;
+                $childItem = new ItemTransfer();
+                $name = $cartItem->getName();
+                $productData = $this->productStorageClient->getProductAbstractStorageData($cartItem->getIdProductAbstract(), $this->currentLocale);
+                if (!empty($productData['name'])) {
+                    $name = $productData['name'];
+                }
+                $childItem->setName($name);
+                $childItem->setIdProductAbstract($amountLeadProduct->getIdProductAbstract());
+                $childItem->setSku($amountLeadProduct->getProduct()->getSku());
+                $childItem->setUnitPrice($cartItem->getUnitPrice());
+                $childItem->setSumPrice($cartItem->getSumPrice());
+                $childItem->setQuantity($cartItem->getAmount());
+                $childItem->setUnitPriceToPayAggregation($cartItem->getUnitPriceToPayAggregation());
+                $childItem->setSumPriceToPayAggregation($cartItem->getSumPriceToPayAggregation());
+
+                $concreteAttributes = $cartItem->getConcreteAttributes();
+                if (!empty($concreteAttributes['packaging_unit'])) {
+                    $cartItem->setName($concreteAttributes['packaging_unit']);
+                }
+                $cartItem->setChildBundleItems(new ArrayObject([$childItem]));
+                $transformedCartItems[] = $cartItem;
+            } else {
+                $transformedCartItems[] = $cartItem;
+            }
         }
 
         return $transformedCartItems;
