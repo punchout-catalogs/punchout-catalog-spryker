@@ -70,7 +70,7 @@
 
         <column name="default_supplier_id" type="VARCHAR" size="64" required="false"/>
 
-        <column name="max_description_length" type="SMALLINT" required="false"/>
+        <column name="max_description_length" type="SMALLINT" required="false" unsigned="true"/>
 
         <column name="encoding" type="VARCHAR" size="16" required="false"/>
 
@@ -83,6 +83,10 @@
         </foreign-key>
 
         <id-method-parameter value="pgw_punchout_catalog_connection_cart_pk_seq"/>
+
+        <behavior name="validate">
+            <parameter name="rule1" value="{column: max_description_length, validator: Range, options: {max: 32767, min: 0}}" />
+        </behavior>
     </table>
 
     <table name="pgw_punchout_catalog_transaction" phpName="PgwPunchoutCatalogTransaction">
