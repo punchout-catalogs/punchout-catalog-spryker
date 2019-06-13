@@ -365,8 +365,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $documentCartItemTransfer->setUnitTotal(
             //getUnitSubtotalAggregation - price
             //$this->toAmount($quoteItemTransfer->getUnitSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
-            //getUnitPriceToPayAggregation - price - discounts
-            $this->toAmount($quoteItemTransfer->getUnitPriceToPayAggregation(), $documentCartItemTransfer->getCurrency())
+            //$quoteItemTransfer->getSumPriceToPayAggregation() / $quoteItemTransfer->getQuantity() - price - discounts
+            $this->toAmount(
+                $quoteItemTransfer->getSumPriceToPayAggregation() / $quoteItemTransfer->getQuantity(), $documentCartItemTransfer->getCurrency())
         );
         $documentCartItemTransfer->setSumTotal(
             //getSumSubtotalAggregation - sum
@@ -529,7 +530,11 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
-        $code = $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit()->getCode();
+        $code = 'ITEM';
+        if ($quoteItemTransfer->getQuantitySalesUnit() != null
+            && $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit() != null) {
+            $code = $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit()->getCode();
+        }
         $documentCartItemTransfer->setUom($this->convertUom($code));
 
         return $documentCartItemTransfer;
