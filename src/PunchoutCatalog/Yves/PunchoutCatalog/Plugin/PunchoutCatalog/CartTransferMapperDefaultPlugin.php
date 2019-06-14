@@ -454,7 +454,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteItemTransfer $quoteItemTransfer,
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer {
-        $productAbstractStorageData = $this->productStorageClient->getProductAbstractStorageData(
+        $productAbstractStorageData = $this->productStorageClient->findProductAbstractStorageData(
             $quoteItemTransfer->getIdProductAbstract(),
             $this->currentLocale
         );
@@ -573,7 +573,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteItemTransfer $quoteItemTransfer,
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer {
-        $productAbstractStorageData = $this->productStorageClient->getProductAbstractStorageData(
+        $productAbstractStorageData = $this->productStorageClient->findProductAbstractStorageData(
             $quoteItemTransfer->getIdProductAbstract(),
             $this->currentLocale
         );
