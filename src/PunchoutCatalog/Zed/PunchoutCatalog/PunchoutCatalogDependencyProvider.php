@@ -43,7 +43,6 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = $this->addGlossaryFacade($container);
         $container = $this->addCompanyBusinessUnitFacade($container);
         $container = $this->addCompanyUserFacade($container);
-        $container = $this->addCustomerFacade($container);//@todo: review dependency
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
 
@@ -75,7 +74,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = $this->addGlossaryFacade($container);
         $container = $this->addCompanyBusinessUnitFacade($container);
         $container = $this->addCompanyUserFacade($container);
-        $container = $this->addCustomerFacade($container);//@todo: review dependency
+        $container = $this->addCustomerFacade($container);
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
         

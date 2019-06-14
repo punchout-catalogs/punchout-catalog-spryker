@@ -79,9 +79,6 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
             throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
         }
         $documentCustomerTransfer->requireEmail();
-        //!!!!!
-        $documentCustomerTransfer->setEmail('george.freeman@spryker.com');//@todo: remove
-        $documentCustomerTransfer->setEmail('cxml14@punchoutcatalogs.net');//@todo: remove
 
         $currentBusinessUnitId = $connectionTransfer->getSetup()->getFkCompanyBusinessUnit();
         $currentBusinessUnit = $this->companyBusinessUnitFacade->findCompanyBusinessUnitById($currentBusinessUnitId);

@@ -58,7 +58,6 @@ class XmlUtil
             return false;
         }
 
-        //@todo: hotfix
         if (strpos($path, '/cXML') === 0) {
             $path = substr($path, 5);
         } elseif (strpos($path, 'cXML') === 0) {
