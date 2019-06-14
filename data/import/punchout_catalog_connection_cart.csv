@@ -52,7 +52,7 @@ Client 1 - cXml - User 1,spryker_sup_3,100,composite,base64,"{
 						""sku"": {
         ""path"": ""ItemID[1]/SupplierPartID[1],ItemDetail[1]/BuyerPartID[1],ItemDetail[1]/ManufacturerPartID[1]""
       },
-						""unit_price"": {
+						""unit_total"": {
         ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]""
       },
       ""currency"": {
@@ -127,7 +127,7 @@ Client 1 - Oci - User 1,spryker_sup_1,128,composite,,"
       ""currency"": {
         ""path"": ""NEW_ITEM-CURRENCY[%line_number%]""
       },
-      ""unit_price"": {
+      ""unit_total"": {
         ""path"": ""NEW_ITEM-PRICE[%line_number%]""
       },
       ""name"": {
@@ -222,7 +222,7 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,urlencoded,"{
       ""sku"": {
         ""path"": ""ItemID[1]/SupplierPartID[1],ItemDetail[1]/BuyerPartID[1],ItemDetail[1]/ManufacturerPartID[1]""
       },
-      ""unit_price"": {
+      ""unit_total"": {
         ""path"": ""ItemDetail[1]/UnitPrice[1]/Money[1]""
       },
       ""currency"": {
@@ -329,7 +329,7 @@ Client 2 - Oci - User 2,spryker_sup_1,,single,,"
       ""currency"": {
         ""path"": ""NEW_ITEM-CURRENCY[%line_number%]""
       },
-      ""unit_price"": {
+      ""unit_total"": {
         ""path"": ""NEW_ITEM-PRICE[%line_number%]""
       },
       ""name"": {

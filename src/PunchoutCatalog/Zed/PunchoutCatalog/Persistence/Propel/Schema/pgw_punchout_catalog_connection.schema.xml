@@ -70,7 +70,7 @@
 
         <column name="default_supplier_id" type="VARCHAR" size="64" required="false"/>
 
-        <column name="max_description_length" type="SMALLINT" required="false"/>
+        <column name="max_description_length" type="INTEGER" required="false" unsigned="true"/>
 
         <column name="encoding" type="VARCHAR" size="16" required="false"/>
 

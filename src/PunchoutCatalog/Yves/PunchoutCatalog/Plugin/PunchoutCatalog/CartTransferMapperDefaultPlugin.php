@@ -19,6 +19,7 @@ use Spryker\Yves\Kernel\AbstractPlugin;
  */
 class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTransferMapperPluginInterface
 {
+    const CHILD_DESCRIPTION_SEPARATOR = ' x ';
     /**
      * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
      */
@@ -354,26 +355,60 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             $documentCartItemTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
         }
 
-        //PRICING & RATES
-        $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
-
+        //PRICING
         $documentCartItemTransfer->setUnitPrice(
             $this->toAmount($quoteItemTransfer->getUnitPrice(), $documentCartItemTransfer->getCurrency())
         );
-
         $documentCartItemTransfer->setSumPrice(
             $this->toAmount($quoteItemTransfer->getSumPrice(), $documentCartItemTransfer->getCurrency())
         );
-
+        $documentCartItemTransfer->setUnitTotal(
+            //getUnitSubtotalAggregation - price
+            //$this->toAmount($quoteItemTransfer->getUnitSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
+            //$quoteItemTransfer->getSumPriceToPayAggregation() / $quoteItemTransfer->getQuantity() - price - discounts
+            $this->toAmount(
+                $quoteItemTransfer->getSumPriceToPayAggregation() / $quoteItemTransfer->getQuantity(), $documentCartItemTransfer->getCurrency())
+        );
+        $documentCartItemTransfer->setSumTotal(
+            //getSumSubtotalAggregation - sum
+            //$this->toAmount($quoteItemTransfer->getSumSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
+            //getSumPriceToPayAggregation - sum - discounts
+            $this->toAmount($quoteItemTransfer->getSumPriceToPayAggregation(), $documentCartItemTransfer->getCurrency())
+        );
+        
+        //Taxes
+        $documentCartItemTransfer->setTaxRate($quoteItemTransfer->getTaxRate());
+        
+        if ($quoteItemTransfer->getUnitTaxAmount() !== null) {
+            $documentCartItemTransfer->setUnitTaxAmount(
+                $this->toAmount($quoteItemTransfer->getUnitTaxAmount(), $documentCartItemTransfer->getCurrency())
+            );
+        }
         if ($quoteItemTransfer->getSumTaxAmount() !== null) {
             $documentCartItemTransfer->setSumTaxAmount(
                 $this->toAmount($quoteItemTransfer->getSumTaxAmount(), $documentCartItemTransfer->getCurrency())
             );
         }
-
+        if ($quoteItemTransfer->getUnitTaxAmountFullAggregation() !== null) {
+            $documentCartItemTransfer->setUnitTaxTotal(
+                $this->toAmount($quoteItemTransfer->getUnitTaxAmountFullAggregation(), $documentCartItemTransfer->getCurrency())
+            );
+        }
+        if ($quoteItemTransfer->getSumTaxAmountFullAggregation() !== null) {
+            $documentCartItemTransfer->setSumTaxTotal(
+                $this->toAmount($quoteItemTransfer->getSumTaxAmountFullAggregation(), $documentCartItemTransfer->getCurrency())
+            );
+        }
+        
+        //Discounts
         if ($quoteItemTransfer->getSumDiscountAmountAggregation() !== null) {
-            $documentCartItemTransfer->setSumDiscountAmount(
+            $documentCartItemTransfer->setSumDiscountTotal(
                 $this->toAmount($quoteItemTransfer->getSumDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
+            );
+        }
+        if ($quoteItemTransfer->getUnitDiscountAmountAggregation() !== null) {
+            $documentCartItemTransfer->setUnitDiscountTotal(
+                $this->toAmount($quoteItemTransfer->getUnitDiscountAmountAggregation(), $documentCartItemTransfer->getCurrency())
             );
         }
 
@@ -434,7 +469,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             && $this->getBundleMode() == PunchoutConnectionConstsInterface::BUNDLE_MODE_SINGLE
         ) {
             foreach ($quoteItemTransfer->getChildBundleItems() as $childCartItem) {
-                $childrenDescriptions[] = $this->prepareChildDescription($childCartItem);
+                $childrenDescriptions[] = $this->prepareChildDescription($childCartItem, $documentCartItemTransfer);
             }
         }
 
@@ -461,6 +496,20 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
+     * @param $value
+     * @return mixed
+     */
+    protected function convertUom($value)
+    {
+        $units = [
+            'KILO' => 'KGM',
+            'ITEM' => 'EA',
+        ];
+
+        return $units[$value] ?? $value;
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
@@ -481,20 +530,27 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $documentCartItemTransfer->setGroupKey($quoteItemTransfer->getGroupKey());
         $documentCartItemTransfer->setAbstractSku($quoteItemTransfer->getAbstractSku());
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
-        $documentCartItemTransfer->setUom('EA');//@todo: get a real value
+        $code = 'ITEM';
+        if ($quoteItemTransfer->getQuantitySalesUnit() != null
+            && $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit() != null) {
+            $code = $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit()->getCode();
+        }
+        $documentCartItemTransfer->setUom($this->convertUom($code));
 
         return $documentCartItemTransfer;
     }
 
     /**
      * @param \Generated\Shared\Transfer\ItemTransfer $quoteItemTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
      *
      * @return string
      */
-    protected function prepareChildDescription(QuoteItemTransfer $quoteItemTransfer)
+    protected function prepareChildDescription(QuoteItemTransfer $quoteItemTransfer, PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer)
     {
         $desc = [];
-        $desc[] = sprintf('%s x %s', $quoteItemTransfer->getQuantity(), $quoteItemTransfer->getName());
+        $amount = $this->toAmount($quoteItemTransfer->getUnitPrice(), $documentCartItemTransfer->getCurrency());
+        $desc[] = implode(self::CHILD_DESCRIPTION_SEPARATOR, [$quoteItemTransfer->getQuantity(), $amount, $quoteItemTransfer->getName()]);
 
         foreach ($quoteItemTransfer->getProductOptions() as $option) {
             $value = $this->glossaryStorageClient->translate($option->getValue(), $this->currentLocale);

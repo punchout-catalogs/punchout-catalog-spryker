@@ -232,8 +232,16 @@
 
         <property name="unitPrice" type="float"/>
         <property name="sumPrice" type="float"/>
+        <property name="unitTotal" type="float"/>
+        <property name="sumTotal" type="float"/>
+
+        <property name="unitTaxAmount" type="float"/>
         <property name="sumTaxAmount" type="float"/>
-        <property name="sumDiscountAmount" type="float"/>
+        <property name="unitTaxTotal" type="float"/>
+        <property name="sumTaxTotal" type="float"/>
+
+        <property name="unitDiscountTotal" type="float"/>
+        <property name="sumDiscountTotal" type="float"/>
 
         <property name="taxRate" type="float"/>
         <property name="taxDescription" type="string"/>
