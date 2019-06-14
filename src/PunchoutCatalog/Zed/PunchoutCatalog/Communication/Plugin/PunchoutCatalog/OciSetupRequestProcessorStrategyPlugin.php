@@ -109,6 +109,6 @@ class OciSetupRequestProcessorStrategyPlugin
      */
     protected function createErrorResponse(MessageTransfer $messageTransfer): string
     {
-        return sprintf('Punchout Error: %s', (string)$messageTransfer->getValue());
+        return sprintf('Punchout Error: %s', (string)$messageTransfer->getTranslatedMessage());
     }
 }
