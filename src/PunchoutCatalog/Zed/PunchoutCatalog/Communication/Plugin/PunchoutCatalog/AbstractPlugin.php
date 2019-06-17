@@ -9,7 +9,6 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin as CoreAbstractPlugin;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter as MappingConverter;
 
 /**
  * @todo The methods in this class are not open for extension + they are fake abstract methods (facade)
@@ -27,7 +26,8 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     protected function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
     {
         // @todo factory
-        return (new MappingConverter())->convert(
+        // review it
+        return ($this->getFacade()->getFactory()->createMappingConverter())->convert(
             $this->convertToArray($mapping)
         );
     }

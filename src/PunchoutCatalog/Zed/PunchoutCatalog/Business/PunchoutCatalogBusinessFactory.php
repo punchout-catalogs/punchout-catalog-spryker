@@ -18,6 +18,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProc
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
@@ -54,18 +55,6 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessorInterface
-     */
-    public function createCartProcessor(): CartProcessorInterface
-    {
-        return new CartProcessor(
-            $this->getRepository(),
-            $this->getConfig(),
-            $this->getGlossaryFacade()
-        );
-    }
-
-    /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface
      */
     public function createConnectionAuthenticator(): ConnectionAuthenticatorInterface
@@ -75,22 +64,6 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
             $this->getVaultFacade(),
             $this->getRepository()
         );
-    }
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\MapperInterface|\PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper
-     */
-    public function createTransactionMapper(): MapperInterface
-    {
-        return new Mapper();
-    }
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface
-     */
-    public function getGlossaryFacade(): PunchoutCatalogToGlossaryFacadeInterface
-    {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_GLOSSARY);
     }
 
     /**
@@ -107,6 +80,42 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function getVaultFacade(): PunchoutCatalogToVaultFacadeInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_VAULT);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface
+     */
+    public function getGlossaryFacade(): PunchoutCatalogToGlossaryFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_GLOSSARY);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor\CartProcessorInterface
+     */
+    public function createCartProcessor(): CartProcessorInterface
+    {
+        return new CartProcessor(
+            $this->getRepository(),
+            $this->getConfig(),
+            $this->getGlossaryFacade()
+        );
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\MapperInterface|\PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper
+     */
+    public function createTransactionMapper(): MapperInterface
+    {
+        return new Mapper();
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter
+     */
+    public function createMappingConverter(): Converter
+    {
+        return new Converter();
     }
 
     /**
@@ -136,6 +145,14 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep
+     */
+    public function createPunchoutCatalogConnectionWriterStep(): PunchoutCatalogConnectionWriterStep
+    {
+        return new PunchoutCatalogConnectionWriterStep($this->getVaultFacade());
+    }
+
+    /**
      * @return \Spryker\Zed\DataImport\Business\Model\DataImporterInterface
      */
     public function getPunchoutCatalogSetupDataImport(): DataImporterInterface
@@ -154,6 +171,14 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep
+     */
+    public function createPunchoutCatalogConnectionSetupWriterStep(): PunchoutCatalogConnectionSetupWriterStep
+    {
+        return new PunchoutCatalogConnectionSetupWriterStep();
+    }
+
+    /**
      * @return \Spryker\Zed\DataImport\Business\Model\DataImporterInterface
      */
     public function getPunchoutCatalogCartDataImport(): DataImporterInterface
@@ -169,22 +194,6 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
         $dataImporter->addDataSetStepBroker($dataSetStepBroker);
 
         return $dataImporter;
-    }
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep
-     */
-    public function createPunchoutCatalogConnectionWriterStep(): PunchoutCatalogConnectionWriterStep
-    {
-        return new PunchoutCatalogConnectionWriterStep($this->getVaultFacade());
-    }
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep
-     */
-    public function createPunchoutCatalogConnectionSetupWriterStep(): PunchoutCatalogConnectionSetupWriterStep
-    {
-        return new PunchoutCatalogConnectionSetupWriterStep();
     }
 
     /**
