@@ -8,6 +8,7 @@
 namespace PunchoutCatalog\Yves\PunchoutCatalog\Widget;
 
 use Generated\Shared\Transfer\CustomerTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
 use Spryker\Yves\Kernel\Widget\AbstractWidget;
 
 /**
@@ -46,7 +47,6 @@ class PunchoutCatalogCheckoutButtonsWidget extends AbstractWidget
      */
     protected function isVisible(CustomerTransfer $customerTransfer): bool
     {
-        // @todo Recommendation: use shared constant to ensure key matching
-        return !empty($customerTransfer->getPunchoutCatalogImpersonationDetails()['is_punchout']);
+        return !empty($customerTransfer->getPunchoutCatalogImpersonationDetails()[PunchoutConstsInterface::IS_PUNCHOUT]);
     }
 }

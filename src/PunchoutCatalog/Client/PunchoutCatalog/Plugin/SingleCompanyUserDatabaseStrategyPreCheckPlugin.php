@@ -3,6 +3,7 @@
 namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin;
 
 use Generated\Shared\Transfer\QuoteTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
 use Spryker\Client\Kernel\AbstractPlugin;
 use Spryker\Client\QuoteExtension\Dependency\Plugin\DatabaseStrategyPreCheckPluginInterface;
 
@@ -32,10 +33,9 @@ class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin imp
         if ($customer) {
             $impersonationDetails = $customer->getPunchoutCatalogImpersonationDetails();
 
-            // @todo Recommendation: use shared constant to ensure key matching
-            if (!empty($impersonationDetails['is_punchout'])
-                && isset($impersonationDetails['punchout_login_mode'])
-                && ($impersonationDetails['punchout_login_mode'] === 'single_user')
+            if (!empty($impersonationDetails[PunchoutConstsInterface::IS_PUNCHOUT])
+                && isset($impersonationDetails[PunchoutConstsInterface::PUNCHOUT_LOGIN_MODE])
+                && ($impersonationDetails[PunchoutConstsInterface::PUNCHOUT_LOGIN_MODE] === PunchoutConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE)
             ) {
                 return false;
             }

@@ -74,7 +74,6 @@ class CxmlContentProcessor implements CxmlContentProcessorInterface
      */
     protected function findXml(string $content): ?\SimpleXMLElement
     {
-        // @todo Karoly can we cache it? (yeah ... stateless, but we load it 3 times instead of 1 just ot check some values)
         $xml = new \SimpleXMLElement($content);
 
         return $xml ? $xml : null;
