@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/punchout-catalogs/punchout-catalog-spryker.svg)](https://travis-ci.org/punchout-catalogs/punchout-catalog-spryker)
 [![Coverage Status](https://coveralls.io/repos/github/punchout-catalogs/punchout-catalog-spryker/badge.svg)](https://coveralls.io/github/punchout-catalogs/punchout-catalog-spryker)
 
-{{ADD DESCRIPTION HERE}}
+Punchout Catalog Module for Spryker eCommerce Platform
 
 ## Installation
 
@@ -15,74 +15,95 @@ composer require punchout-catalogs/punchout-catalog-spryker
 [Spryker Documentation](https://academy.spryker.com/developing_with_spryker/module_guide/modules.html)
 
 
+## Testing
+
+Running:
+
+```
+./vendor/bin/codecept run
+```
+
 
 ### Custom cart mapping
 
-Extending cart mapping behavior could be implemented by adding custom mapping to application configuration:
+Extending cart mapping behavior could be implemented by overriding 
+PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig class method:
 
 ```php
-// QuoteTransfer => PunchoutCatalogDocumentCartTransfer
-$config[PunchoutCatalogConstants::CUSTOM_CART_TRANSFER_MAPPING] = [
-    /**
-     * Closure without key in array should return transfer object 
-     *
-     * @param \Generated\Shared\Transfer\QuoteTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
-     */
-    function ($quoteTransfer, $cartRequestTransfer, $plugin) {
-        $cartRequestTransfer->setCoupon('Coupon for ' . $quoteTransfer->getName());
-        return $cartRequestTransfer;
-    },
-    
-    'cart_note' => 'name',
-];
+<?php
 
-// ItemTransfer => PunchoutCatalogDocumentCartItemTransfer
-$config[PunchoutCatalogConstants::CUSTOM_CART_ITEM_TRANSFER_MAPPING] = [
-    /**
-     * Closure with key in array should return field value
-     *
-     * @param \Generated\Shared\Transfer\ItemTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
-     * @param \Generated\Shared\Transfer\QuoteTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
-     */
-    'tax_description' => function () {
-        return 'test description';
-    },
-    
-    /**
-     * @param \Generated\Shared\Transfer\ItemTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
-     * @param \Generated\Shared\Transfer\QuoteTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
-     */
-    function ($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin) {
-        $name = trim($quoteItemTransfer->getName());
-        $documentCartItemTransfer->setDiscountDescription('Custom discount description for ' . $name);
-        return $documentCartItemTransfer;
-    },
-    
-    'discount_description' => 'name',
-    
-    'cart_note' => 'group_key',
-];
+namespace Pyz\Yves\PunchoutCatalog;
 
-// CustomerTransfer => PunchoutCatalogDocumentCartCustomerTransfer
-$config[PunchoutCatalogConstants::CUSTOM_CART_CUSTOMER_TRANSFER_MAPPING] = [
-    'first_name' => 'customer_reference',
-    
+use PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig as BasePunchoutCatalogConfig;
+
+class PunchoutCatalogConfig extends BasePunchoutCatalogConfig
+{
     /**
-     * @param \Generated\Shared\Transfer\CustomerTransfer
-     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer
-     * @param \Generated\Shared\Transfer\QuoteTransfer
-     * @param \PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin
+     * @return array
      */
-    function ($quoteCustomerTransfer, $documentCartCustomerTransfer, $quoteTransfer, $plugin) {
-        return $documentCartCustomerTransfer;
-    },
-];
+    public function getCustomCartMapping(): array
+    {
+        return [
+            // QuoteTransfer => PunchoutCatalogDocumentCartTransfer
+
+            // without key, should return transfer object
+            function ($quoteTransfer, $cartRequestTransfer, $plugin) {
+                $cartRequestTransfer->setCoupon('Coupon for ' . $quoteTransfer->getName());
+                return $cartRequestTransfer;
+            },
+            'cart_note' => 'name',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomCartItemMapping(): array
+    {
+        return[
+            //ItemTransfer => PunchoutCatalogDocumentCartItemTransfer
+
+            'tax_description' => function () {
+                return 'test';
+            },
+            /**
+             * @param \Generated\Shared\Transfer\ItemTransfer
+             * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
+             * @param \Generated\Shared\Transfer\QuoteTransfer
+             * @param \PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin
+             */
+            function ($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin) {
+                $name = trim($quoteItemTransfer->getName());
+                $documentCartItemTransfer->setDiscountDescription('Custom discount description for ' . $name);
+                return $documentCartItemTransfer;
+            },
+            'discount_description' => 'name',
+            'cart_note' => 'group_key',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getCustomCartCustomerMapping(): array
+    {
+        return [
+            //CustomerTransfer => PunchoutCatalogDocumentCartCustomerTransfer
+
+            'first_name' => 'customer_reference',
+
+            /**
+             * @param \Generated\Shared\Transfer\CustomerTransfer
+             * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer
+             * @param \Generated\Shared\Transfer\QuoteTransfer
+             * @param \PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperDefaultPlugin
+             */
+            function ($quoteCustomerTransfer, $documentCartCustomerTransfer, $quoteTransfer, $plugin) {
+                return $documentCartCustomerTransfer;
+            },
+        ];
+    }
+}
 ```
 
 
