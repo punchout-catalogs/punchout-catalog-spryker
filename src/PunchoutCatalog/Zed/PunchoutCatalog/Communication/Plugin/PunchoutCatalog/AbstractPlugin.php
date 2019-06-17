@@ -14,6 +14,7 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin as CoreAbstractPlugin;
  * @todo The methods in this class are not open for extension + they are fake abstract methods (facade)
  *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
 abstract class AbstractPlugin extends CoreAbstractPlugin
@@ -26,8 +27,8 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     protected function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
     {
         // @todo factory
-        // review it
-        return ($this->getFacade()->getFactory()->createMappingConverter())->convert(
+        // fixed, but should to review it
+        return ($this->getFactory()->createMappingConverter())->convert(
             $this->convertToArray($mapping)
         );
     }
@@ -39,7 +40,6 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
      */
     protected function convertToArray(string $mapping): ?array
     {
-        // @todo UtilEncoding
         return json_decode(trim($mapping), true);
     }
     

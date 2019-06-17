@@ -12,6 +12,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDynamic;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategySingle;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
@@ -35,6 +36,16 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
         return new UrlHandler($this->getConfig());
     }
 
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter
+     */
+    public function createMappingConverter(): Converter
+    {
+        return new Converter();
+    }
+
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface
      */
@@ -43,6 +54,14 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
         return new CustomerModeStrategySingle(
             $this->getCompanyUserFacade()
         );
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
+     */
+    public function getCompanyUserFacade(): PunchoutCatalogToCompanyUserFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_USER);
     }
 
     /**
@@ -59,14 +78,6 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
-     */
-    public function getCompanyUserFacade(): PunchoutCatalogToCompanyUserFacadeInterface
-    {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_USER);
-    }
-
-    /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface
      */
     public function getCustomerFacade(): PunchoutCatalogToCustomerFacadeInterface
@@ -75,18 +86,18 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface
-     */
-    public function getOauthCompanyUserFacade(): PunchoutCatalogToOauthCompanyUserFacadeInterface
-    {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_OAUTH_COMPANY_USER);
-    }
-
-    /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
      */
     public function getCompanyBusinessUnitFacade(): PunchoutCatalogToCompanyBusinessUnitFacadeInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_BUSINESS_UNIT);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface
+     */
+    public function getOauthCompanyUserFacade(): PunchoutCatalogToOauthCompanyUserFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_OAUTH_COMPANY_USER);
     }
 }

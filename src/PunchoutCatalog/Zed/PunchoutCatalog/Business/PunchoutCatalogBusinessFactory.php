@@ -18,7 +18,6 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProc
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
@@ -108,14 +107,6 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createTransactionMapper(): MapperInterface
     {
         return new Mapper();
-    }
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter
-     */
-    public function createMappingConverter(): Converter
-    {
-        return new Converter();
     }
 
     /**
@@ -236,5 +227,13 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createOciProtocolDataValidator(): ProtocolDataValidatorInterface
     {
         return new ProtocolDataValidator();
+    }
+
+    /**
+     * @return \Spryker\Zed\PriceProduct\Dependency\Service\PriceProductToUtilEncodingServiceInterface
+     */
+    public function getUtilEncodingService(): PriceProductToUtilEncodingServiceInterface
+    {
+        return $this->getProvidedDependency(PriceProductDependencyProvider::SERVICE_UTIL_ENCODING);
     }
 }
