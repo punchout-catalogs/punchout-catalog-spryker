@@ -82,7 +82,7 @@ class OciSetupRequestProcessorStrategyPlugin
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
     
-        $map = (new Decoder())->execute($mappingTransfer, $ociContent);
+        $map = $this->getFactory()->createOciDecoder()->execute($mappingTransfer, $ociContent);
         
         return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }

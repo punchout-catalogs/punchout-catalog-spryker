@@ -9,21 +9,15 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartResponseContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCartResponseContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
-
-use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use InvalidArgumentException;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder;
+use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
-
 use SimpleXMLElement;
 
 /**
@@ -51,30 +45,31 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     {
         $response = (new PunchoutCatalogCartResponseTransfer())
             ->setIsSuccess(true);
-    
+
         $punchoutCatalogCartRequestTransfer->requireContext();
-    
+
         $context = (new PunchoutCatalogCartResponseContextTransfer())->fromArray(
             $punchoutCatalogCartRequestTransfer->getContext()->toArray(), true
         );
         $response->setContext($context);
-    
+
         $context = $punchoutCatalogCartRequestTransfer->getContext()
             ->requireProtocolData()
             ->requirePunchoutCatalogConnection();
 
         // @todo factory - applies to all plugins
-        (new ProtocolDataValidator())->validate(
+        // fixed, but should to review it
+        $this->getFactory()->createXmlProtocolDataValidator()->validate(
             $context->getProtocolData(),
             false
         );
-    
+
         $xml = $this->prepareXmlContent($punchoutCatalogCartRequestTransfer);
-    
+
         $xml = $xml->asXML();
-    
+
         $connection = $context->getPunchoutCatalogConnection();
-    
+
         //The names cXML-urlencoded and cXML-base64 are case insensitive.
         if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
             $response->addResponseField(
@@ -89,34 +84,12 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
                     ->setValue($this->fixBase64Value($xml))
             );
         }
-    
+
         $response->getContext()->setRawData($punchoutCatalogCartRequestTransfer->toArray());
         $response->getContext()->setContent($xml);
         return $response;
     }
-    
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function fixUrlencodedValue(string $value): string
-    {
-        $value = htmlentities($value, ENT_QUOTES, "utf-8");
-        //$value = htmlspecialchars($value, ENT_QUOTES, "utf-8");
-        return iconv('utf-8', 'us-ascii//TRANSLIT', $value);
-    }
-    
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
-    protected function fixBase64Value(string $value): string
-    {
-        return base64_encode($value);
-    }
-    
+
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
@@ -126,7 +99,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     {
         $context = $punchoutCatalogCartRequestTransfer->getContext();
         $connection = $context->getPunchoutCatalogConnection();
-        
+
         $mappingTransfer = $this->convertToMappingTransfer(
             (string)$connection->getCart()->getMapping()
         );
@@ -135,9 +108,8 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
 
         $xml = new SimpleXMLElement($xml);
 
-        // @todo factory method
-        $xml = (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer, $xml);
-        
+        $xml = $this->getFactory()->createXmlEncoder()->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer, $xml);
+
         return $xml;
     }
 
@@ -170,9 +142,9 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     public function getReturnHeader(PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer): string
     {
         $ver = static::CXML_VERSION;
-    
+
         $context = $punchoutCatalogCartRequestTransfer->getContext();
-        
+
         $toCxml = $context->getProtocolData()->getCxmlToCredentials();
         $senderCxml = $context->getProtocolData()->getCxmlSenderCredentials();
         $cart = $context->getProtocolData()->getCart();
@@ -222,5 +194,27 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     </Message>
 </cXML>
 EOF;
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixUrlencodedValue(string $value): string
+    {
+        $value = htmlentities($value, ENT_QUOTES, "utf-8");
+        //$value = htmlspecialchars($value, ENT_QUOTES, "utf-8");
+        return iconv('utf-8', 'us-ascii//TRANSLIT', $value);
+    }
+
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    protected function fixBase64Value(string $value): string
+    {
+        return base64_encode($value);
     }
 }

@@ -13,6 +13,12 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDy
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategySingle;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder as XmlEncoder;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Encoder as OciEncoder;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder as XmlDecoder;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder as OciDecoder;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator as XmlProtocolDataValidator;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator as OciProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
@@ -99,5 +105,52 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     public function getOauthCompanyUserFacade(): PunchoutCatalogToOauthCompanyUserFacadeInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_OAUTH_COMPANY_USER);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder
+     */
+    public function createXmlEncoder()
+    {
+        return new XmlEncoder();
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Encoder
+     */
+    public function createOciEncoder()
+    {
+        return new OciEncoder();
+    }
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder
+     */
+    public function createXmlDecoder()
+    {
+        return new XmlDecoder();
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder
+     */
+    public function createOciDecoder()
+    {
+        return new OciDecoder();
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator
+     */
+    public function createXmlProtocolDataValidator()
+    {
+        return new XmlProtocolDataValidator();
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator
+     */
+    public function createOciProtocolDataValidator()
+    {
+        return new OciProtocolDataValidator();
     }
 }

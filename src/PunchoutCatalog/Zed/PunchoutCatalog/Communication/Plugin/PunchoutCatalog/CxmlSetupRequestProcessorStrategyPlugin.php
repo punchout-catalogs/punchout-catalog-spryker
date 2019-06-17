@@ -101,7 +101,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
 
-        $map = (new Decoder())->execute($mappingTransfer, $xmlContent);
+        $map = $this->getFactory()->createXmlDecoder()->execute($mappingTransfer, $xmlContent);
         
         return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }
