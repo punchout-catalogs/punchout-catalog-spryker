@@ -78,7 +78,6 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $this->customerClient = $this->getFactory()->getCustomerClient();
         $this->currentLocale = $this->getFactory()->getStore()->getCurrentLocale();
 
-        // @todo Discuss
         $this->cartMapping = array_merge($this->cartMapping, $this->getFactory()->getModuleConfig()->getCustomCartMapping());
         $this->cartItemMapping = array_merge($this->cartItemMapping, $this->getFactory()->getModuleConfig()->getCustomCartItemMapping());
         $this->cartCustomerMapping = array_merge($this->cartCustomerMapping, $this->getFactory()->getModuleConfig()->getCustomCartCustomerMapping());
@@ -238,7 +237,6 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
-     * @todo: improve this method to cover bundle products: single + composite modes
      *
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $cartRequestTransfer
@@ -456,7 +454,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteItemTransfer $quoteItemTransfer,
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer {
-        $productAbstractStorageData = $this->productStorageClient->getProductAbstractStorageData(
+        $productAbstractStorageData = $this->productStorageClient->findProductAbstractStorageData(
             $quoteItemTransfer->getIdProductAbstract(),
             $this->currentLocale
         );
@@ -575,7 +573,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteItemTransfer $quoteItemTransfer,
         PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
     ): PunchoutCatalogDocumentCartItemTransfer {
-        $productAbstractStorageData = $this->productStorageClient->getProductAbstractStorageData(
+        $productAbstractStorageData = $this->productStorageClient->findProductAbstractStorageData(
             $quoteItemTransfer->getIdProductAbstract(),
             $this->currentLocale
         );

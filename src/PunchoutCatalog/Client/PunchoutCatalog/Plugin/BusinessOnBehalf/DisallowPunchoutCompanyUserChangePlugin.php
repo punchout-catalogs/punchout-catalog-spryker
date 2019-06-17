@@ -3,6 +3,7 @@
 namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin\BusinessOnBehalf;
 
 use Generated\Shared\Transfer\CustomerTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
 use Spryker\Client\BusinessOnBehalfExtension\Dependency\Plugin\CompanyUserChangeAllowedCheckPluginInterface;
 use Spryker\Client\Kernel\AbstractPlugin;
 
@@ -26,6 +27,6 @@ class DisallowPunchoutCompanyUserChangePlugin extends AbstractPlugin implements 
     {
         $impersonationDetails = $customerTransfer->getPunchoutCatalogImpersonationDetails();
 
-        return empty($impersonationDetails['is_punchout']);
+        return empty($impersonationDetails[PunchoutConstsInterface::IS_PUNCHOUT]);
     }
 }

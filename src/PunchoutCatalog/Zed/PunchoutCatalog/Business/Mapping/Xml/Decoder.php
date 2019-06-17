@@ -56,7 +56,7 @@ class Decoder extends AbstractCoder implements DecoderInterface
                     foreach ($object->getPath() as $path) {
                         $multiLines = $this->get($source, $path);
         
-                        //@todo: improve code complexity
+                        //@todo: reduce code complexity
                         if ($multiLines && is_array($multiLines)) {
                             foreach ($multiLines as $lineSource) {
                                 $_line = $this->map($object, $lineSource);

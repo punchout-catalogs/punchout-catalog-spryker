@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
 use SprykerShop\Yves\ShopApplication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +66,7 @@ class CartController extends AbstractController
      */
     protected function isPunchoutCustomer(): bool
     {
-        return ($this->getPunchoutImpersonationDetails() && $this->getPunchoutImpersonationDetails()['is_punchout']);
+        return ($this->getPunchoutImpersonationDetails() && $this->getPunchoutImpersonationDetails()[PunchoutConstsInterface::IS_PUNCHOUT]);
     }
 
     /**

@@ -51,7 +51,7 @@ class PackingUnitCartItemTransformerPlugin extends AbstractPlugin implements Car
                 $data[] = $cartItem;
                 $childItem = new ItemTransfer();
                 $name = $cartItem->getName();
-                $productData = $this->productStorageClient->getProductAbstractStorageData($cartItem->getIdProductAbstract(), $this->currentLocale);
+                $productData = $this->productStorageClient->findProductAbstractStorageData($cartItem->getIdProductAbstract(), $this->currentLocale);
                 if (!empty($productData['name'])) {
                     $name = $productData['name'];
                 }

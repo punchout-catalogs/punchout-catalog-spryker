@@ -28,9 +28,8 @@ class PunchoutCatalogToProductStorageClientBridge implements PunchoutCatalogToPr
      *
      * @return array
      */
-    public function getProductAbstractStorageData($idProductAbstract, $localeName): array
+    public function findProductAbstractStorageData($idProductAbstract, $localeName): array
     {
-        // @todo this is a deprecated method
-        return $this->productStorageClient->getProductAbstractStorageData($idProductAbstract, $localeName);
+        return $this->productStorageClient->findProductAbstractStorageData($idProductAbstract, $localeName);
     }
 }

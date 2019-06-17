@@ -137,12 +137,12 @@ class CxmlSetupRequestProcessorStrategyPlugin
     {
         $status = static::ERROR_CODE_INTERNAL;
         $statusText = static::ERROR_TEXT_INTERNAL;
-        $statusMessage = $messageTransfer->getValue();
+        $statusMessage = $messageTransfer->getTranslatedMessage();
 
-        if ($messageTransfer->getCode() == PunchoutConnectionConstsInterface::ERROR_INVALID_DATA) {
+        if ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_INVALID_DATA) {
             $statusText = static::ERROR_TEXT_NOT_ACCEPTABLE;
             $status = static::ERROR_CODE_NOT_ACCEPTABLE;
-        } elseif ($messageTransfer->getCode() == PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION) {
+        } elseif ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION) {
             $statusText = static::ERROR_TEXT_UNATHORIZED;
             $status = static::ERROR_CODE_UNATHORIZED;
         }

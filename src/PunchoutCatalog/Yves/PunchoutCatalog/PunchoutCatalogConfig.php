@@ -16,7 +16,7 @@ class PunchoutCatalogConfig extends AbstractBundleConfig
      */
     public function getCustomCartMapping(): array
     {
-        return $this->get(PunchoutCatalogConstants::CUSTOM_CART_TRANSFER_MAPPING, []);
+        return [];
     }
 
     /**
@@ -24,7 +24,7 @@ class PunchoutCatalogConfig extends AbstractBundleConfig
      */
     public function getCustomCartItemMapping(): array
     {
-        return $this->get(PunchoutCatalogConstants::CUSTOM_CART_ITEM_TRANSFER_MAPPING, []);
+        return [];
     }
 
     /**
@@ -32,6 +32,6 @@ class PunchoutCatalogConfig extends AbstractBundleConfig
      */
     public function getCustomCartCustomerMapping(): array
     {
-        return $this->get(PunchoutCatalogConstants::CUSTOM_CART_CUSTOMER_TRANSFER_MAPPING, []);
+        return [];
     }
 }

@@ -17,6 +17,7 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
@@ -167,7 +168,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
         
         return [
-            'is_punchout' => true,
+            PunchoutConstsInterface::IS_PUNCHOUT => true,
             'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData()->toArray(),
             'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
             'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
@@ -176,7 +177,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
                 'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
                 'bundle_mode' => $connection->getCart()->getBundleMode(),
             ],
-            'punchout_login_mode' => $connection->getSetup()->getLoginMode(),
+            PunchoutConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
             //store it in session - for sake of different customizations - currently can't use it as
             //oAuth token table has 1024 symbold only length for storing all impersonalization details
             //'punchout_data' => $documentTransfer->toArray(),

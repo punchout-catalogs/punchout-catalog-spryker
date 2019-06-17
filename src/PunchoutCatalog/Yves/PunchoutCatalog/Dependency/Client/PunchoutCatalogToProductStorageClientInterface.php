@@ -15,5 +15,5 @@ interface PunchoutCatalogToProductStorageClientInterface
      *
      * @return array
      */
-    public function getProductAbstractStorageData($idProductAbstract, $localeName): array;
+    public function findProductAbstractStorageData($idProductAbstract, $localeName): array;
 }
