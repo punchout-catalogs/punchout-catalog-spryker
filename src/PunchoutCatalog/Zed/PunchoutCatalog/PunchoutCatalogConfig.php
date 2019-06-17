@@ -101,6 +101,8 @@ class PunchoutCatalogConfig extends DataImportConfig
     }
 
     /**
+     * @deprecated
+     *
      * @param int $businessUnitId
      *
      * @return string

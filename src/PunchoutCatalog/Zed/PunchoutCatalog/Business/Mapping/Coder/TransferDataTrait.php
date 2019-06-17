@@ -10,6 +10,8 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder;
 use Spryker\Shared\Kernel\Transfer\TransferInterface;
 
 /**
+ * @todo There is no reason to have this as a trait. This is a regular library model class, that could be injected through constructor to anyone who needs it.
+ *
  * Trait TransferDataTrait
  *
  * @package PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder

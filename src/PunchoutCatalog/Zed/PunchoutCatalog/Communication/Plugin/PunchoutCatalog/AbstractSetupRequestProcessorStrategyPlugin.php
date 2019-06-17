@@ -61,6 +61,8 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      * - Returns with prepared content and content type.
      * - Adds error message and sets "isSuccess=true".
      *
+     * @api
+     *
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer

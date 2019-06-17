@@ -62,6 +62,9 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
 
     /**
      * @todo This is method does not belong to the abstract class (+SRP violation)
+     * @todo has a public class that is not part of the plugin interfaces
+     *
+     * @api
      *
      * @return string
      */

@@ -24,6 +24,7 @@ class GatewayController extends AbstractGatewayController
      */
     public function processCartTransferAction(?PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer = null): PunchoutCatalogCartResponseTransfer
     {
+        // @todo filterCartResponseContext expects object but input is actually nullable
         return $this->filterCartResponseContext(
             $this->getFacade()->processCart($punchoutCatalogCartRequestTransfer)
         );
@@ -36,6 +37,7 @@ class GatewayController extends AbstractGatewayController
      */
     public function processCartCancelAction(?PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer = null): PunchoutCatalogCartResponseTransfer
     {
+        // @todo filterCartResponseContext expects object but input is actually nullable
         return $this->filterCartResponseContext(
             $this->getFacade()->processCancel($punchoutCatalogCancelRequestTransfer)
         );

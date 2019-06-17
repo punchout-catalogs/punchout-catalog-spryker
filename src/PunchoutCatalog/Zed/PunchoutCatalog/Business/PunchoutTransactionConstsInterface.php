@@ -7,12 +7,12 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
-/**
- * @todo Recommendation 1 time used constants
- */
 interface PunchoutTransactionConstsInterface
 {
+    // @todo move these to the related file
     public const TRANSACTION_TYPE_SETUP_REQUEST  = 'setup_request';
+    // @todo move these to the related file
     public const TRANSACTION_TYPE_SETUP_RESPONSE = 'setup_response';
+    // @todo move these to the related file
     public const TRANSACTION_TYPE_TRANSFER_TO_REQUISITION = 'transfer_to_requisition';
 }

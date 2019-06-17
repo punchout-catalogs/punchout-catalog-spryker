@@ -26,15 +26,19 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\SplitCo
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\StripCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\UppercaseCommand;
 
+// @todo trait is not really necessary, a model class can fulfill requirements
 trait TransformationTrait
 {
     /**
+     * @todo property is not really necessary, getDefaultTransformation can be used directly
+     *
      * @var array|\PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\ITransform[]
      */
     protected $transformations = [];
 
     public function __construct(?array $transformations = null)
     {
+        // @todo you do not have any use case where transformations are provided
         if ($transformations !== null) {
             $this->transformations = $transformations;
         } else {

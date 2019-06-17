@@ -37,12 +37,4 @@ class PunchoutCatalogEntityManager extends AbstractEntityManager implements Punc
 
         return $punchoutCatalogTransactionEntityTransfer;
     }
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\Propel\Mapper\PunchoutCatalogTransactionMapperInterface
-     */
-    protected function getTransactionMapper()
-    {
-        return $this->getFactory()->createPunchoutCatalogTransactionMapper();
-    }
 }

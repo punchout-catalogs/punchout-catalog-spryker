@@ -113,7 +113,7 @@ class CartController extends AbstractController
 
         $viewData = [
             'fields' => $cartResponseTransfer->getFields(),
-            'submit_url' => $this->getPunchoutImpersonationDetails()['protocol_data']['cart']['url'],
+            'submit_url' => $this->getPunchoutImpersonationDetails()['protocol_data']['cart']['url'] ?? null,
             'submit_target' => $this->getPunchoutImpersonationDetails()['protocol_data']['cart']['target'] ?? null,
         ];
 

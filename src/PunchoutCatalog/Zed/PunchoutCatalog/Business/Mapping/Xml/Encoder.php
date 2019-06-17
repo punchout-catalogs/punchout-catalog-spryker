@@ -56,6 +56,7 @@ class Encoder extends AbstractCoder implements EncoderInterface
             $this->document = $document;
         }
 
+        // @todo The snippet trait defines a state property although it is not necessary. The prepared map could be directly injected into the "toFlat" method.
         $this->snippets = [];
         $this->registerSnippets($mapping);
 

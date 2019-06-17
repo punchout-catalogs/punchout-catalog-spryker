@@ -16,6 +16,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\DecoderInterface;
 
 class Decoder extends AbstractCoder implements DecoderInterface
 {
+    // @todo Snippet is not used anywhere beside registering snippets
     use SnippetTrait;
     use TransformationTrait;
 

@@ -131,6 +131,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      */
     protected function mapProtocolOperationToConnectionType($protocolOperation): ?string
     {
+        // @todo not extendable
         switch ($protocolOperation) {
             case PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST:
                 return PunchoutConnectionConstsInterface::CONNECTION_TYPE_SETUP_REQUEST;

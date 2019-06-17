@@ -18,7 +18,7 @@ class PunchoutCatalogToCompanyUserFacadeBridge implements PunchoutCatalogToCompa
     protected $companyUserFacade;
 
     /**
-     * @param \Spryker\Zed\CompanyUser\Business\CompanyUserFacade $companyUserFacade
+     * @param \Spryker\Zed\CompanyUser\Business\CompanyUserFacadeInterface $companyUserFacade
      */
     public function __construct($companyUserFacade)
     {

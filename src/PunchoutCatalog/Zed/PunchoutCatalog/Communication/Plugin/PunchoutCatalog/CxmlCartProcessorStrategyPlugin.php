@@ -27,7 +27,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartPro
 use SimpleXMLElement;
 
 /**
- * @todo Difficult extension (facade)
+ * @todo Difficult extension (facade) - applies to all plugins
  *
  * @see: http://xml.cxml.org/current/ReleaseNotes.html
  *
@@ -39,6 +39,8 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     protected const CXML_VERSION = '1.2.023';//1.2.021
 
     /**
+     * @api
+     *
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
      * @return \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer
@@ -61,7 +63,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
             ->requireProtocolData()
             ->requirePunchoutCatalogConnection();
 
-        // @todo factory
+        // @todo factory - applies to all plugins
         (new ProtocolDataValidator())->validate(
             $context->getProtocolData(),
             false
@@ -132,7 +134,8 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
         $xml = $this->getReturnHeader($punchoutCatalogCartRequestTransfer);
 
         $xml = new SimpleXMLElement($xml);
-    
+
+        // @todo factory method
         $xml = (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer, $xml);
         
         return $xml;
@@ -158,6 +161,8 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     }
 
     /**
+     * @api
+     *
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
      * @return string
