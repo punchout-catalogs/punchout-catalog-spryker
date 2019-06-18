@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
@@ -31,7 +32,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
  */
 class RequestProcessor implements RequestProcessorInterface
 {
-    protected const DEFAULT_FORMAT = PunchoutConnectionConstsInterface::FORMAT_CXML;
+    protected const DEFAULT_FORMAT = PunchoutCatalogConstsInterface::FORMAT_CXML;
     
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface
@@ -69,8 +70,8 @@ class RequestProcessor implements RequestProcessorInterface
         $this->punchoutCatalogToGlossaryFacade = $punchoutCatalogToGlossaryFacade;
         
         $this->requestProcessorPlugins = [
-            PunchoutConnectionConstsInterface::FORMAT_CXML => new CxmlSetupRequestProcessorStrategyPlugin(),
-            PunchoutConnectionConstsInterface::FORMAT_OCI => new OciSetupRequestProcessorStrategyPlugin(),
+            PunchoutCatalogConstsInterface::FORMAT_CXML => new CxmlSetupRequestProcessorStrategyPlugin(),
+            PunchoutCatalogConstsInterface::FORMAT_OCI => new OciSetupRequestProcessorStrategyPlugin(),
         ];
     }
 
@@ -134,6 +135,7 @@ class RequestProcessor implements RequestProcessorInterface
         } elseif (($exception instanceof InvalidArgumentException)
             || ($exception instanceof RequiredTransferPropertyException)
         ) {
+            dd($exception);
             $code = PunchoutConnectionConstsInterface::ERROR_INVALID_DATA;
         } else {
             $code = PunchoutConnectionConstsInterface::ERROR_UNEXPECTED;

@@ -17,7 +17,7 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
-use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
@@ -98,7 +98,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         
         return (new PunchoutCatalogSetupResponseTransfer())
             ->setContext((clone $punchoutCatalogRequestTransfer->getContext())->setRawData(null))
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(true)
             ->setContent($this->createEntryResponse($landingUrl));
     }
@@ -118,7 +118,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     public function processError(MessageTransfer $messageTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return (new PunchoutCatalogSetupResponseTransfer())
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(false)
             ->setContent($this->createErrorResponse($messageTransfer));
     }
@@ -168,7 +168,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
         
         return [
-            PunchoutConstsInterface::IS_PUNCHOUT => true,
+            PunchoutCatalogConstsInterface::IS_PUNCHOUT => true,
             'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData()->toArray(),
             'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
             'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
@@ -177,7 +177,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
                 'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
                 'bundle_mode' => $connection->getCart()->getBundleMode(),
             ],
-            PunchoutConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
+            PunchoutCatalogConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
             //store it in session - for sake of different customizations - currently can't use it as
             //oAuth token table has 1024 symbold only length for storing all impersonalization details
             //'punchout_data' => $documentTransfer->toArray(),

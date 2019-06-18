@@ -10,6 +10,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
@@ -34,7 +35,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      */
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
-        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML) {
+        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML) {
             return false;
         } elseif (empty($punchoutCatalogRequestTransfer->getContent())) {
             return false;
@@ -61,7 +62,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         $protocolOperation = $this->getFacade()->fetchCXmlOperation($punchoutCatalogRequestTransfer->getContent());
 
         $punchoutCatalogRequestTransfer
-            ->setProtocolType(PunchoutConnectionConstsInterface::FORMAT_CXML)
+            ->setProtocolType(PunchoutCatalogConstsInterface::FORMAT_CXML)
             ->setProtocolOperation($protocolOperation)
             ->setProtocolData(
                 (new PunchoutCatalogProtocolDataTransfer())->fromArray($protocolData)

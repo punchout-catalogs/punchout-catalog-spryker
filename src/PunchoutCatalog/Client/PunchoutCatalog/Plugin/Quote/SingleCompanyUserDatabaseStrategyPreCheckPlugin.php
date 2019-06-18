@@ -3,7 +3,7 @@
 namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin\Quote;
 
 use Generated\Shared\Transfer\QuoteTransfer;
-use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use Spryker\Client\Kernel\AbstractPlugin;
 use Spryker\Client\QuoteExtension\Dependency\Plugin\DatabaseStrategyPreCheckPluginInterface;
 
@@ -33,9 +33,9 @@ class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin imp
         if ($customer) {
             $impersonationDetails = $customer->getPunchoutCatalogImpersonationDetails();
 
-            if (!empty($impersonationDetails[PunchoutConstsInterface::IS_PUNCHOUT])
-                && isset($impersonationDetails[PunchoutConstsInterface::PUNCHOUT_LOGIN_MODE])
-                && ($impersonationDetails[PunchoutConstsInterface::PUNCHOUT_LOGIN_MODE] === PunchoutConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE)
+            if (!empty($impersonationDetails[PunchoutCatalogConstsInterface::IS_PUNCHOUT])
+                && isset($impersonationDetails[PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE])
+                && ($impersonationDetails[PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE] === PunchoutCatalogConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE)
             ) {
                 return false;
             }

@@ -8,6 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Controller;
 
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -56,16 +57,16 @@ class RequestController extends AbstractController
 
         // @todo Plugin stack recommendation
         if ($request->getContentType() === null || $request->getContentType() === 'form') {
-            $punchoutCatalogRequestTransfer->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART);
+            $punchoutCatalogRequestTransfer->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART);
         } elseif ($request->getContentType() === 'xml') {
-            $punchoutCatalogRequestTransfer->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML);
+            $punchoutCatalogRequestTransfer->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML);
         } else {
             $punchoutCatalogRequestTransfer->setContentType($request->getContentType());
         }
 
         if ($request->getMethod() == Request::METHOD_GET) {
             $punchoutCatalogRequestTransfer->setContent($request->query->all());//ALL $_GET
-        } elseif ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
+        } elseif ($punchoutCatalogRequestTransfer->getContentType() === PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
             $punchoutCatalogRequestTransfer->setContent($request->request->all());//ALL $_POST
         } else {
             $punchoutCatalogRequestTransfer->setContent($request->getContent());//RAW BODY

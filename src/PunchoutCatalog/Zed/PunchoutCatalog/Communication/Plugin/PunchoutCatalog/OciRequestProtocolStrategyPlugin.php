@@ -10,6 +10,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
@@ -37,7 +38,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
      */
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
-        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
+        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
             return false;
         }
 
@@ -74,7 +75,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
         $protocolOperation = $this->getFacade()->fetchOciOperation($content);
 
         $punchoutCatalogRequestTransfer
-            ->setProtocolType(PunchoutConnectionConstsInterface::FORMAT_OCI)
+            ->setProtocolType(PunchoutCatalogConstsInterface::FORMAT_OCI)
             ->setProtocolOperation($protocolOperation)
             ->setProtocolData($protocolData);
 

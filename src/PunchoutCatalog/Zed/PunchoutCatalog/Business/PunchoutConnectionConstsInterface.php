@@ -9,11 +9,6 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
 interface PunchoutConnectionConstsInterface
 {
-    // @todo move this to Shared.Config
-    public const FORMAT_CXML = 'cxml';
-    // @todo move this to Shared.Config
-    public const FORMAT_OCI = 'oci';
-
     /**
      * @deprecated
      */
@@ -32,15 +27,6 @@ interface PunchoutConnectionConstsInterface
      * @deprecated
      */
     public const CONTENT_TYPE_XML = 'xml';
-
-    // @todo move this to Shared.Config
-    public const CONTENT_TYPE_FORM_MULTIPART = 'multipart/form-data';
-    // @todo move this to Shared.Config
-    public const CONTENT_TYPE_TEXT_XML = 'text/xml';
-    // @todo move this to Shared.Config
-    public const CONTENT_TYPE_TEXT_HTML = 'text/html';
-    // @todo move this to Shared.Config
-    public const CONTENT_TYPE_TEXT_PLAIN = 'text/plain';
 
     // @todo move these to the related file
     public const ERROR_GENERAL = 'punchout-catalog.error.general';

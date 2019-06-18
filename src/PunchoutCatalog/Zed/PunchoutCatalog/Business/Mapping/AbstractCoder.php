@@ -10,6 +10,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping;
 use Generated\Shared\Transfer\PunchoutCatalogMappingObjectFieldTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\ITransform;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AmountCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AmountFormattedCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AppendCommand;
@@ -26,6 +27,8 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\RoundCo
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\SplitCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\StripCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\UppercaseCommand;
+use Spryker\Shared\Kernel\Transfer\TransferInterface;
+use \InvalidArgumentException;
 
 abstract class AbstractCoder
 {

@@ -14,6 +14,7 @@ use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
@@ -45,17 +46,17 @@ class CartProcessor implements CartProcessorInterface
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface
      */
     protected $punchoutCatalogRepository;
-    
+
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig
      */
     protected $punchoutCatalogConfig;
-    
+
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface
      */
     protected $punchoutCatalogToGlossaryFacade;
-    
+
     /**
      * @param \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface $punchoutCatalogRepository
      * @param \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig $punchoutCatalogConfig
@@ -70,13 +71,13 @@ class CartProcessor implements CartProcessorInterface
         $this->punchoutCatalogRepository = $punchoutCatalogRepository;
         $this->punchoutCatalogConfig = $punchoutCatalogConfig;
         $this->punchoutCatalogToGlossaryFacade = $punchoutCatalogToGlossaryFacade;
-        
+
         $this->cartProcessorPlugins = [
-            PunchoutConnectionConstsInterface::FORMAT_CXML => new CxmlCartProcessorStrategyPlugin(),
-            PunchoutConnectionConstsInterface::FORMAT_OCI => new OciCartProcessorStrategyPlugin(),
+            PunchoutCatalogConstsInterface::FORMAT_CXML => new CxmlCartProcessorStrategyPlugin(),
+            PunchoutCatalogConstsInterface::FORMAT_OCI => new OciCartProcessorStrategyPlugin(),
         ];
     }
-    
+
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer $punchoutCatalogCancelRequestTransfer
      *
@@ -86,10 +87,10 @@ class CartProcessor implements CartProcessorInterface
     {
         $punchoutCatalogCartRequestTransfer = new PunchoutCatalogCartRequestTransfer();
         $punchoutCatalogCartRequestTransfer->fromArray($punchoutCatalogCancelRequestTransfer->toArray(), true);
-        
+
         return $this->processCart($punchoutCatalogCartRequestTransfer);
     }
-    
+
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
@@ -101,21 +102,21 @@ class CartProcessor implements CartProcessorInterface
             $punchoutCatalogCartRequestTransfer->requireContext();
             $punchoutCatalogCartRequestTransfer->getContext()->requireLocale();
             $punchoutCatalogCartRequestTransfer->getContext()->requirePunchoutCatalogConnectionId();
-            
+
             $connection = $this->punchoutCatalogRepository->findConnectionById(
                 $punchoutCatalogCartRequestTransfer->getContext()->getPunchoutCatalogConnectionId()
             );
-            
+
             if ($connection === null) {
                 throw new TransferredCartException(static::ERROR_MISSING_CONNECTION);
             }
             $punchoutCatalogCartRequestTransfer->getContext()->setPunchoutCatalogConnection($connection);
-            
+
             $format = $connection->getFormat();
             if (!$format || !isset($this->cartProcessorPlugins[$format])) {
                 throw new TransferredCartException(static::ERROR_MISSING_FORMAT);
             }
-            
+
             $punchoutCatalogCartResponseTransfer = $this->cartProcessorPlugins[$format]->processCart(
                 $punchoutCatalogCartRequestTransfer
             );
@@ -129,27 +130,27 @@ class CartProcessor implements CartProcessorInterface
                 $message = PunchoutConnectionConstsInterface::ERROR_GENERAL;
                 $code = PunchoutConnectionConstsInterface::ERROR_GENERAL;
             }
-    
+
             $localeName = $this->getCurrentLocale($punchoutCatalogCartRequestTransfer);
-            
-            $mesageTransfer = (new MessageTransfer())
-                ->setValue($this->translate($message, $localeName))
-                ->setCode($code);
-            
+
+            $messageTransfer = (new MessageTransfer())
+                ->setTranslatedMessage($this->translate($message, $localeName))
+                ->setValue($code);
+
             $punchoutCatalogResponseTransfer = new PunchoutCatalogCartResponseTransfer();
             $punchoutCatalogResponseTransfer->setIsSuccess(false);
-            $punchoutCatalogResponseTransfer->addMessage($mesageTransfer);
+            $punchoutCatalogResponseTransfer->addMessage($messageTransfer);
             $punchoutCatalogResponseTransfer->addException($e->getMessage());
-    
+
             if ($e->getPrevious()) {
                 $punchoutCatalogResponseTransfer->addException("Original Exception:\n" . $e->getPrevious()->getMessage());
                 $punchoutCatalogResponseTransfer->addException($e->getPrevious()->getTraceAsString());
             }
-            
+
             return $punchoutCatalogResponseTransfer;
         }
     }
-    
+
     /**
      * @param PunchoutCatalogCartRequestTransfer $punchoutCatalogCartRequestTransfer
      *
@@ -164,7 +165,7 @@ class CartProcessor implements CartProcessorInterface
         }
         return $this->punchoutCatalogConfig->getDefaultLocaleName();
     }
-    
+
     /**
      * @param string $id
      * @param string $localeName
