@@ -13,17 +13,10 @@ use SimpleXMLElement;
 use Spryker\Shared\Kernel\Transfer\TransferInterface;
 use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\SnippetTrait;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransferDataTrait;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransformationTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\EncoderInterface;
 
 class Encoder extends AbstractCoder implements EncoderInterface
 {
-    use TransferDataTrait;
-    use SnippetTrait;
-    use TransformationTrait;
-
     /**
      * @var array
      */
@@ -56,8 +49,6 @@ class Encoder extends AbstractCoder implements EncoderInterface
             $this->document = $document;
         }
 
-        // @todo The snippet trait defines a state property although it is not necessary. The prepared map could be directly injected into the "toFlat" method.
-        $this->snippets = [];
         $this->registerSnippets($mapping);
 
         $data = [];

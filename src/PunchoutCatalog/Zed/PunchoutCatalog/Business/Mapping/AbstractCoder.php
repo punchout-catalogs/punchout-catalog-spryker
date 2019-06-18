@@ -9,9 +9,80 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping;
 
 use Generated\Shared\Transfer\PunchoutCatalogMappingObjectFieldTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AmountCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AmountFormattedCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AppendCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\CutCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\DateCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\DefaultCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\HtmlspecialCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\JoinCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\LowercaseCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\MapCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\NotCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\PrependCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\RoundCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\SplitCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\StripCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\UppercaseCommand;
 
 abstract class AbstractCoder
 {
+    /**
+     * @var array|\Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer[]
+     */
+    protected $snippets = [];
+
+    /**
+     * @param \Spryker\Shared\Kernel\Transfer\TransferInterface $transfer
+     *
+     * @return array
+     */
+    public function toAssociativeArray(TransferInterface $transfer): array
+    {
+        return $this->_toAssociativeArray($transfer->toArray());
+    }
+
+    /**
+     * @param array $transferData
+     *
+     * @return array
+     */
+    protected function _toAssociativeArray(array $transferData): array
+    {
+        foreach ($transferData as $key => &$val) {
+            if (($key === 'custom_attributes' || $key === 'options')) {
+                $val = $this->_fixCustomAttributes($val);
+            } elseif (is_array($val)) {
+                $val = $this->_toAssociativeArray($val);
+            } elseif (is_object($val)) {
+                $val = [];//hot fix for empty ArrayObject in transfer objects
+            }
+        }
+        return $transferData;
+    }
+
+    /**
+     * @param $transferData
+     *
+     * @return array
+     */
+    protected function _fixCustomAttributes($transferData): array
+    {
+        if (!is_array($transferData)) {
+            return [];
+        }
+
+        $newTransferData = [];
+        foreach ($transferData as $key => $val) {
+            $idx = $val['code'] ?? '';
+            $newTransferData[$idx] = $val;
+        }
+
+        return $newTransferData;
+    }
+
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer $object
      * @param \Generated\Shared\Transfer\PunchoutCatalogMappingObjectFieldTransfer $field
@@ -25,7 +96,8 @@ abstract class AbstractCoder
         PunchoutCatalogMappingObjectTransfer $object,
         PunchoutCatalogMappingObjectFieldTransfer $field,
         $source
-    ) {
+    )
+    {
         $result = $this->fetchSourceValueByPath($field->getPath(), $source, true);
 
         if ($field->getIsRequired() && ($result === null || $result === '')) {
@@ -100,13 +172,62 @@ abstract class AbstractCoder
     }
 
     /**
-     * @param \SimpleXMLElement|string $val
+     * @param string $path
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer|null
+     */
+    protected function getSnippetFromPath(string $path): ?PunchoutCatalogMappingObjectTransfer
+    {
+        $snippetName = $this->toSnippet($path);
+        $snippet = $snippetName ? $this->getSnippet($snippetName) : null;
+        $snippetRelPath = $snippet ? $this->toSnippetPath($path) : null;
+
+        $_snippet = null;
+        if ($snippetRelPath && is_string($snippetRelPath)) {
+            $_snippet = clone $snippet;
+            $_snippet->setPath([$snippetRelPath]);
+        }
+
+        return $_snippet;
+    }
+
+    /**
+     * @param $xpath
+     *
+     * @return bool|string
+     */
+    protected function toSnippet($xpath)
+    {
+        $xpath = explode('/', $xpath);
+        $snippet = end($xpath);
+
+        if (!$snippet || strlen($snippet) < 2 || (strpos($snippet, '()') === false)) {
+            return false;
+        }
+        $snippet = str_replace('()', '', $snippet);
+        return trim($snippet);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer|null
+     */
+    protected function getSnippet(string $name): ?PunchoutCatalogMappingObjectTransfer
+    {
+        return isset($this->snippets[$name]) ? $this->snippets[$name] : null;
+    }
+
+    /**
+     * @param $xpath
      *
      * @return string
      */
-    public function cast($val): string
+    protected function toSnippetPath($xpath): string
     {
-        return (string)$val;
+        $xpath = explode('/', $xpath);
+        array_pop($xpath);//remove last element
+        return implode('/', $xpath);
     }
 
     /**
@@ -160,6 +281,76 @@ abstract class AbstractCoder
             }
         }
         return $document;
+    }
+
+    /**
+     * @param \SimpleXMLElement|string $val
+     *
+     * @return string
+     */
+    public function cast($val): string
+    {
+        return (string)$val;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogMappingObjectFieldTransfer $field
+     * @param $value |null
+     *
+     * @return mixed
+     */
+    public function mapTransformations(PunchoutCatalogMappingObjectFieldTransfer $field, $value = null)
+    {
+        foreach ($field->getTransformations() as $transformation) {
+            $value = $this->getTransformCommand($transformation->getName())->execute($transformation, $value);
+        }
+        return $value;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @throws \InvalidArgumentException
+     *
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\ITransform
+     */
+    protected function getTransformCommand(string $name): ITransform
+    {
+        $transformations = $this->getTransformations();
+        if (!isset($transformations[$name])) {
+            throw new InvalidArgumentException('Could not handle transform: ' . $name);
+        }
+
+        if (!($transformations[$name] instanceof ITransform)) {
+            throw new InvalidArgumentException('Undefined transform command: ' . $name);
+        }
+
+        return $transformations[$name];
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\ITransform[]
+     */
+    protected function getTransformations(): array
+    {
+        return [
+            'default' => new DefaultCommand(),
+            'join' => new JoinCommand(),
+            'split' => new SplitCommand(),
+            'cut' => new CutCommand(),
+            'uppercase' => new UppercaseCommand(),
+            'lowercase' => new LowercaseCommand(),
+            'not' => new NotCommand(),
+            'date' => new DateCommand(),
+            'append' => new AppendCommand(),
+            'prepend' => new PrependCommand(),
+            'map' => new MapCommand(),
+            'amount' => new AmountCommand(),
+            'famount' => new AmountFormattedCommand(),
+            'round' => new RoundCommand(),
+            'strip' => new StripCommand(),
+            'htmlspecial' => new HtmlspecialCommand(),
+        ];
     }
 
     /**
@@ -303,5 +494,21 @@ abstract class AbstractCoder
         }
 
         return implode("\n", $result);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogMappingTransfer $mapping
+     *
+     * @return $this
+     */
+    protected function registerSnippets(PunchoutCatalogMappingTransfer $mapping)
+    {
+        /** @var \Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer $object */
+        foreach ($mapping->getObjects() as $object) {
+            if ($object->getIsCustom()) {
+                $this->snippets[$object->getName()] = $object;
+            }
+        }
+        return $this;
     }
 }

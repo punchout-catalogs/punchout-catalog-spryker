@@ -13,14 +13,10 @@ use Spryker\Shared\Kernel\Transfer\TransferInterface;
 use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransferDataTrait;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransformationTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\EncoderInterface;
 
 class Encoder extends AbstractCoder implements EncoderInterface
 {
-    use TransferDataTrait;
-    use TransformationTrait;
-
     /**
      * @var array
      */

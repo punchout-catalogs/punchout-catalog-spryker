@@ -11,16 +11,10 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use SimpleXMLElement;
 use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\SnippetTrait;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransformationTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\DecoderInterface;
 
 class Decoder extends AbstractCoder implements DecoderInterface
 {
-    // @todo Snippet is not used anywhere beside registering snippets
-    use SnippetTrait;
-    use TransformationTrait;
-
     /**
      * @var array
      */
@@ -40,7 +34,6 @@ class Decoder extends AbstractCoder implements DecoderInterface
         $this->xmlUtil = new XmlUtil();
 
         $this->document = [];
-        $this->snippets = [];
         $this->registerSnippets($mapping);
 
         /** @var \Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer $object */

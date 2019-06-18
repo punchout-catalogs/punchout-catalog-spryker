@@ -228,12 +228,4 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     {
         return new ProtocolDataValidator();
     }
-
-    /**
-     * @return \Spryker\Zed\PriceProduct\Dependency\Service\PriceProductToUtilEncodingServiceInterface
-     */
-    public function getUtilEncodingService(): PriceProductToUtilEncodingServiceInterface
-    {
-        return $this->getProvidedDependency(PriceProductDependencyProvider::SERVICE_UTIL_ENCODING);
-    }
 }
