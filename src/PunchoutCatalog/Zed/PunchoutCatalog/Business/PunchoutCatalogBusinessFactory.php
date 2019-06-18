@@ -28,6 +28,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompa
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
 use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
 use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
@@ -196,13 +197,11 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
-     * @todo Proper injection
-     *
-     * @return \Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceBridge
      */
-    public function createUtilUuidGeneratorService(): UtilUuidGeneratorServiceInterface
+    public function createUtilUuidGeneratorService(): PunchoutCatalogToUtilUuidGeneratorServiceBridge
     {
-        return new UtilUuidGeneratorService();
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::SERVICE_UTIL_UUID_GENERATOR);
     }
 
     /**

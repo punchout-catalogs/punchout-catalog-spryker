@@ -15,6 +15,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCusto
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeAdapter;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeBridge;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceBridge;
 use Spryker\Zed\DataImport\DataImportDependencyProvider;
 use Spryker\Zed\Kernel\Container;
 
@@ -31,6 +32,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     public const FACADE_OAUTH_COMPANY_USER = 'FACADE_OAUTH_COMPANY_USER';
     public const PROPEL_QUERY_COMPANY_USER = 'PROPEL_QUERY_COMPANY_USER';
     public const PROPEL_QUERY_CUSTOMER = 'PROPEL_QUERY_CUSTOMER';
+    public const SERVICE_UTIL_UUID_GENERATOR = 'SERVICE_UTIL_UUID_GENERATOR';
 
     /**
      * @param \Spryker\Zed\Kernel\Container $container
@@ -45,6 +47,24 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = $this->addCompanyUserFacade($container);
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
+        $container = $this->addUtilUuidGeneratorService($container);
+
+        return $container;
+    }
+
+
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addUtilUuidGeneratorService(Container $container): Container
+    {
+        $container[static::SERVICE_UTIL_UUID_GENERATOR] = function (Container $container) {
+            return new PunchoutCatalogToUtilUuidGeneratorServiceBridge(
+                $container->getLocator()->utilUuidGenerator()->service()
+            );
+        };
 
         return $container;
     }
