@@ -12,7 +12,6 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
 use SimpleXMLElement;
 
@@ -34,6 +33,21 @@ class CxmlSetupRequestProcessorStrategyPlugin
     protected const ERROR_TEXT_NOT_ACCEPTABLE = 'Not Acceptable';
 
     /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlRequestProtocolStrategyPlugin::setRequestProtocol
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciRequestProtocolStrategyPlugin::assertOciRequestData
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticator::applyProtocolStrategy
+     */
+    protected const ERROR_AUTHENTICATION = 'punchout-catalog.error.authentication';
+
+    /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticator::authenticateRequest
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor::process
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor::processException
+     */
+    protected const ERROR_INVALID_DATA = 'punchout-catalog.error.invalid-data';
+
+    protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+    /**
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
@@ -45,7 +59,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
         return (
             ($punchoutCatalogRequestTransfer->getContentType() === PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML)
             && ($punchoutCatalogRequestTransfer->getProtocolType() === PunchoutCatalogConstsInterface::FORMAT_CXML)
-            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST)
+            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === self::PROTOCOL_OPERATION_SETUP_REQUEST)
         );
     }
 
@@ -146,10 +160,10 @@ class CxmlSetupRequestProcessorStrategyPlugin
         $statusText = static::ERROR_TEXT_INTERNAL;
         $statusMessage = $messageTransfer->getTranslatedMessage();
 
-        if ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_INVALID_DATA) {
+        if ($messageTransfer->getValue() == self::ERROR_INVALID_DATA) {
             $statusText = static::ERROR_TEXT_NOT_ACCEPTABLE;
             $status = static::ERROR_CODE_NOT_ACCEPTABLE;
-        } elseif ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION) {
+        } elseif ($messageTransfer->getValue() == self::ERROR_AUTHENTICATION) {
             $statusText = static::ERROR_TEXT_UNATHORIZED;
             $status = static::ERROR_CODE_UNATHORIZED;
         }

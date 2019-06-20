@@ -13,7 +13,6 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
 
@@ -26,6 +25,11 @@ use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
  */
 class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements PunchoutCatalogProtocolStrategyPluginInterface
 {
+    protected const ERROR_AUTHENTICATION = 'punchout-catalog.error.authentication';
+
+    protected const CONNECTION_TYPE_SETUP_REQUEST = 'setup_request';
+    protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+
     /**
      * @api
      *
@@ -76,7 +80,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
             );
         } catch (RequiredTransferPropertyException $e) {
             throw new AuthenticateException(
-                PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
+                self::ERROR_AUTHENTICATION, 0, $e
             );
         }
 
@@ -134,8 +138,8 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     {
         // @todo not extendable
         switch ($protocolOperation) {
-            case PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST:
-                return PunchoutConnectionConstsInterface::CONNECTION_TYPE_SETUP_REQUEST;
+            case self::PROTOCOL_OPERATION_SETUP_REQUEST:
+                return self::CONNECTION_TYPE_SETUP_REQUEST;
             default:
                 return null;
         }

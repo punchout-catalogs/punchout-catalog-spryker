@@ -13,8 +13,6 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
 
 /**
@@ -25,6 +23,8 @@ class OciSetupRequestProcessorStrategyPlugin
     extends AbstractSetupRequestProcessorStrategyPlugin
     implements PunchoutCatalogRequestProcessorStrategyPluginInterface
 {
+    protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+
     /**
      * @api
      *
@@ -37,7 +37,7 @@ class OciSetupRequestProcessorStrategyPlugin
         return (
             ($punchoutCatalogRequestTransfer->getContentType() === PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART)
             && ($punchoutCatalogRequestTransfer->getProtocolType() === PunchoutCatalogConstsInterface::FORMAT_OCI)
-            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST)
+            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === self::PROTOCOL_OPERATION_SETUP_REQUEST)
         );
     }
 

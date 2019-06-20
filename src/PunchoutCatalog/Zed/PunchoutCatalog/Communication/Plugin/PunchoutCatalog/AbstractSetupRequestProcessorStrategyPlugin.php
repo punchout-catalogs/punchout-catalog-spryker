@@ -18,7 +18,6 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 /**
@@ -30,6 +29,8 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
  */
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {
+    protected const ERROR_UNEXPECTED = 'punchout-catalog.error.unexpected';
+
     /**
      * @uses \PunchoutCatalog\Client\PunchoutCatalog\Plugin\Quote\SingleCompanyUserDatabaseStrategyPreCheckPlugin::check
      */
@@ -92,7 +93,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         if (!$oAuthResponseTransfer->getIsValid() && $oAuthResponseTransfer->getError()) {
             throw new AuthenticateException($oAuthResponseTransfer->getError()->getMessage());
         } elseif (!$oAuthResponseTransfer->getIsValid() || !$oAuthResponseTransfer->getAccessToken()) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_UNEXPECTED);
+            throw new AuthenticateException(self::ERROR_UNEXPECTED);
         }
         
         $landingUrl = $this->getFactory()

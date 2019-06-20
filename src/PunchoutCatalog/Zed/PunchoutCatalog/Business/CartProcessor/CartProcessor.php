@@ -16,15 +16,12 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlCartProcessorStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciCartProcessorStrategyPlugin;
 
-use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
-use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\TransferredCartException;
 
 /**

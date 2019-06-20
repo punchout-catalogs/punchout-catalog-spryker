@@ -15,7 +15,6 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 
 class CustomerModeStrategySingle implements CustomerModeStrategyInterface
 {

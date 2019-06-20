@@ -15,8 +15,6 @@ use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
 use SimpleXMLElement;
 
