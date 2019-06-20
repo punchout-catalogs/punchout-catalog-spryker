@@ -21,6 +21,11 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInt
 class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
 {
     /**
+     * @uses \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategySingle::getCustomerTransfer
+     */
+    protected const ERROR_MISSING_COMPANY_USER = 'punchout-catalog.error.missing-company-user';
+
+    /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface
      */
     protected $punchoutCatalogRepository;
@@ -76,7 +81,7 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
         $connectionTransfer->getSetup()->requireFkCompanyBusinessUnit();
 
         if (null === $documentCustomerTransfer) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+            throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
         }
         $documentCustomerTransfer->requireEmail();
 
@@ -98,7 +103,7 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
             $customerResponseTransfer = $this->customerFacade->addCustomer($customerTransfer);
 
             if (!$customerResponseTransfer->getIsSuccess()) {
-                throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+                throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
             }
 
             //And create new connection to company
@@ -113,7 +118,7 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
             $companyUserResponseTransfer = $this->companyUserFacade->create($companyUserTransfer);
 
             if (!$companyUserResponseTransfer->getIsSuccessful()) {
-                throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+                throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
             }
         } else {
             $customerTransfer = $this->customerFacade->findCustomerById((new CustomerTransfer())->setIdCustomer($customerId));
@@ -124,14 +129,14 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
                 $customerTransfer->getIdCustomer(), $currentBusinessUnit->getFkCompany());
 
             if (empty($companyUserId)) {
-                throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+                throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
             }
 
             $companyUserTransfer = $this->companyUserFacade->getCompanyUserById($companyUserId);
         }
 
         if ($companyUserTransfer === null) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+            throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
         }
 
         return (new CustomerTransfer())

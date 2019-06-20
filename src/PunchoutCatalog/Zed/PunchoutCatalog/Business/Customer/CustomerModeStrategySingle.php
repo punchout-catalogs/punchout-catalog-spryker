@@ -20,6 +20,11 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterfa
 class CustomerModeStrategySingle implements CustomerModeStrategyInterface
 {
     /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDynamic
+     */
+    protected const ERROR_MISSING_COMPANY_USER = 'punchout-catalog.error.missing-company-user';
+
+    /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
      */
     protected $companyUserFacade;
@@ -56,7 +61,7 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
         if (null === $companyUserTransfer
             || $companyUserTransfer->getFkCompanyBusinessUnit() != $connectionTransfer->getSetup()->getFkCompanyBusinessUnit()
         ) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+            throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
         }
         
         return (new CustomerTransfer())

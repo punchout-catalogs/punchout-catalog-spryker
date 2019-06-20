@@ -20,8 +20,6 @@ interface PunchoutConnectionConstsInterface
     // @todo move these to the related file
     public const ERROR_MISSING_COMPANY_BUSINESS_UNIT = 'punchout-catalog.error.missing-company-business-unit';
     // @todo move these to the related files
-    public const ERROR_MISSING_COMPANY_USER = 'punchout-catalog.error.missing-company-user';
-    // @todo move these to the related files
     public const CONNECTION_TYPE_SETUP_REQUEST = 'setup_request';
     // @todo move these to the related files - and connect the pairs
     public const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
