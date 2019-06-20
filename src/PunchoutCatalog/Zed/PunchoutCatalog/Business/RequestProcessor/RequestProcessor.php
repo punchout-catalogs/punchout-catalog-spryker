@@ -135,7 +135,6 @@ class RequestProcessor implements RequestProcessorInterface
         } elseif (($exception instanceof InvalidArgumentException)
             || ($exception instanceof RequiredTransferPropertyException)
         ) {
-            dd($exception);
             $code = PunchoutConnectionConstsInterface::ERROR_INVALID_DATA;
         } else {
             $code = PunchoutConnectionConstsInterface::ERROR_UNEXPECTED;
