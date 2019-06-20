@@ -13,7 +13,6 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidator
 class ProtocolDataValidator implements ProtocolDataValidatorInterface
 {
     /**
-     * @todo: review it - probably no need to validate To credentials
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
      * @param bool $validateSharedSecret
@@ -24,9 +23,9 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
     {
         $protocolDataTransfer
             ->requireCart()
-            ->requireCxmlSenderCredentials();
-            //->requireCxmlToCredentials();
-        
+            ->requireCxmlSenderCredentials()
+            ->requireCxmlToCredentials();
+
         $protocolDataTransfer->getCart()
             ->requireUrl()
             ->requireOperation()
@@ -40,13 +39,11 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
         if ($validateSharedSecret) {
             $protocolDataTransfer->getCxmlSenderCredentials()->requireSharedSecret();
         }
-        
-        /**
+
         $protocolDataTransfer->getCxmlToCredentials()
             ->requireIdentity()
             ->requireDomain();
-        */
-        
+
         return true;
     }
 }
