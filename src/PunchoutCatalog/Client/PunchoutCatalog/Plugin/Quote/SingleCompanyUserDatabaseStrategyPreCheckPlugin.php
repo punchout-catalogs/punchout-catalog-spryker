@@ -14,6 +14,11 @@ use Spryker\Client\QuoteExtension\Dependency\Plugin\DatabaseStrategyPreCheckPlug
 class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin implements DatabaseStrategyPreCheckPluginInterface
 {
     /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\AbstractSetupRequestProcessorStrategyPlugin::CUSTOMER_LOGIN_MODE_SINGLE
+     */
+    protected const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
+
+    /**
      * {@inheritdoc}
      * - Retrieves logged in customer from Session.
      * - Returns false to disable persistent carts when "single user" connection mode is selected for a punchout customer.
@@ -35,7 +40,7 @@ class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin imp
 
             if (!empty($impersonationDetails[PunchoutCatalogConstsInterface::IS_PUNCHOUT])
                 && isset($impersonationDetails[PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE])
-                && ($impersonationDetails[PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE] === PunchoutCatalogConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE)
+                && ($impersonationDetails[PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE] === self::CUSTOMER_LOGIN_MODE_SINGLE)
             ) {
                 return false;
             }

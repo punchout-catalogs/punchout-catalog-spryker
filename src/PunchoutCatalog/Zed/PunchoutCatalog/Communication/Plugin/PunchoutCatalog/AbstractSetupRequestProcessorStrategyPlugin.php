@@ -31,6 +31,12 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {
     /**
+     * @uses \PunchoutCatalog\Client\PunchoutCatalog\Plugin\Quote\SingleCompanyUserDatabaseStrategyPreCheckPlugin::check
+     */
+    protected const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
+    protected const CUSTOMER_LOGIN_MODE_DYNAMIC = 'dynamic_user_creation';
+
+    /**
      * @param string $mapping
      *
      * @return array
@@ -136,7 +142,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     {
         $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
         
-        if ($connection->getSetup()->getLoginMode() == PunchoutConnectionConstsInterface::CUSTOMER_LOGIN_MODE_DYNAMIC) {
+        if ($connection->getSetup()->getLoginMode() == self::CUSTOMER_LOGIN_MODE_DYNAMIC) {
             $documentTransfer->requireCustomer();
             $customerStrategy = $this->getFactory()->createCustomerLoginDynamicStrategy();
         } else {
@@ -177,7 +183,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
                 'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
                 'bundle_mode' => $connection->getCart()->getBundleMode(),
             ],
-            PunchoutCatalogConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
+            self::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
             //store it in session - for sake of different customizations - currently can't use it as
             //oAuth token table has 1024 symbold only length for storing all impersonalization details
             //'punchout_data' => $documentTransfer->toArray(),

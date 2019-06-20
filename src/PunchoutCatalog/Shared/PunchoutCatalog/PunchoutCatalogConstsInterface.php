@@ -12,9 +12,6 @@ class PunchoutCatalogConstsInterface
     public const IS_PUNCHOUT = 'is_punchout';
     public const PUNCHOUT_LOGIN_MODE = 'punchout_login_mode';
 
-    public const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
-    public const CUSTOMER_LOGIN_MODE_DYNAMIC = 'dynamic_user';
-
     public const FORMAT_CXML = 'cxml';
     public const FORMAT_OCI = 'oci';
 

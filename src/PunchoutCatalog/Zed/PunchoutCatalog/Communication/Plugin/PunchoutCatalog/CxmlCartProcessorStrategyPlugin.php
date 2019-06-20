@@ -32,6 +32,9 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
 {
     protected const CXML_VERSION = '1.2.023';//1.2.021
 
+    protected const CXML_ENCODING_BASE64 = 'base64';
+    protected const CXML_ENCODING_URLENCODED = 'urlencoded';
+
     /**
      * @api
      *
@@ -71,7 +74,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
         $connection = $context->getPunchoutCatalogConnection();
 
         //The names cXML-urlencoded and cXML-base64 are case insensitive.
-        if ($connection->getCart()->getEncoding() == PunchoutConnectionConstsInterface::CXML_ENCODING_URLENCODED) {
+        if ($connection->getCart()->getEncoding() == self::CXML_ENCODING_URLENCODED) {
             $response->addResponseField(
                 (new PunchoutCatalogCartResponseFieldTransfer())
                     ->setName('cxml-urlencoded')

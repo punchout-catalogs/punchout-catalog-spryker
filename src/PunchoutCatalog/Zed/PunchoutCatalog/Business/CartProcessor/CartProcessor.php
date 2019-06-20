@@ -34,6 +34,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\TransferredCartException;
  */
 class CartProcessor implements CartProcessorInterface
 {
+    protected const ERROR_GENERAL = 'punchout-catalog.error.general';
     protected const ERROR_MISSING_CONNECTION = 'punchout-catalog.error.missing-connection';
     protected const ERROR_MISSING_FORMAT = 'punchout-catalog.error.missing-cart-format';
 
@@ -127,8 +128,8 @@ class CartProcessor implements CartProcessorInterface
                 $message = $e->getMessage();
                 $code = $e->getMessage();
             } else {
-                $message = PunchoutConnectionConstsInterface::ERROR_GENERAL;
-                $code = PunchoutConnectionConstsInterface::ERROR_GENERAL;
+                $message = self::ERROR_GENERAL;
+                $code = self::ERROR_GENERAL;
             }
 
             $localeName = $this->getCurrentLocale($punchoutCatalogCartRequestTransfer);

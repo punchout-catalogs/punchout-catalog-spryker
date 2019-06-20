@@ -9,27 +9,6 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
 interface PunchoutConnectionConstsInterface
 {
-    /**
-     * @deprecated
-     */
-    public const DATA_FORMAT_XML = 'xml';
-    /**
-     * @deprecated
-     */
-    public const DATA_FORMAT_ARRAY = 'array';
-
-    /**
-     * @deprecated
-     */
-    public const CONTENT_TYPE_FORM = 'form';
-
-    /**
-     * @deprecated
-     */
-    public const CONTENT_TYPE_XML = 'xml';
-
-    // @todo move these to the related file
-    public const ERROR_GENERAL = 'punchout-catalog.error.general';
     // @todo move these to the related files - and connect the pairs
     public const ERROR_AUTHENTICATION = 'punchout-catalog.error.authentication';
     // @todo move these to the related files - and connect the pairs
@@ -37,10 +16,7 @@ interface PunchoutConnectionConstsInterface
     // @todo move these to the related file
     public const ERROR_UNEXPECTED = 'punchout-catalog.error.unexpected';
 
-    /**
-     * @deprecated
-     */
-    public const ERROR_MISSING_LOGIN_MODE = 'punchout-catalog.error.missing-login-mode';
+
     // @todo move these to the related file
     public const ERROR_MISSING_COMPANY_BUSINESS_UNIT = 'punchout-catalog.error.missing-company-business-unit';
     // @todo move these to the related files
@@ -49,20 +25,6 @@ interface PunchoutConnectionConstsInterface
     public const CONNECTION_TYPE_SETUP_REQUEST = 'setup_request';
     // @todo move these to the related files - and connect the pairs
     public const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
-
-    /**
-     * @deprecated
-     */
-    public const CXML_ENCODING_BASE64 = 'base64';
-    // @todo move these to the related file
-    public const CXML_ENCODING_URLENCODED = 'urlencoded';
-
-    /**
-     * @deprecated
-     */
-    public const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
-    // @todo move these to the related file
-    public const CUSTOMER_LOGIN_MODE_DYNAMIC = 'dynamic_user_creation';
 
     // @todo move these to the related file
     public const BUNDLE_MODE_SINGLE = 'single';
