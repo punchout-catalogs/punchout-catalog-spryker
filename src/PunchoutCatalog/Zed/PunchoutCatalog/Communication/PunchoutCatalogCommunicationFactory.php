@@ -13,10 +13,12 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDy
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategySingle;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder as XmlEncoder;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder as OciDecoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Encoder as OciEncoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder as XmlDecoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder as OciDecoder;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Encoder as XmlEncoder;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestContentTypeStrategy\FormTypeStrategyPlugin;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestContentTypeStrategy\XmlTypeStrategyPlugin;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator as XmlProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator as OciProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
@@ -100,6 +102,17 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestContentTypeStrategy\RequestContentTypeStrategyPluginInterface[]
+     */
+    public function createRequestContentTypeStrategyPlugins(): array
+    {
+        return [
+            new FormTypeStrategyPlugin(),
+            new XmlTypeStrategyPlugin(),
+        ];
+    }
+
+    /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface
      */
     public function getOauthCompanyUserFacade(): PunchoutCatalogToOauthCompanyUserFacadeInterface
@@ -122,6 +135,7 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     {
         return new OciEncoder();
     }
+
     /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder
      */

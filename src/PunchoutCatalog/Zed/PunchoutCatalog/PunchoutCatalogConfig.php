@@ -9,9 +9,6 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Controller\RequestController;
-use Spryker\Zed\DataImport\DataImportConfig;
-use Spryker\Shared\Application\ApplicationConstants;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException;
 use Spryker\Shared\Application\ApplicationConstants;
@@ -22,7 +19,8 @@ class PunchoutCatalogConfig extends DataImportConfig
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_CONNECTION = 'punchout-catalog-connection';
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP = 'punchout-catalog-connection-setup';
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_CART = 'punchout-catalog-connection-cart';
-/**
+
+    /**
      * @uses RequestController::indexAction()
      */
     protected const PUNCHOUT_REQUEST_URL = '/punchout-catalog/request';
@@ -37,28 +35,6 @@ class PunchoutCatalogConfig extends DataImportConfig
         return $this->buildImporterConfiguration(
             implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection.csv']),
             static::IMPORT_TYPE_PUNCHOUT_CATALOG_CONNECTION
-        );
-    }
-
-    /**
-     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
-     */
-    public function getPunchoutCatalogSetupDataImporterConfiguration(): DataImporterConfigurationTransfer
-    {
-        return $this->buildImporterConfiguration(
-            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_setup.csv']),
-            static::IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP
-        );
-    }
-
-    /**
-     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
-     */
-    public function getPunchoutCatalogCartDataImporterConfiguration(): DataImporterConfigurationTransfer
-    {
-        return $this->buildImporterConfiguration(
-            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_cart.csv']),
-            static::IMPORT_TYPE_PUNCHOUT_CATALOG_CART
         );
     }
 
@@ -91,6 +67,28 @@ class PunchoutCatalogConfig extends DataImportConfig
     }
 
     /**
+     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
+     */
+    public function getPunchoutCatalogSetupDataImporterConfiguration(): DataImporterConfigurationTransfer
+    {
+        return $this->buildImporterConfiguration(
+            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_setup.csv']),
+            static::IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP
+        );
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
+     */
+    public function getPunchoutCatalogCartDataImporterConfiguration(): DataImporterConfigurationTransfer
+    {
+        return $this->buildImporterConfiguration(
+            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_cart.csv']),
+            static::IMPORT_TYPE_PUNCHOUT_CATALOG_CART
+        );
+    }
+
+    /**
      * @return string
      */
     public function getDefaultLocaleName(): string
@@ -113,9 +111,25 @@ class PunchoutCatalogConfig extends DataImportConfig
      */
     public function getZedPunchoutUrl(): string
     {
+        return $this->getBaseUrlZed() . static::PUNCHOUT_REQUEST_URL;
+    }
 
+    /**
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
+     *
+     * @return string
+     */
+    public function getBaseUrlZed(): string
+    {
+        if ($this->getConfig()->hasKey(ApplicationConstants::BASE_URL_ZED)) {
+            return $this->getConfig()->get(ApplicationConstants::BASE_URL_ZED);
+        }
 
-        return $this->getBaseUrlZed() . static::PUNCHOUT_REQUEST_URL ;
+        throw new MissingZedUrlConfigurationException(
+            'Missing configuration! You need to configure Zed URL ' .
+            'in your own PunchoutCatalogConfig::getBaseUrlZed() ' .
+            'to be able to generate PunchOut URL for remote systems.'
+        );
     }
 
     /**
@@ -135,24 +149,6 @@ class PunchoutCatalogConfig extends DataImportConfig
             'Missing configuration! You need to configure Yves URL ' .
             'in your own PunchoutCatalogConfig::getBaseUrlYves() ' .
             'to be able to generate login URL with access token for remote systems.'
-        );
-    }
-
-    /**
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
-     *
-     * @return string
-     */
-    public function getBaseUrlZed(): string
-    {
-        if ($this->getConfig()->hasKey(ApplicationConstants::BASE_URL_ZED)) {
-            return $this->getConfig()->get(ApplicationConstants::BASE_URL_ZED);
-        }
-
-        throw new MissingZedUrlConfigurationException(
-            'Missing configuration! You need to configure Zed URL ' .
-            'in your own PunchoutCatalogConfig::getBaseUrlZed() ' .
-            'to be able to generate PunchOut URL for remote systems.'
         );
     }
 }

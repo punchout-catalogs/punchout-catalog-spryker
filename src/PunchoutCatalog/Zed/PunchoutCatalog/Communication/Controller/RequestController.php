@@ -52,13 +52,16 @@ class RequestController extends AbstractController
         $punchoutCatalogRequestTransfer->setIsSuccess(true);
         $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit((int)$idBusinessUnit);
 
-        // @todo Plugin stack recommendation
-        if ($request->getContentType() === null || $request->getContentType() === 'form') {
-            $punchoutCatalogRequestTransfer->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART);
-        } elseif ($request->getContentType() === 'xml') {
-            $punchoutCatalogRequestTransfer->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML);
-        } else {
-            $punchoutCatalogRequestTransfer->setContentType($request->getContentType());
+        $plugins = $this->getFactory()->createRequestContentTypeStrategyPlugins();
+
+        $punchoutCatalogRequestTransfer->setContentType($request->getContentType());
+
+        foreach ($plugins as $plugin) {
+            if (!$plugin->isApplicable($request->getContentType())){
+                continue;
+            }
+            $punchoutCatalogRequestTransfer->setContentType($plugin->getPunchoutCatalogContentType($request->getContentType()));
+            break;
         }
 
         if ($request->getMethod() == Request::METHOD_GET) {

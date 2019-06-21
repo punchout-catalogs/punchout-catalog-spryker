@@ -15,23 +15,11 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentPro
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessorInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReader;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReaderInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface;
-use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
-use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
-
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorService;
-use Spryker\Service\UtilUuidGenerator\UtilUuidGeneratorServiceInterface;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionCartWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionSetupWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReader;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReaderInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
@@ -41,6 +29,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidator
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToGlossaryFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceBridge;
 use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogDependencyProvider;
@@ -130,14 +119,6 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function getOauthCompanyUserFacade(): PunchoutCatalogToOauthCompanyUserFacadeInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_OAUTH_COMPANY_USER);
-    }
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface
-     */
-    public function getStoreFacade(): PunchoutCatalogToStoreFacadeInterface
-    {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_STORE);
     }
 
     /**
@@ -259,5 +240,13 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
             $this->getConfig(),
             $this->getStoreFacade()
         );
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface
+     */
+    public function getStoreFacade(): PunchoutCatalogToStoreFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_STORE);
     }
 }
