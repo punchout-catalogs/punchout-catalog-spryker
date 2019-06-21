@@ -116,16 +116,14 @@ class PunchoutCatalogConfig extends DataImportConfig
     }
     
     /**
+     * @param string $storeName
+     *
      * @return string
      *
      * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
      */
-    public function getBaseUrlYves(): string
+    public function getBaseUrlYves(string $storeName): string
     {
-        if ($this->getConfig()->hasKey(ApplicationConstants::BASE_URL_YVES)) {
-            return $this->getConfig()->get(ApplicationConstants::BASE_URL_YVES);
-        }
-        
         throw new MissingYvesUrlConfigurationException(
             'Missing configuration! You need to configure Yves URL ' .
             'in your own PunchoutCatalogConfig::getBaseUrlYves() ' .
