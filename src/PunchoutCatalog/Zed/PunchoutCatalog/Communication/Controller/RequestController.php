@@ -23,10 +23,8 @@ use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
  */
 class RequestController extends AbstractController
 {
-    /**
-     * @var string
-     */
-    protected const BUSINESS_UNIT_PARAM = 'business-unit';
+    public const PARAM_BUSINESS_UNIT = 'business-unit';
+    public const PARAM_STORE = 'store';
     
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
@@ -51,7 +49,7 @@ class RequestController extends AbstractController
      */
     protected function mapSymfonyRequestToSetupRequestTransfer(Request $request): PunchoutCatalogSetupRequestTransfer
     {
-        $idBusinessUnit = $request->query->get(static::BUSINESS_UNIT_PARAM);
+        $idBusinessUnit = $request->query->get(static::PARAM_BUSINESS_UNIT);
     
         $punchoutCatalogRequestTransfer = new PunchoutCatalogSetupRequestTransfer();
         $punchoutCatalogRequestTransfer->setIsSuccess(true);

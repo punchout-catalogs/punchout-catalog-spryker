@@ -350,4 +350,20 @@
         <property name="customer" type="PunchoutCatalogDocumentCustomer"/>
     </transfer>
     <!-- / Setup Request Mapping -->
+
+    <!-- Entry Point -->
+    <transfer name="Store">
+        <property name="name" type="string" />
+    </transfer>
+
+    <transfer name="PunchoutCatalogEntryPoint">
+        <property name="store" type="Store" />
+        <property name="url" type="string" />
+        <property name="idCompanyBusinessUnit" type="int" />
+    </transfer>
+
+    <transfer name="PunchoutCatalogEntryPointFilter">
+        <property name="idCompanyBusinessUnit" type="int" />
+    </transfer>
+    <!-- / Entry Point -->
 </transfers>

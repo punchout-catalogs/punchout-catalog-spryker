@@ -23,6 +23,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
@@ -42,17 +43,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         
         return $mapping;
     }
-    
-    /**
-     * @return string
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
-     */
-    protected function getHostname()
-    {
-        $zedUrl = $this->getConfig()->getBaseUrlZed();
-        return parse_url($zedUrl)['host'];
-    }
-    
+
     /**
      * Specification:
      * - Processes request message.
@@ -83,10 +74,12 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         } elseif (!$oAuthResponseTransfer->getIsValid() || !$oAuthResponseTransfer->getAccessToken()) {
             throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_UNEXPECTED);
         }
-        
+
+        // @todo Correct store name is required
+        $storeName = "DE";
         $landingUrl = $this->getFactory()
             ->createUrlHandler()
-            ->getLoginUrl($oAuthResponseTransfer->getAccessToken());
+            ->getLoginUrl($oAuthResponseTransfer->getAccessToken(), $storeName);
         
         //Mark Request as Success TRX
         $punchoutCatalogRequestTransfer->setIsSuccess(true);

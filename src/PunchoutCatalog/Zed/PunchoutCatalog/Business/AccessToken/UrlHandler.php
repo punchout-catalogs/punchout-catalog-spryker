@@ -28,11 +28,12 @@ class UrlHandler implements UrlHandlerInterface
     
     /**
      * @param string $accessToken
+     * @param string $storeName
      * @param string $locale
      * @param string $returnUrl
      * @return string
      */
-    public function getLoginUrl(string $accessToken, string $locale = null, string $returnUrl = null): string
+    public function getLoginUrl(string $accessToken, string $storeName, string $locale = null, string $returnUrl = null): string
     {
         $locale = $locale ?? $this->punchoutCatalogConfig->getDefaultStoreLocale();
 
@@ -40,7 +41,7 @@ class UrlHandler implements UrlHandlerInterface
             'returnUrl' => $returnUrl ?? 'home',
         ];
         
-        return $this->punchoutCatalogConfig->getBaseUrlYves()
+        return $this->punchoutCatalogConfig->getBaseUrlYves($storeName)
             . '/' . $locale
             . '/' . static::USER_LOGIN_URL
             . '/' . $accessToken . '?' . http_build_query($params);

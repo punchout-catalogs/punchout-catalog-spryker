@@ -180,10 +180,13 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
 
         $operationAllowed = 'create';
 
+        // @todo Correct store name is required
+        $storeName = "DE";
+
         return <<< EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="{$this->getPayloadId()}"
+<cXML payloadID="{$this->getYvesPayloadId($storeName)}"
     timestamp="{$this->getTimestamp()}"
     xml:lang="{$context->getLocale()}"
     version="{$ver}"

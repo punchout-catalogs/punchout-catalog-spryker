@@ -42,14 +42,36 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     /**
      * @api
      *
+     * @param string $storeName
+     *
      * @return string
      */
-    public function getPayloadId(): string
+    public function getYvesPayloadId(string $storeName): string
+    {
+        return $this->getPayloadId($this->getYvesHostname($storeName));
+    }
+
+    /**
+     * @api
+     *
+     * @return string
+     */
+    public function getZedPayloadId(): string
+    {
+        return $this->getPayloadId($this->getZedHostname());
+    }
+
+    /**
+     * @param string $hostName
+     *
+     * @return string
+     */
+    protected function getPayloadId(string $hostName): string
     {
         $dti = $this->getTimestamp();
-        
+
         $randomNumber = rand(1, 999999999);
-        $payloadId = $dti . '.' . $randomNumber . '@' . $this->getHostname();
+        $payloadId = $dti . '.' . $randomNumber . '@' . $hostName;
 
         return $payloadId;
     }
@@ -63,12 +85,28 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     }
     
     /**
-     * @return string
+     * @param string $storeName
+     *
      * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     *
+     * @return string
      */
-    protected function getHostname()
+    protected function getYvesHostname(string $storeName): string
     {
-        $zedUrl = $this->getConfig()->getBaseUrlYves();
+        $yvesUrl = $this->getConfig()->getBaseUrlYves($storeName);
+
+        return parse_url($yvesUrl)['host'];
+    }
+
+    /**
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     *
+     * @return string
+     */
+    protected function getZedHostname(): string
+    {
+        $zedUrl = $this->getConfig()->getBaseUrlZed();
+
         return parse_url($zedUrl)['host'];
     }
 }
