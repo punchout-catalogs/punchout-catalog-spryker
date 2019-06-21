@@ -11,9 +11,12 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentPro
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\CxmlContentProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\ContentProcessor\OciContentProcessorInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReader;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReaderInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToOauthCompanyUserFacadeInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface;
 use Spryker\Zed\DataImport\Business\DataImportBusinessFactory;
 use Spryker\Zed\DataImport\Business\Model\DataImporterInterface;
 
@@ -129,6 +132,14 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     }
 
     /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface
+     */
+    public function getStoreFacade(): PunchoutCatalogToStoreFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_STORE);
+    }
+
+    /**
      * @return \Spryker\Zed\DataImport\Business\Model\DataImporterInterface
      */
     public function getPunchoutCatalogConnectionDataImport(): DataImporterInterface
@@ -236,5 +247,16 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function createOciProtocolDataValidator(): ProtocolDataValidatorInterface
     {
         return new ProtocolDataValidator();
+    }
+
+    /**
+     * @return RequestEntryPointReaderInterface
+     */
+    public function createRequestEntryPointReader(): RequestEntryPointReaderInterface
+    {
+        return new RequestEntryPointReader(
+            $this->getConfig(),
+            $this->getStoreFacade()
+        );
     }
 }

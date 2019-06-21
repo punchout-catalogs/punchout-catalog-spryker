@@ -8,6 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
+use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Controller\RequestController;
 use Spryker\Zed\DataImport\DataImportConfig;
 use Spryker\Shared\Application\ApplicationConstants;
 
@@ -19,7 +20,10 @@ class PunchoutCatalogConfig extends DataImportConfig
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_CONNECTION = 'punchout-catalog-connection';
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP = 'punchout-catalog-connection-setup';
     public const IMPORT_TYPE_PUNCHOUT_CATALOG_CART = 'punchout-catalog-connection-cart';
-    
+
+    /**
+     * @uses RequestController::indexAction()
+     */
     protected const PUNCHOUT_REQUEST_URL = '/punchout-catalog/request';
     protected const PUNCHOUT_DEFAULT_LOCALE = 'en_US';
     protected const PUNCHOUT_DEFAULT_STORE_LOCALE = 'de';
@@ -102,18 +106,13 @@ class PunchoutCatalogConfig extends DataImportConfig
     }
     
     /**
-     * @param int $businessUnitId
-     *
      * @return string
      *
      * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
      */
-    public function getZedPunchoutUrl(int $businessUnitId): string
+    public function getZedPunchoutUrl(): string
     {
-        $params = [
-            'business-unit' => $businessUnitId,
-        ];
-        return $this->getBaseUrlZed() . static::PUNCHOUT_REQUEST_URL . "?" .  http_build_query($params);
+        return $this->getBaseUrlZed() . static::PUNCHOUT_REQUEST_URL;
     }
     
     /**

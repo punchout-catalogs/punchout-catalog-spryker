@@ -17,6 +17,8 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogEntryPointFilterTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogEntryPointTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
@@ -340,5 +342,21 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         return $this->getFactory()
             ->createCxmlContentProcessor()
             ->fetchOperation($content);
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @api
+     *
+     * @param PunchoutCatalogEntryPointFilterTransfer $entryPointFilter
+     *
+     * @return PunchoutCatalogEntryPointTransfer[]
+     */
+    public function getRequestEntryPointsByBusinessUnit(PunchoutCatalogEntryPointFilterTransfer $entryPointFilter): array
+    {
+        return $this->getFactory()
+            ->createRequestEntryPointReader()
+            ->getRequestEntryPointsByBusinessUnit($entryPointFilter);
     }
 }
