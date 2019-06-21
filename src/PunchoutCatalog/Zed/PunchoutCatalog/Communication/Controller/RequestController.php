@@ -20,11 +20,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RequestController extends AbstractController
 {
-    /**
-     * @var string
-     */
-    protected const PARAM_BUSINESS_UNIT = 'business-unit';
-
+    public const PARAM_BUSINESS_UNIT = 'business-unit';
+    public const PARAM_STORE = 'store';
+    
     /**
      * @param \Symfony\Component\HttpFoundation\Request $request
      *

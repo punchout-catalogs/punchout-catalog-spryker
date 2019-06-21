@@ -7,18 +7,19 @@
 } %}
 
 {% block template %}
-<h3>{{ 'punchout-catalog.cart.return' | trans }}</h3>
-<form id="punchoutCartForm" method="POST"
-      action="{{data.submit_url}}"
-      enctype="application/x-www-form-urlencoded"
-      style="height: 0; width: 0; border: 0;"
-      {% if data.submit_target %}target="{{data.submit_target}}"{% endif %}
->
-{% if data.fields %}
-    {% for field in data.fields %}
-        <input type="hidden" name="{{field.name}}" value="{{field.value|raw}}" />
-    {% endfor %}
-{% endif %}
-</form>
-<script type="text/javascript">document.getElementById("punchoutCartForm").submit();</script>
+    <div>
+        <h3>{{ 'punchout-catalog.cart.return' | trans }}</h3>
+        <form id="punchoutCartForm" method="POST"
+              action="{{ data.submit_url }}"
+              enctype="application/x-www-form-urlencoded"
+              style="height: 0; width: 0; border: 0;"
+              {% if data.submit_target %}target="{{ data.submit_target }}"{% endif %}>
+            {% if data.fields %}
+                {% for field in data.fields %}
+                    <input type="hidden" name="{{ field.name }}" value="{{ field.value|raw }}"/>
+                {% endfor %}
+            {% endif %}
+        </form>
+        <script type="text/javascript">document.getElementById("punchoutCartForm").submit();</script>
+    </div>
 {% endblock %}

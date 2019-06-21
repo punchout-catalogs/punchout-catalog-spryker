@@ -129,7 +129,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
         $landingUrl = htmlspecialchars($landingUrl);
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
+<cXML payloadID="' . $this->getZedPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
     <Response>
         <Status code="200" text="OK"/>
         <PunchOutSetupResponse>
@@ -171,7 +171,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
         $statusMessage = htmlspecialchars($statusMessage);
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
+<cXML payloadID="' . $this->getZedPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
     <Response>
         <Status code="' . $status . '" text="' . $statusText . '">' . $statusMessage . '</Status>
     </Response>

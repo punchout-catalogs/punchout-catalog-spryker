@@ -7,6 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
+use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeBridge;
 use Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery;
 use Orm\Zed\Customer\Persistence\SpyCustomerQuery;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeBridge;
@@ -30,6 +31,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     public const FACADE_CUSTOMER = 'FACADE_CUSTOMER';
     public const FACADE_VAULT = 'FACADE_VAULT';
     public const FACADE_OAUTH_COMPANY_USER = 'FACADE_OAUTH_COMPANY_USER';
+    public const FACADE_STORE = 'FACADE_STORE';
     public const PROPEL_QUERY_COMPANY_USER = 'PROPEL_QUERY_COMPANY_USER';
     public const PROPEL_QUERY_CUSTOMER = 'PROPEL_QUERY_CUSTOMER';
     public const SERVICE_UTIL_UUID_GENERATOR = 'SERVICE_UTIL_UUID_GENERATOR';
@@ -47,6 +49,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = $this->addCompanyUserFacade($container);
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
+        $container = $this->addStoreFacade($container);
         $container = $this->addUtilUuidGeneratorService($container);
 
         return $container;
@@ -166,6 +169,20 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
     {
         $container[static::FACADE_VAULT] = function (Container $container) {
             return new PunchoutCatalogToVaultFacadeBridge($container->getLocator()->vault()->facade());
+        };
+
+        return $container;
+    }
+
+    /**
+     * @param \Spryker\Zed\Kernel\Container $container
+     *
+     * @return \Spryker\Zed\Kernel\Container
+     */
+    protected function addStoreFacade(Container $container): Container
+    {
+        $container[static::FACADE_STORE] = function (Container $container) {
+            return new PunchoutCatalogToStoreFacadeBridge($container->getLocator()->store()->facade());
         };
 
         return $container;
