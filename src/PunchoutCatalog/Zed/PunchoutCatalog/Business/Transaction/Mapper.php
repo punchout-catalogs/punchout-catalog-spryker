@@ -7,10 +7,15 @@ use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutTransactionConstsInterface;
 
 class Mapper implements MapperInterface
 {
+    protected const TRANSACTION_TYPE_SETUP_REQUEST  = 'setup_request';
+
+    protected const TRANSACTION_TYPE_SETUP_RESPONSE = 'setup_response';
+
+    protected const TRANSACTION_TYPE_TRANSFER_TO_REQUISITION = 'transfer_to_requisition';
+
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer $responseTransfer
      * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
@@ -24,7 +29,7 @@ class Mapper implements MapperInterface
     {
         if ($entityTransfer === null) {
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
-            $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_SETUP_RESPONSE);
+            $entityTransfer->setType(self::TRANSACTION_TYPE_SETUP_RESPONSE);
         }
     
         $entityTransfer->setStatus($responseTransfer->getIsSuccess());
@@ -71,7 +76,7 @@ class Mapper implements MapperInterface
     {
         if ($entityTransfer === null) {
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
-            $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_SETUP_REQUEST);
+            $entityTransfer->setType(self::TRANSACTION_TYPE_SETUP_REQUEST);
         }
     
         $entityTransfer->setStatus($requestTransfer->getIsSuccess());
@@ -129,7 +134,7 @@ class Mapper implements MapperInterface
     {
         if ($entityTransfer === null) {
             $entityTransfer = new PgwPunchoutCatalogTransactionEntityTransfer();
-            $entityTransfer->setType(PunchoutTransactionConstsInterface::TRANSACTION_TYPE_TRANSFER_TO_REQUISITION);
+            $entityTransfer->setType(self::TRANSACTION_TYPE_TRANSFER_TO_REQUISITION);
         }
     
         $entityTransfer->setStatus($cartResponseTransfer->getIsSuccess());

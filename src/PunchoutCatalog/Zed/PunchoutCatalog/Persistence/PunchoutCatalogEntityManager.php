@@ -8,11 +8,6 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Persistence;
 
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogConnection;
-use Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransaction;
 use Spryker\Zed\Kernel\Persistence\AbstractEntityManager;
 
 /**
@@ -41,13 +36,5 @@ class PunchoutCatalogEntityManager extends AbstractEntityManager implements Punc
         $punchoutCatalogTransactionEntityTransfer->setIdPunchoutCatalogTransaction($transactionEntity->getIdPunchoutCatalogTransaction());
 
         return $punchoutCatalogTransactionEntityTransfer;
-    }
-    
-    /**
-     * @return Propel\Mapper\PunchoutCatalogTransactionMapperInterface|PunchoutCatalogTransactionMapperInterface
-     */
-    protected function getTransactionMapper()
-    {
-        return $this->getFactory()->createPunchoutCatalogTransactionMapper();
     }
 }

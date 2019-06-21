@@ -7,7 +7,6 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin;
 
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 

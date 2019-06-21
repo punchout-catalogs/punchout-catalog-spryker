@@ -7,18 +7,12 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
-use Generated\Shared\Transfer\CustomerTransfer;
-use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CompanyUserResponseTransfer;
-use Generated\Shared\Transfer\CompanyUserCollectionTransfer;
+use Generated\Shared\Transfer\CompanyUserTransfer;
 
 interface PunchoutCatalogToCompanyUserFacadeInterface
 {
     /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
      * @param int $idCompanyUser
      *
      * @return \Generated\Shared\Transfer\CompanyUserTransfer|null
@@ -26,10 +20,6 @@ interface PunchoutCatalogToCompanyUserFacadeInterface
     public function findCompanyUserById(int $idCompanyUser): ?CompanyUserTransfer;
 
     /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
      * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
      *
      * @return \Generated\Shared\Transfer\CompanyUserResponseTransfer
@@ -37,10 +27,6 @@ interface PunchoutCatalogToCompanyUserFacadeInterface
     public function create(CompanyUserTransfer $companyUserTransfer): CompanyUserResponseTransfer;
 
     /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
      * @param int $idCompanyUser
      *
      * @return \Generated\Shared\Transfer\CompanyUserTransfer

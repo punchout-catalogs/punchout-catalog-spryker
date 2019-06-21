@@ -21,11 +21,11 @@ class PunchoutCatalogTransactionMapper implements PunchoutCatalogTransactionMapp
     public function mapTransactionTransferToEntity(
         PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer,
         PgwPunchoutCatalogTransaction $punchoutCatalogTransactionEntity
-    ): PgwPunchoutCatalogTransaction
-    {
+    ): PgwPunchoutCatalogTransaction {
         $punchoutCatalogTransactionEntity->fromArray(
             $punchoutCatalogTransactionEntityTransfer->modifiedToArray(false)
         );
+
         return $punchoutCatalogTransactionEntity;
     }
 
@@ -38,8 +38,7 @@ class PunchoutCatalogTransactionMapper implements PunchoutCatalogTransactionMapp
     public function mapEntityToTransactionTransfer(
         PgwPunchoutCatalogTransaction $punchoutCatalogTransactionEntity,
         PgwPunchoutCatalogTransactionEntityTransfer $punchoutCatalogTransactionEntityTransfer
-    ): PgwPunchoutCatalogTransactionEntityTransfer
-    {
+    ): PgwPunchoutCatalogTransactionEntityTransfer {
         $punchoutCatalogTransactionEntityTransfer = $punchoutCatalogTransactionEntityTransfer->fromArray(
             $punchoutCatalogTransactionEntity->toArray(),
             true

@@ -1,9 +1,9 @@
 <?php
 
-namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin;
+namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin\BusinessOnBehalf;
 
 use Generated\Shared\Transfer\CustomerTransfer;
-use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use Spryker\Client\BusinessOnBehalfExtension\Dependency\Plugin\CompanyUserChangeAllowedCheckPluginInterface;
 use Spryker\Client\Kernel\AbstractPlugin;
 
@@ -27,6 +27,6 @@ class DisallowPunchoutCompanyUserChangePlugin extends AbstractPlugin implements 
     {
         $impersonationDetails = $customerTransfer->getPunchoutCatalogImpersonationDetails();
 
-        return empty($impersonationDetails[PunchoutConstsInterface::IS_PUNCHOUT]);
+        return empty($impersonationDetails[PunchoutCatalogConstsInterface::IS_PUNCHOUT]);
     }
 }

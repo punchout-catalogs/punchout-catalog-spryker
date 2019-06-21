@@ -17,17 +17,26 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
-use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 /**
+ * @todo The methods in this class are not open for extension + some of them are fake abstract methods (facade)
+ *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {
+    protected const ERROR_UNEXPECTED = 'punchout-catalog.error.unexpected';
+
+    /**
+     * @uses \PunchoutCatalog\Client\PunchoutCatalog\Plugin\Quote\SingleCompanyUserDatabaseStrategyPreCheckPlugin::check
+     */
+    protected const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
+    protected const CUSTOMER_LOGIN_MODE_DYNAMIC = 'dynamic_user_creation';
+
     /**
      * @param string $mapping
      *
@@ -49,6 +58,8 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      * - Processes request message.
      * - Returns with prepared content and content type.
      * - Adds error message and sets "isSuccess=true".
+     *
+     * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
      *
@@ -72,7 +83,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         if (!$oAuthResponseTransfer->getIsValid() && $oAuthResponseTransfer->getError()) {
             throw new AuthenticateException($oAuthResponseTransfer->getError()->getMessage());
         } elseif (!$oAuthResponseTransfer->getIsValid() || !$oAuthResponseTransfer->getAccessToken()) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_UNEXPECTED);
+            throw new AuthenticateException(self::ERROR_UNEXPECTED);
         }
 
         // @todo Correct store name is required
@@ -86,7 +97,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         
         return (new PunchoutCatalogSetupResponseTransfer())
             ->setContext((clone $punchoutCatalogRequestTransfer->getContext())->setRawData(null))
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(true)
             ->setContent($this->createEntryResponse($landingUrl));
     }
@@ -106,7 +117,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     public function processError(MessageTransfer $messageTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return (new PunchoutCatalogSetupResponseTransfer())
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(false)
             ->setContent($this->createErrorResponse($messageTransfer));
     }
@@ -124,7 +135,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     {
         $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
         
-        if ($connection->getSetup()->getLoginMode() == PunchoutConnectionConstsInterface::CUSTOMER_LOGIN_MODE_DYNAMIC) {
+        if ($connection->getSetup()->getLoginMode() == self::CUSTOMER_LOGIN_MODE_DYNAMIC) {
             $documentTransfer->requireCustomer();
             $customerStrategy = $this->getFactory()->createCustomerLoginDynamicStrategy();
         } else {
@@ -156,7 +167,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
         
         return [
-            PunchoutConstsInterface::IS_PUNCHOUT => true,
+            PunchoutCatalogConstsInterface::IS_PUNCHOUT => true,
             'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData()->toArray(),
             'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
             'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
@@ -165,7 +176,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
                 'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
                 'bundle_mode' => $connection->getCart()->getBundleMode(),
             ],
-            PunchoutConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
+            self::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
             //store it in session - for sake of different customizations - currently can't use it as
             //oAuth token table has 1024 symbold only length for storing all impersonalization details
             //'punchout_data' => $documentTransfer->toArray(),

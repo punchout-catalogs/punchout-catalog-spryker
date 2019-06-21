@@ -15,10 +15,14 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 
 class CustomerModeStrategySingle implements CustomerModeStrategyInterface
 {
+    /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDynamic
+     */
+    protected const ERROR_MISSING_COMPANY_USER = 'punchout-catalog.error.missing-company-user';
+
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface
      */
@@ -56,7 +60,7 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
         if (null === $companyUserTransfer
             || $companyUserTransfer->getFkCompanyBusinessUnit() != $connectionTransfer->getSetup()->getFkCompanyBusinessUnit()
         ) {
-            throw new AuthenticateException(PunchoutConnectionConstsInterface::ERROR_MISSING_COMPANY_USER);
+            throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
         }
         
         return (new CustomerTransfer())

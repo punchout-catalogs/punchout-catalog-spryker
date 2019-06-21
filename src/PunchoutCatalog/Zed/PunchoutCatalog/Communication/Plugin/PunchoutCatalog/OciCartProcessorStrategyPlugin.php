@@ -16,9 +16,6 @@ use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseFieldTransfer;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Encoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
 
 /**
@@ -52,7 +49,7 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
             ->requireProtocolData()
             ->requirePunchoutCatalogConnection();
     
-        (new ProtocolDataValidator())->validate($punchoutCatalogCartRequestContextTransfer->getProtocolData());
+        ($this->getFactory()->createOciProtocolDataValidator())->validate($punchoutCatalogCartRequestContextTransfer->getProtocolData());
     
         $fields = $this->prepareOciContent(
             $punchoutCatalogCartRequestTransfer,
@@ -89,7 +86,7 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
             (string)$connection->getCart()->getMapping()
         );
 
-        return (new Encoder())->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer);
+        return $this->getFactory()->createOciEncoder()->execute($mappingTransfer, $punchoutCatalogCartRequestTransfer);
     }
 
     /**

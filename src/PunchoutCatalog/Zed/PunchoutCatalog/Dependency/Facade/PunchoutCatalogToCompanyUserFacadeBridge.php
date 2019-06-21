@@ -7,10 +7,8 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
-use Generated\Shared\Transfer\CustomerTransfer;
-use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CompanyUserResponseTransfer;
-use Generated\Shared\Transfer\CompanyUserCollectionTransfer;
+use Generated\Shared\Transfer\CompanyUserTransfer;
 
 class PunchoutCatalogToCompanyUserFacadeBridge implements PunchoutCatalogToCompanyUserFacadeInterface
 {
@@ -18,20 +16,16 @@ class PunchoutCatalogToCompanyUserFacadeBridge implements PunchoutCatalogToCompa
      * @var \Spryker\Zed\CompanyUser\Business\CompanyUserFacadeInterface
      */
     protected $companyUserFacade;
-    
+
     /**
-     * @param \Spryker\Zed\CompanyUser\Business\CompanyUserFacade $companyUserFacade
+     * @param \Spryker\Zed\CompanyUser\Business\CompanyUserFacadeInterface $companyUserFacade
      */
     public function __construct($companyUserFacade)
     {
         $this->companyUserFacade = $companyUserFacade;
     }
-    
+
     /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
      * @param int $idCompanyUser
      *
      * @return \Generated\Shared\Transfer\CompanyUserTransfer|null
@@ -41,26 +35,17 @@ class PunchoutCatalogToCompanyUserFacadeBridge implements PunchoutCatalogToCompa
         return $this->companyUserFacade->findCompanyUserById($idCompanyUser);
     }
 
-
-
     /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
      * @param int $idCompanyUser
      *
      * @return \Generated\Shared\Transfer\CompanyUserTransfer
      */
-    public function getCompanyUserById(int $idCompanyUser): CompanyUserTransfer {
+    public function getCompanyUserById(int $idCompanyUser): CompanyUserTransfer
+    {
         return $this->companyUserFacade->getCompanyUserById($idCompanyUser);
     }
 
     /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
      * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
      *
      * @return \Generated\Shared\Transfer\CompanyUserResponseTransfer
@@ -69,5 +54,4 @@ class PunchoutCatalogToCompanyUserFacadeBridge implements PunchoutCatalogToCompa
     {
         return $this->companyUserFacade->create($companyUserTransfer);
     }
-
 }

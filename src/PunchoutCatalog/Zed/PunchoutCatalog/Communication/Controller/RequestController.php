@@ -7,19 +7,16 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Controller;
 
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
+use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Spryker\Zed\Kernel\Communication\Controller\AbstractController;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacadeInterface getFacade()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface getRepository()
  */
 class RequestController extends AbstractController
 {
@@ -34,44 +31,48 @@ class RequestController extends AbstractController
     public function indexAction(Request $request): Response
     {
         $punchoutCatalogRequestTransfer = $this->mapSymfonyRequestToSetupRequestTransfer($request);
-        
+
         $processingResult = $this->getFacade()->processRequest($punchoutCatalogRequestTransfer);
-        
+
         return (new Response())
             ->setContent($processingResult->getContent())
             ->setStatusCode(Response::HTTP_OK);
     }
-    
+
     /**
-     * @param Request $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return PunchoutCatalogSetupRequestTransfer
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer
      */
     protected function mapSymfonyRequestToSetupRequestTransfer(Request $request): PunchoutCatalogSetupRequestTransfer
     {
         $idBusinessUnit = $request->query->get(static::PARAM_BUSINESS_UNIT);
-    
+
         $punchoutCatalogRequestTransfer = new PunchoutCatalogSetupRequestTransfer();
         $punchoutCatalogRequestTransfer->setIsSuccess(true);
         $punchoutCatalogRequestTransfer->setFkCompanyBusinessUnit((int)$idBusinessUnit);
-        
-        if (null === $request->getContentType() || 'form' === $request->getContentType()) {
-            $punchoutCatalogRequestTransfer->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART);
-        } elseif ('xml' === $request->getContentType()) {
-            $punchoutCatalogRequestTransfer->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML);
-        } else {
-            $punchoutCatalogRequestTransfer->setContentType($request->getContentType());
+
+        $plugins = $this->getFactory()->createRequestContentTypeStrategyPlugins();
+
+        $punchoutCatalogRequestTransfer->setContentType($request->getContentType());
+
+        foreach ($plugins as $plugin) {
+            if (!$plugin->isApplicable($request->getContentType())){
+                continue;
+            }
+            $punchoutCatalogRequestTransfer->setContentType($plugin->getPunchoutCatalogContentType($request->getContentType()));
+            break;
         }
 
         if ($request->getMethod() == Request::METHOD_GET) {
             $punchoutCatalogRequestTransfer->setContent($request->query->all());//ALL $_GET
-        } elseif ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
+        } elseif ($punchoutCatalogRequestTransfer->getContentType() === PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
             $punchoutCatalogRequestTransfer->setContent($request->request->all());//ALL $_POST
         } else {
             $punchoutCatalogRequestTransfer->setContent($request->getContent());//RAW BODY
         }
-    
+
+
         return $punchoutCatalogRequestTransfer;
     }
-
 }

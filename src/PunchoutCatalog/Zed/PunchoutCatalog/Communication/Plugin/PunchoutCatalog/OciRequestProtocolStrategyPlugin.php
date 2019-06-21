@@ -10,9 +10,9 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
@@ -24,6 +24,11 @@ use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
  */
 class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements PunchoutCatalogProtocolStrategyPluginInterface
 {
+    protected const ERROR_AUTHENTICATION = 'punchout-catalog.error.authentication';
+
+    protected const CONNECTION_TYPE_SETUP_REQUEST = 'setup_request';
+    protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+
     /**
      * {@inheritdoc}
      * - Returns true if provided content has a multipart/form-data content type with a non-empty OCI content.
@@ -37,7 +42,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
      */
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
-        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
+        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART) {
             return false;
         }
 
@@ -74,7 +79,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
         $protocolOperation = $this->getFacade()->fetchOciOperation($content);
 
         $punchoutCatalogRequestTransfer
-            ->setProtocolType(PunchoutConnectionConstsInterface::FORMAT_OCI)
+            ->setProtocolType(PunchoutCatalogConstsInterface::FORMAT_OCI)
             ->setProtocolOperation($protocolOperation)
             ->setProtocolData($protocolData);
 
@@ -118,8 +123,8 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
     protected function mapProtocolOperationToConnectionType(?string $protocolOperation): ?string
     {
         switch ($protocolOperation) {
-            case PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST:
-                return PunchoutConnectionConstsInterface::CONNECTION_TYPE_SETUP_REQUEST;
+            case self::PROTOCOL_OPERATION_SETUP_REQUEST:
+                return self::CONNECTION_TYPE_SETUP_REQUEST;
             default:
                 return null;
         }
@@ -172,7 +177,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
             $this->getFacade()->assertOciProtocolData($punchoutCatalogRequestTransfer->getProtocolData());
         } catch (RequiredTransferPropertyException $e) {
             throw new AuthenticateException(
-                PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
+                self::ERROR_AUTHENTICATION, 0, $e
             );
         }
     }

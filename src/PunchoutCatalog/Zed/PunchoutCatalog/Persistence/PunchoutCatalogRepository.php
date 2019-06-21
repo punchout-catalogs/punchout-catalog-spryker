@@ -103,7 +103,7 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
 
         return $connectionList;
     }
-    
+
     /**
      * @module Customer
      *
@@ -116,7 +116,7 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
         $query = $this->getFactory()
             ->getCustomerQuery()
             //->filterByIsActive(true)
-            ->filterByEmail($email)
+            ->filterByEmail($email);
             //->joinCompany()
             //->useCompanyQuery()
             //->joinCompanyBusinessUnit()
@@ -124,16 +124,16 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
             //->filterByIdCompanyBusinessUnit($idCompanyBusinessUnit)
             //->endUse()
             //->endUse()
-        ;
-    
+
+
         $customer = $query->findOne();
         if ($customer === null) {
             return null;
         }
-    
+
         return $customer->getIdCustomer();
     }
-    
+
     /**
      * @module CompanyUser
      * @module Company

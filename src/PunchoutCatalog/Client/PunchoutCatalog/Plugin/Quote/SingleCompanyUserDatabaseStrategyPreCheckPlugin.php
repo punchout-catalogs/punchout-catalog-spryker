@@ -1,9 +1,9 @@
 <?php
 
-namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin;
+namespace PunchoutCatalog\Client\PunchoutCatalog\Plugin\Quote;
 
 use Generated\Shared\Transfer\QuoteTransfer;
-use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use Spryker\Client\Kernel\AbstractPlugin;
 use Spryker\Client\QuoteExtension\Dependency\Plugin\DatabaseStrategyPreCheckPluginInterface;
 
@@ -13,6 +13,11 @@ use Spryker\Client\QuoteExtension\Dependency\Plugin\DatabaseStrategyPreCheckPlug
  */
 class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin implements DatabaseStrategyPreCheckPluginInterface
 {
+    /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\AbstractSetupRequestProcessorStrategyPlugin::CUSTOMER_LOGIN_MODE_SINGLE
+     */
+    protected const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
+
     /**
      * {@inheritdoc}
      * - Retrieves logged in customer from Session.
@@ -33,9 +38,9 @@ class SingleCompanyUserDatabaseStrategyPreCheckPlugin extends AbstractPlugin imp
         if ($customer) {
             $impersonationDetails = $customer->getPunchoutCatalogImpersonationDetails();
 
-            if (!empty($impersonationDetails[PunchoutConstsInterface::IS_PUNCHOUT])
-                && isset($impersonationDetails[PunchoutConstsInterface::PUNCHOUT_LOGIN_MODE])
-                && ($impersonationDetails[PunchoutConstsInterface::PUNCHOUT_LOGIN_MODE] === PunchoutConstsInterface::CUSTOMER_LOGIN_MODE_SINGLE)
+            if (!empty($impersonationDetails[PunchoutCatalogConstsInterface::IS_PUNCHOUT])
+                && isset($impersonationDetails[PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE])
+                && ($impersonationDetails[PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE] === self::CUSTOMER_LOGIN_MODE_SINGLE)
             ) {
                 return false;
             }

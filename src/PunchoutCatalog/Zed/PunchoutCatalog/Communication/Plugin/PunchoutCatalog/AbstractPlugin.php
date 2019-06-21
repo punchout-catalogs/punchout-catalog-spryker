@@ -9,10 +9,12 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin as CoreAbstractPlugin;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter as MappingConverter;
 
 /**
+ * @todo The methods in this class are not open for extension + they are fake abstract methods (facade)
+ *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
  */
 abstract class AbstractPlugin extends CoreAbstractPlugin
@@ -24,7 +26,7 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
      */
     protected function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
     {
-        return (new MappingConverter())->convert(
+        return ($this->getFactory()->createMappingConverter())->convert(
             $this->convertToArray($mapping)
         );
     }
@@ -40,6 +42,8 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     }
     
     /**
+     * @todo This is method does not belong to the abstract class (+SRP violation)
+     *
      * @api
      *
      * @param string $storeName
@@ -77,6 +81,11 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
     }
 
     /**
+     * @todo This is method does not belong to the abstract class (+SRP violation)
+     * @todo has a public class that is not part of the plugin interfaces
+     *
+     * @api
+     *
      * @return string
      */
     public function getTimestamp(): string

@@ -9,10 +9,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci;
 
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
-use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 
 class ProtocolDataValidator implements ProtocolDataValidatorInterface
 {

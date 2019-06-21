@@ -11,7 +11,6 @@ use Generated\Shared\Transfer\PunchoutCatalogDocumentCartTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomAttributeTransfer;
 use Generated\Shared\Transfer\QuoteTransfer;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartTransferMapperPluginInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
 use Spryker\Yves\Kernel\AbstractPlugin;
 
 /**
@@ -19,7 +18,15 @@ use Spryker\Yves\Kernel\AbstractPlugin;
  */
 class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTransferMapperPluginInterface
 {
-    const CHILD_DESCRIPTION_SEPARATOR = ' x ';
+    protected const BUNDLE_MODE_SINGLE = 'single';
+    protected const BUNDLE_MODE_COMPOSITE = 'composite';
+
+    protected const BUNDLE_COMPOSITE_PRICE_LEVEL = 'groupLevel';
+    protected const BUNDLE_COMPOSITE_ITEM_TYPE = 'composite';
+    protected const BUNDLE_CHILD_ITEM_TYPE = 'item';
+
+    protected const CHILD_DESCRIPTION_SEPARATOR = ' x ';
+
     /**
      * @var \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
      */
@@ -262,10 +269,10 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                 );
 
                 if ($quoteItemTransfer->getChildBundleItems()->count()
-                    && $this->getBundleMode() == PunchoutConnectionConstsInterface::BUNDLE_MODE_COMPOSITE
+                    && $this->getBundleMode() == self::BUNDLE_MODE_COMPOSITE
                 ) {
-                    $documentCartItemTransfer->setCompositeItemType(PunchoutConnectionConstsInterface::BUNDLE_COMPOSITE_PRICE_LEVEL);
-                    $documentCartItemTransfer->setItemType(PunchoutConnectionConstsInterface::BUNDLE_COMPOSITE_ITEM_TYPE);
+                    $documentCartItemTransfer->setCompositeItemType(self::BUNDLE_COMPOSITE_PRICE_LEVEL);
+                    $documentCartItemTransfer->setItemType(self::BUNDLE_COMPOSITE_ITEM_TYPE);
 
                     $childItems[$documentCartItemTransfer->getInternalId()] = [
                         'bundleProduct' => $documentCartItemTransfer, 'bundleItems' => [],
@@ -289,7 +296,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                     $bundleProduct = $complexData['bundleProduct'];
 
                     $documentCartItemTransfer = new PunchoutCatalogDocumentCartItemTransfer();
-                    $documentCartItemTransfer->setItemType(PunchoutConnectionConstsInterface::BUNDLE_CHILD_ITEM_TYPE);
+                    $documentCartItemTransfer->setItemType(self::BUNDLE_CHILD_ITEM_TYPE);
                     $documentCartItemTransfer->setParentLineNumber($bundleProduct->getLineNumber());
                     $documentCartItemTransfer->setParentInternalId($bundleProduct->getInternalId());
 
@@ -464,7 +471,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
         $childrenDescriptions = [];
         if ($quoteItemTransfer->getChildBundleItems()->count()
-            && $this->getBundleMode() == PunchoutConnectionConstsInterface::BUNDLE_MODE_SINGLE
+            && $this->getBundleMode() == self::BUNDLE_MODE_SINGLE
         ) {
             foreach ($quoteItemTransfer->getChildBundleItems() as $childCartItem) {
                 $childrenDescriptions[] = $this->prepareChildDescription($childCartItem, $documentCartItemTransfer);
@@ -612,7 +619,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     {
         $cartDetails = $this->getPunchoutCartDetails();
 
-        return $cartDetails['bundle_mode'] ?? PunchoutConnectionConstsInterface::BUNDLE_MODE_SINGLE;
+        return $cartDetails['bundle_mode'] ?? self::BUNDLE_MODE_SINGLE;
     }
 
     /**

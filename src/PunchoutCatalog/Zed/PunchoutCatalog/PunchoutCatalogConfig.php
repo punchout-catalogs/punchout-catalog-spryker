@@ -9,11 +9,10 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog;
 
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Controller\RequestController;
-use Spryker\Zed\DataImport\DataImportConfig;
-use Spryker\Shared\Application\ApplicationConstants;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException;
+use Spryker\Shared\Application\ApplicationConstants;
+use Spryker\Zed\DataImport\DataImportConfig;
 
 class PunchoutCatalogConfig extends DataImportConfig
 {
@@ -25,9 +24,9 @@ class PunchoutCatalogConfig extends DataImportConfig
      * @uses RequestController::indexAction()
      */
     protected const PUNCHOUT_REQUEST_URL = '/punchout-catalog/request';
-    protected const PUNCHOUT_DEFAULT_LOCALE = 'en_US';
-    protected const PUNCHOUT_DEFAULT_STORE_LOCALE = 'de';
-    
+    protected const PUNCHOUT_DEFAULT_LOCALE_NAME = 'en_US';
+    protected const PUNCHOUT_DEFAULT_LOCALE = 'de';
+
     /**
      * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
      */
@@ -36,28 +35,6 @@ class PunchoutCatalogConfig extends DataImportConfig
         return $this->buildImporterConfiguration(
             implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection.csv']),
             static::IMPORT_TYPE_PUNCHOUT_CATALOG_CONNECTION
-        );
-    }
-
-    /**
-     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
-     */
-    public function getPunchoutCatalogSetupDataImporterConfiguration(): DataImporterConfigurationTransfer
-    {
-        return $this->buildImporterConfiguration(
-            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_setup.csv']),
-            static::IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP
-        );
-    }
-
-    /**
-     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
-     */
-    public function getPunchoutCatalogCartDataImporterConfiguration(): DataImporterConfigurationTransfer
-    {
-        return $this->buildImporterConfiguration(
-            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_cart.csv']),
-            static::IMPORT_TYPE_PUNCHOUT_CATALOG_CART
         );
     }
 
@@ -88,7 +65,37 @@ class PunchoutCatalogConfig extends DataImportConfig
 
         return $moduleRoot . DIRECTORY_SEPARATOR;
     }
-    
+
+    /**
+     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
+     */
+    public function getPunchoutCatalogSetupDataImporterConfiguration(): DataImporterConfigurationTransfer
+    {
+        return $this->buildImporterConfiguration(
+            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_setup.csv']),
+            static::IMPORT_TYPE_PUNCHOUT_CATALOG_SETUP
+        );
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer
+     */
+    public function getPunchoutCatalogCartDataImporterConfiguration(): DataImporterConfigurationTransfer
+    {
+        return $this->buildImporterConfiguration(
+            implode(DIRECTORY_SEPARATOR, [$this->getModuleDataImportDirectory(), 'punchout_catalog_connection_cart.csv']),
+            static::IMPORT_TYPE_PUNCHOUT_CATALOG_CART
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultLocaleName(): string
+    {
+        return static::PUNCHOUT_DEFAULT_LOCALE_NAME;
+    }
+
     /**
      * @return string
      */
@@ -96,56 +103,52 @@ class PunchoutCatalogConfig extends DataImportConfig
     {
         return static::PUNCHOUT_DEFAULT_LOCALE;
     }
-    
+
     /**
-     * @return string
-     */
-    public function getDefaultStoreLocale(): string
-    {
-        return static::PUNCHOUT_DEFAULT_STORE_LOCALE;
-    }
-    
-    /**
-     * @return string
+     * @deprecated
      *
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
+     * @return string
      */
     public function getZedPunchoutUrl(): string
     {
         return $this->getBaseUrlZed() . static::PUNCHOUT_REQUEST_URL;
     }
-    
+
     /**
-     * @param string $storeName
-     *
-     * @return string
-     *
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
-     */
-    public function getBaseUrlYves(string $storeName): string
-    {
-        throw new MissingYvesUrlConfigurationException(
-            'Missing configuration! You need to configure Yves URL ' .
-            'in your own PunchoutCatalogConfig::getBaseUrlYves() ' .
-            'to be able to generate login URL with access token for remote systems.'
-        );
-    }
-    
-    /**
-     * @return string
-     *
      * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingZedUrlConfigurationException
+     *
+     * @return string
      */
     public function getBaseUrlZed(): string
     {
         if ($this->getConfig()->hasKey(ApplicationConstants::BASE_URL_ZED)) {
             return $this->getConfig()->get(ApplicationConstants::BASE_URL_ZED);
         }
-        
+
         throw new MissingZedUrlConfigurationException(
             'Missing configuration! You need to configure Zed URL ' .
             'in your own PunchoutCatalogConfig::getBaseUrlZed() ' .
             'to be able to generate PunchOut URL for remote systems.'
+        );
+    }
+
+    /**
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     *
+     * @param string $storeName
+     *
+     * @return string
+     */
+    public function getBaseUrlYves(string $storeName): string
+    {
+        if ($this->getConfig()->hasKey(ApplicationConstants::BASE_URL_YVES)) {
+            return $this->getConfig()->get(ApplicationConstants::BASE_URL_YVES);
+        }
+
+        throw new MissingYvesUrlConfigurationException(
+            'Missing configuration! You need to configure Yves URL ' .
+            'in your own PunchoutCatalogConfig::getBaseUrlYves() ' .
+            'to be able to generate login URL with access token for remote systems.'
         );
     }
 }

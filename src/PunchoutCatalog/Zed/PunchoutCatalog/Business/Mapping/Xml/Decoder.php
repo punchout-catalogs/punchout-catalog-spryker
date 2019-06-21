@@ -11,15 +11,10 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use SimpleXMLElement;
 use InvalidArgumentException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\AbstractCoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\SnippetTrait;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\TransformationTrait;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\DecoderInterface;
 
 class Decoder extends AbstractCoder implements DecoderInterface
 {
-    use SnippetTrait;
-    use TransformationTrait;
-
     /**
      * @var array
      */
@@ -39,7 +34,6 @@ class Decoder extends AbstractCoder implements DecoderInterface
         $this->xmlUtil = new XmlUtil();
 
         $this->document = [];
-        $this->snippets = [];
         $this->registerSnippets($mapping);
 
         /** @var \Generated\Shared\Transfer\PunchoutCatalogMappingObjectTransfer $object */
@@ -55,7 +49,6 @@ class Decoder extends AbstractCoder implements DecoderInterface
                     foreach ($object->getPath() as $path) {
                         $multiLines = $this->get($source, $path);
         
-                        //@todo: reduce code complexity
                         if ($multiLines && is_array($multiLines)) {
                             foreach ($multiLines as $lineSource) {
                                 $_line = $this->map($object, $lineSource);

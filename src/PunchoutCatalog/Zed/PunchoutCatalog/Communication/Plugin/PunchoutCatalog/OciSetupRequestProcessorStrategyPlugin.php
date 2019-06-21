@@ -12,8 +12,7 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
 
 /**
@@ -24,6 +23,8 @@ class OciSetupRequestProcessorStrategyPlugin
     extends AbstractSetupRequestProcessorStrategyPlugin
     implements PunchoutCatalogRequestProcessorStrategyPluginInterface
 {
+    protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+
     /**
      * @api
      *
@@ -34,9 +35,9 @@ class OciSetupRequestProcessorStrategyPlugin
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
         return (
-            ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_FORM_MULTIPART)
-            && ($punchoutCatalogRequestTransfer->getProtocolType() === PunchoutConnectionConstsInterface::FORMAT_OCI)
-            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST)
+            ($punchoutCatalogRequestTransfer->getContentType() === PunchoutCatalogConstsInterface::CONTENT_TYPE_FORM_MULTIPART)
+            && ($punchoutCatalogRequestTransfer->getProtocolType() === PunchoutCatalogConstsInterface::FORMAT_OCI)
+            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === self::PROTOCOL_OPERATION_SETUP_REQUEST)
         );
     }
 
@@ -50,7 +51,7 @@ class OciSetupRequestProcessorStrategyPlugin
     public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return parent::processRequest($punchoutCatalogRequestTransfer)
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_HTML);
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_HTML);
     }
 
     /**
@@ -63,7 +64,7 @@ class OciSetupRequestProcessorStrategyPlugin
     public function processError(MessageTransfer $messageTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return parent::processError($messageTransfer)
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_PLAIN);
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_PLAIN);
     }
 
     /**
@@ -82,7 +83,7 @@ class OciSetupRequestProcessorStrategyPlugin
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
     
-        $map = (new Decoder())->execute($mappingTransfer, $ociContent);
+        $map = $this->getFactory()->createOciDecoder()->execute($mappingTransfer, $ociContent);
         
         return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }

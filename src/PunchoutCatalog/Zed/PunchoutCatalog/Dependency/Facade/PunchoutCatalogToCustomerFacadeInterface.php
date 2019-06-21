@@ -7,23 +7,19 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
-use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\CustomerResponseTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
 
 interface PunchoutCatalogToCustomerFacadeInterface
 {
     /**
-     * @param int $idCustomer
+     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *
      * @return \Generated\Shared\Transfer\CustomerTransfer|null
      */
-    public function findCustomerById(int $idCustomer): ?CustomerTransfer;
+    public function findCustomerById(CustomerTransfer $customerTransfer): ?CustomerTransfer;
 
     /**
-     * {@inheritdoc}
-     *
-     * @api
-     *
      * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
      *
      * @return \Generated\Shared\Transfer\CustomerResponseTransfer

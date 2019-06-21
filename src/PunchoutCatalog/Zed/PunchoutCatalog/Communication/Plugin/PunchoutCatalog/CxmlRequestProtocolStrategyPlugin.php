@@ -10,21 +10,24 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
-use Spryker\Zed\Kernel\Communication\AbstractPlugin;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
+use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  */
 class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements PunchoutCatalogProtocolStrategyPluginInterface
 {
+    protected const ERROR_AUTHENTICATION = 'punchout-catalog.error.authentication';
+
+    protected const CONNECTION_TYPE_SETUP_REQUEST = 'setup_request';
+    protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+
     /**
      * @api
      *
@@ -34,7 +37,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      */
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
-        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML) {
+        if ($punchoutCatalogRequestTransfer->getContentType() !== PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML) {
             return false;
         } elseif (empty($punchoutCatalogRequestTransfer->getContent())) {
             return false;
@@ -61,7 +64,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         $protocolOperation = $this->getFacade()->fetchCXmlOperation($punchoutCatalogRequestTransfer->getContent());
 
         $punchoutCatalogRequestTransfer
-            ->setProtocolType(PunchoutConnectionConstsInterface::FORMAT_CXML)
+            ->setProtocolType(PunchoutCatalogConstsInterface::FORMAT_CXML)
             ->setProtocolOperation($protocolOperation)
             ->setProtocolData(
                 (new PunchoutCatalogProtocolDataTransfer())->fromArray($protocolData)
@@ -70,12 +73,11 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         $punchoutCatalogRequestTransfer->requireProtocolOperation();
 
         try {
-            (new ProtocolDataValidator())->validate(
-                $punchoutCatalogRequestTransfer->getProtocolData()
-            );
+            $this->getFactory()->createXmlProtocolDataValidator()
+                ->validate($punchoutCatalogRequestTransfer->getProtocolData());
         } catch (RequiredTransferPropertyException $e) {
             throw new AuthenticateException(
-                PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION, 0, $e
+                self::ERROR_AUTHENTICATION, 0, $e
             );
         }
 
@@ -131,9 +133,10 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      */
     protected function mapProtocolOperationToConnectionType($protocolOperation): ?string
     {
+        // @todo not extendable
         switch ($protocolOperation) {
-            case PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST:
-                return PunchoutConnectionConstsInterface::CONNECTION_TYPE_SETUP_REQUEST;
+            case self::PROTOCOL_OPERATION_SETUP_REQUEST:
+                return self::CONNECTION_TYPE_SETUP_REQUEST;
             default:
                 return null;
         }

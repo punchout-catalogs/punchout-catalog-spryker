@@ -8,14 +8,12 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
 use Generated\Shared\Transfer\MessageTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
-
-use SimpleXMLElement;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutConnectionConstsInterface;
+use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
+use SimpleXMLElement;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -35,6 +33,21 @@ class CxmlSetupRequestProcessorStrategyPlugin
     protected const ERROR_TEXT_NOT_ACCEPTABLE = 'Not Acceptable';
 
     /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\CxmlRequestProtocolStrategyPlugin::setRequestProtocol
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog\OciRequestProtocolStrategyPlugin::assertOciRequestData
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticator::applyProtocolStrategy
+     */
+    protected const ERROR_AUTHENTICATION = 'punchout-catalog.error.authentication';
+
+    /**
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticator::authenticateRequest
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor::process
+     * @see \PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor::processException
+     */
+    protected const ERROR_INVALID_DATA = 'punchout-catalog.error.invalid-data';
+
+    protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+    /**
      * @api
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
@@ -44,9 +57,9 @@ class CxmlSetupRequestProcessorStrategyPlugin
     public function isApplicable(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): bool
     {
         return (
-            ($punchoutCatalogRequestTransfer->getContentType() === PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML)
-            && ($punchoutCatalogRequestTransfer->getProtocolType() === PunchoutConnectionConstsInterface::FORMAT_CXML)
-            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === PunchoutConnectionConstsInterface::PROTOCOL_OPERATION_SETUP_REQUEST)
+            ($punchoutCatalogRequestTransfer->getContentType() === PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML)
+            && ($punchoutCatalogRequestTransfer->getProtocolType() === PunchoutCatalogConstsInterface::FORMAT_CXML)
+            && ($punchoutCatalogRequestTransfer->getProtocolOperation() === self::PROTOCOL_OPERATION_SETUP_REQUEST)
         );
     }
 
@@ -60,7 +73,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
     public function processRequest(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return parent::processRequest($punchoutCatalogRequestTransfer)
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML);
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML);
     }
 
     /**
@@ -78,7 +91,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
     public function processError(MessageTransfer $messageTransfer): PunchoutCatalogSetupResponseTransfer
     {
         return parent::processError($messageTransfer)
-            ->setContentType(PunchoutConnectionConstsInterface::CONTENT_TYPE_TEXT_XML);
+            ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML);
     }
 
     /**
@@ -101,8 +114,8 @@ class CxmlSetupRequestProcessorStrategyPlugin
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
 
-        $map = (new Decoder())->execute($mappingTransfer, $xmlContent);
-        
+        $map = $this->getFactory()->createXmlDecoder()->execute($mappingTransfer, $xmlContent);
+
         return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }
 
@@ -129,6 +142,14 @@ class CxmlSetupRequestProcessorStrategyPlugin
     }
 
     /**
+     * @return string
+     */
+    protected function getDefaultLocale(): string
+    {
+        return str_replace('_', '-', $this->getConfig()->getDefaultLocaleName());
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\MessageTransfer $messageTransfer
      *
      * @return string
@@ -139,10 +160,10 @@ class CxmlSetupRequestProcessorStrategyPlugin
         $statusText = static::ERROR_TEXT_INTERNAL;
         $statusMessage = $messageTransfer->getTranslatedMessage();
 
-        if ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_INVALID_DATA) {
+        if ($messageTransfer->getValue() == self::ERROR_INVALID_DATA) {
             $statusText = static::ERROR_TEXT_NOT_ACCEPTABLE;
             $status = static::ERROR_CODE_NOT_ACCEPTABLE;
-        } elseif ($messageTransfer->getValue() == PunchoutConnectionConstsInterface::ERROR_AUTHENTICATION) {
+        } elseif ($messageTransfer->getValue() == self::ERROR_AUTHENTICATION) {
             $statusText = static::ERROR_TEXT_UNATHORIZED;
             $status = static::ERROR_CODE_UNATHORIZED;
         }
@@ -155,13 +176,5 @@ class CxmlSetupRequestProcessorStrategyPlugin
         <Status code="' . $status . '" text="' . $statusText . '">' . $statusMessage . '</Status>
     </Response>
 </cXML>';
-    }
-    
-    /**
-     * @return string
-     */
-    protected function getDefaultLocale(): string
-    {
-        return str_replace('_', '-', $this->getConfig()->getDefaultLocale());
     }
 }
