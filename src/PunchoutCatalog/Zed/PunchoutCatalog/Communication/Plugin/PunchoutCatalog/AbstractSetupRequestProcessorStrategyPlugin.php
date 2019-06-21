@@ -26,7 +26,6 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
- * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  */
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {

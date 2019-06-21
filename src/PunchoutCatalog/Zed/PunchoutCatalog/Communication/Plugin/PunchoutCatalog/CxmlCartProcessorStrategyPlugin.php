@@ -58,8 +58,6 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
             ->requireProtocolData()
             ->requirePunchoutCatalogConnection();
 
-        // @todo factory - applies to all plugins
-        // fixed, but should to review it
         $this->getFactory()->createXmlProtocolDataValidator()->validate(
             $context->getProtocolData(),
             false

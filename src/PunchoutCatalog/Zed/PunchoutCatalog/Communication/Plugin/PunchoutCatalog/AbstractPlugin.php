@@ -26,8 +26,6 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
      */
     protected function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
     {
-        // @todo factory
-        // fixed, but should to review it
         return ($this->getFactory()->createMappingConverter())->convert(
             $this->convertToArray($mapping)
         );

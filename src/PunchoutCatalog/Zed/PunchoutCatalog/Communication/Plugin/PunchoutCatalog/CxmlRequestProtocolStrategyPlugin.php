@@ -11,17 +11,15 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
-use Spryker\Zed\Kernel\Communication\AbstractPlugin;
-
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Cxml\ProtocolDataValidator;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
+use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
+ * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  */
 class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements PunchoutCatalogProtocolStrategyPluginInterface
 {
@@ -75,9 +73,8 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         $punchoutCatalogRequestTransfer->requireProtocolOperation();
 
         try {
-            (new ProtocolDataValidator())->validate(
-                $punchoutCatalogRequestTransfer->getProtocolData()
-            );
+            $this->getFactory()->createXmlProtocolDataValidator()
+                ->validate($punchoutCatalogRequestTransfer->getProtocolData());
         } catch (RequiredTransferPropertyException $e) {
             throw new AuthenticateException(
                 self::ERROR_AUTHENTICATION, 0, $e
