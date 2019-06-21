@@ -1,0 +1,10 @@
+actor: PunchoutTester
+modules:
+    enabled:
+        - \Helper\Punchout
+        - REST
+        - PhpBrowser
+    config:
+        REST:
+            depends: PhpBrowser
+            url: http://zed.de.suite-nonsplit.local/punchout-catalog
