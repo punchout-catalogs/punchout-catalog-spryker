@@ -8,6 +8,7 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
 use Spryker\Zed\Store\Business\StoreFacadeInterface;
+use Generated\Shared\Transfer\StoreTransfer;
 
 class PunchoutCatalogToStoreFacadeBridge implements PunchoutCatalogToStoreFacadeInterface
 {
@@ -30,5 +31,13 @@ class PunchoutCatalogToStoreFacadeBridge implements PunchoutCatalogToStoreFacade
     public function getAllStores()
     {
         return $this->storeFacade->getAllStores();
+    }
+
+    /**
+     * @return \Generated\Shared\Transfer\StoreTransfer
+     */
+    public function getCurrentStore(): StoreTransfer
+    {
+        return $this->storeFacade->getCurrentStore();
     }
 }

@@ -7,10 +7,17 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade;
 
+use Generated\Shared\Transfer\StoreTransfer;
+
 interface PunchoutCatalogToStoreFacadeInterface
 {
     /**
      * @return \Generated\Shared\Transfer\StoreTransfer[]
      */
     public function getAllStores();
+
+    /**
+     * @return \Generated\Shared\Transfer\StoreTransfer
+     */
+    public function getCurrentStore(): StoreTransfer;
 }

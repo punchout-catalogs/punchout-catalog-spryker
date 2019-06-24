@@ -100,6 +100,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
         $container = $this->addCustomerFacade($container);
         $container = $this->addVaultFacade($container);
         $container = $this->addOAuthCompanyUserFacade($container);
+        $container = $this->addStoreFacade($container);
 
         return $container;
     }

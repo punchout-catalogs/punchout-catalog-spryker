@@ -159,8 +159,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
 
         $operationAllowed = 'create';
 
-        // @todo Correct store name is required
-        $storeName = "DE";
+        $storeName = $this->getFactory()->getStoreFacade()->getCurrentStore()->getName();
 
         return <<< EOF
 <?xml version="1.0" encoding="UTF-8"?>

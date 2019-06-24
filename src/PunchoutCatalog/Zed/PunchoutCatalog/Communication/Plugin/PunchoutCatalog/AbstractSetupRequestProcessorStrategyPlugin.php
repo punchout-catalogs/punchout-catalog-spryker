@@ -86,8 +86,8 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
             throw new AuthenticateException(self::ERROR_UNEXPECTED);
         }
 
-        // @todo Correct store name is required
-        $storeName = "DE";
+        $storeName = $this->getFactory()->getStoreFacade()->getCurrentStore()->getName();
+
         $landingUrl = $this->getFactory()
             ->createUrlHandler()
             ->getLoginUrl($oAuthResponseTransfer->getAccessToken(), $storeName);
