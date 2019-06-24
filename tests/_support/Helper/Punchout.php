@@ -73,6 +73,18 @@ XML_DATA;
 
     }
 
+    /**
+     * For debug purposes
+     *
+     * @param $name
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function savePage($name)
+    {
+        $dir = codecept_output_dir();
+        $this->getModule('PhpBrowser')->_savePageSource($dir . $name . '.html');
+    }
+
     public function isCxml($xml)
     {
         $this->assertContains('<cXML', $xml, 'is cXML');
