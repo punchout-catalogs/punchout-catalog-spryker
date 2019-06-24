@@ -30,7 +30,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
     protected const CXML_VERSION = '1.2.023';//1.2.021
 
     protected const CXML_ENCODING_BASE64 = 'base64';
-    protected const CXML_ENCODING_URLENCODED = 'urlencoded';
+    protected const CXML_ENCODING_URLENCODED = 'url-encoded';
 
     /**
      * @api

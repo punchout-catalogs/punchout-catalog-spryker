@@ -153,7 +153,7 @@ Client 1 - Oci - User 1,spryker_sup_1,128,composite,,"
     }
   }
 }"
-Client 1 - cXml - User 2,spryker_sup_3,,single,urlencoded,"{
+Client 1 - cXml - User 2,spryker_sup_3,,single,url-encoded,"{
   ""cart"": {
     ""fields"": {
       ""cart_note"": {
@@ -290,7 +290,7 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,urlencoded,"{
     }
   }
 }"
-Client 2 - cXml - User 1,spryker_sup_2,,composite,urlencoded,{}
+Client 2 - cXml - User 1,spryker_sup_2,,composite,url-encoded,{}
 Client 3 - cXml - User 3,spryker_sup_3,,composite,base64,{}
 Client 2 - Oci - User 2,spryker_sup_1,,single,,"
 {
