@@ -96,14 +96,14 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     ): PunchoutCatalogSetupRequestTransfer
     {
         $punchoutCatalogRequestTransfer->requireContext();
-        
+
         $type = $this->mapProtocolOperationToConnectionType($punchoutCatalogRequestTransfer->getProtocolOperation());
 
         $credentialSearchTransfer = new PunchoutCatalogConnectionCredentialSearchTransfer();
         $credentialSearchTransfer->setFkCompanyBusinessUnit(
             $punchoutCatalogRequestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
         );
-        
+
         $credentialSearchTransfer->setFormat($punchoutCatalogRequestTransfer->getProtocolType());
         $credentialSearchTransfer->setType($type);
 
@@ -122,7 +122,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         $punchoutCatalogRequestTransfer->getContext()->setPunchoutCatalogConnection(
             $punchoutCatalogConnectionTransfer
         );
-        
+
         return $punchoutCatalogRequestTransfer;
     }
 
@@ -133,12 +133,6 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      */
     protected function mapProtocolOperationToConnectionType($protocolOperation): ?string
     {
-        // @todo not extendable
-        switch ($protocolOperation) {
-            case self::PROTOCOL_OPERATION_SETUP_REQUEST:
-                return self::CONNECTION_TYPE_SETUP_REQUEST;
-            default:
-                return null;
-        }
+        return $protocolOperation == self::PROTOCOL_OPERATION_SETUP_REQUEST ? self::CONNECTION_TYPE_SETUP_REQUEST : null;
     }
 }

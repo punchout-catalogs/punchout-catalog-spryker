@@ -17,10 +17,9 @@ use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogCartProcessorStrategyPluginInterface;
 use SimpleXMLElement;
+use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
- * @todo Difficult extension (facade) - applies to all plugins
- *
  * @see: http://xml.cxml.org/current/ReleaseNotes.html
  *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -119,7 +118,7 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
      */
     protected function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
     {
-        $mappingTransfer = parent::convertToMappingTransfer($mapping);
+        $mappingTransfer = $this->getFacade()->convertToMappingTransfer($mapping);
 
         foreach ($mappingTransfer->getObjects() as $object) {
             if ($object->getName() == 'cart_item') {
@@ -161,11 +160,13 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
 
         $storeName = $this->getFactory()->getStoreFacade()->getCurrentStore()->getName();
 
+        $yvesPayloadId = $this->getFacade()->getYvesPayloadId($storeName);
+        $timestamp = $this->getFacade()->getTimestamp();
         return <<< EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="{$this->getYvesPayloadId($storeName)}"
-    timestamp="{$this->getTimestamp()}"
+<cXML payloadID="{$yvesPayloadId}"
+    timestamp="{$timestamp}"
     xml:lang="{$context->getLocale()}"
     version="{$ver}"
 >

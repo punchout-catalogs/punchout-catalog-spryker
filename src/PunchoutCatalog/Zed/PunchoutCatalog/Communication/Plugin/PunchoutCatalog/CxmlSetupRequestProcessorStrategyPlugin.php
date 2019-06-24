@@ -47,6 +47,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
     protected const ERROR_INVALID_DATA = 'punchout-catalog.error.invalid-data';
 
     protected const PROTOCOL_OPERATION_SETUP_REQUEST = 'request/punchoutsetuprequest';
+
     /**
      * @api
      *
@@ -110,7 +111,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
             return [];
         }
 
-        $mappingTransfer = $this->convertToMappingTransfer(
+        $mappingTransfer = $this->getFacade()->convertToMappingTransfer(
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
 
@@ -127,9 +128,11 @@ class CxmlSetupRequestProcessorStrategyPlugin
     protected function createEntryResponse(string $landingUrl): string
     {
         $landingUrl = htmlspecialchars($landingUrl);
+        $timestamp = $this->getFacade()->getTimestamp();
+        $zedPayloadId = $this->getFacade()->getZedPayloadId();
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getZedPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
+<cXML payloadID="' . $zedPayloadId . '" timestamp="' . $timestamp . '" xml:lang="' . $this->getDefaultLocale() . '">
     <Response>
         <Status code="200" text="OK"/>
         <PunchOutSetupResponse>
@@ -169,9 +172,11 @@ class CxmlSetupRequestProcessorStrategyPlugin
         }
 
         $statusMessage = htmlspecialchars($statusMessage);
+        $timestamp = $this->getFacade()->getTimestamp();
+        $zedPayloadId = $this->getFacade()->getZedPayloadId();
         return '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.2.021/cXML.dtd">
-<cXML payloadID="' . $this->getZedPayloadId() . '" timestamp="' . $this->getTimestamp() . '" xml:lang="' . $this->getDefaultLocale() . '">
+<cXML payloadID="' . $zedPayloadId . '" timestamp="' . $timestamp . '" xml:lang="' . $this->getDefaultLocale() . '">
     <Response>
         <Status code="' . $status . '" text="' . $statusText . '">' . $statusMessage . '</Status>
     </Response>

@@ -20,6 +20,7 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogEntryPointFilterTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogEntryPointTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
@@ -133,6 +134,18 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     }
 
     /**
+     * @return string
+     */
+    protected function generateSessionId(): string
+    {
+        $id = microtime(true) . '_' . uniqid('', true);
+
+        return $this->getFactory()
+            ->createUtilUuidGeneratorService()
+            ->generateUuid5FromObjectId($id);
+    }
+
+    /**
      * {@inheritdoc}
      *
      * @api
@@ -214,18 +227,6 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     public function importCart(?DataImporterConfigurationTransfer $dataImporterConfigurationTransfer = null): DataImporterReportTransfer
     {
         return $this->getFactory()->getPunchoutCatalogCartDataImport()->import($dataImporterConfigurationTransfer);
-    }
-
-    /**
-     * @return string
-     */
-    protected function generateSessionId(): string
-    {
-        $id = microtime(true) . '_' . uniqid('', true);
-
-        return $this->getFactory()
-            ->createUtilUuidGeneratorService()
-            ->generateUuid5FromObjectId($id);
     }
 
     /**
@@ -356,5 +357,116 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
         return $this->getFactory()
             ->createRequestEntryPointReader()
             ->getRequestEntryPointsByBusinessUnit($entryPointFilter);
+    }
+
+
+    /**
+     * @api
+     *
+     * @param string $storeName
+     *
+     * @return string
+     */
+    public function getYvesPayloadId(string $storeName): string
+    {
+        return $this->getPayloadId($this->getYvesHostname($storeName));
+    }
+
+    /**
+     * @param string $hostName
+     *
+     * @return string
+     */
+    protected function getPayloadId(string $hostName): string
+    {
+        $dti = $this->getTimestamp();
+
+        $randomNumber = rand(1, 999999999);
+        $payloadId = $dti . '.' . $randomNumber . '@' . $hostName;
+
+        return $payloadId;
+    }
+
+    /**
+     * @api
+     *
+     * @return string
+     */
+    public function getTimestamp(): string
+    {
+        return date('Y-m-d\TH:i:sP');
+    }
+
+    /**
+     * @param string $storeName
+     *
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     *
+     * @return string
+     */
+    protected function getYvesHostname(string $storeName): string
+    {
+        $yvesUrl = $this->getConfig()->getBaseUrlYves($storeName);
+
+        return parse_url($yvesUrl)['host'];
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig
+     */
+    protected function getConfig()
+    {
+        return $this->getFactory()->getConfig();
+    }
+
+    /**
+     * @api
+     *
+     * @return string
+     */
+    public function getZedPayloadId(): string
+    {
+        return $this->getPayloadId($this->getZedHostname());
+    }
+
+    /**
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     *
+     * @return string
+     */
+    protected function getZedHostname(): string
+    {
+        $zedUrl = $this->getConfig()->getBaseUrlZed();
+
+        return parse_url($zedUrl)['host'];
+    }
+
+    /**
+     * @param string $mapping
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogMappingTransfer
+     */
+    public function convertToMappingTransfer(string $mapping): PunchoutCatalogMappingTransfer
+    {
+        return ($this->getFactory()->createMappingConverter())->convert(
+            $this->convertToArray($mapping)
+        );
+    }
+
+    /**
+     * @param string $mapping
+     *
+     * @return array|null
+     */
+    public function convertToArray(string $mapping): ?array
+    {
+        $mapping = json_decode(trim($mapping), true);
+
+
+        if (is_array($mapping) && !empty($mapping['cart_item']) && empty($mapping['multi_lines'])) {
+            $mapping['cart_item']['multi_lines'] = true;
+        }
+
+        return $mapping;
     }
 }

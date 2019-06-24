@@ -12,7 +12,6 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\AccessToken\UrlHandlerInterface
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyDynamic;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategyInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategySingle;
-use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Decoder as OciDecoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Oci\Encoder as OciEncoder;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Xml\Decoder as XmlDecoder;
@@ -43,15 +42,6 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     public function createUrlHandler(): UrlHandlerInterface
     {
         return new UrlHandler($this->getConfig());
-    }
-
-
-    /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter
-     */
-    public function createMappingConverter(): Converter
-    {
-        return new Converter();
     }
 
 
@@ -95,19 +85,19 @@ class PunchoutCatalogCommunicationFactory extends AbstractCommunicationFactory
     }
 
     /**
-     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface
-     */
-    public function getStoreFacade(): PunchoutCatalogToStoreFacadeInterface
-    {
-        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_STORE);
-    }
-
-    /**
      * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface
      */
     public function getCompanyBusinessUnitFacade(): PunchoutCatalogToCompanyBusinessUnitFacadeInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_COMPANY_BUSINESS_UNIT);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToStoreFacadeInterface
+     */
+    public function getStoreFacade(): PunchoutCatalogToStoreFacadeInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_STORE);
     }
 
     /**

@@ -8,10 +8,9 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
 use Generated\Shared\Transfer\MessageTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
-
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
 
@@ -79,12 +78,12 @@ class OciSetupRequestProcessorStrategyPlugin
             return [];
         }
 
-        $mappingTransfer = $this->convertToMappingTransfer(
+        $mappingTransfer = $this->getFacade()->convertToMappingTransfer(
             (string)$punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()->getMapping()
         );
-    
+
         $map = $this->getFactory()->createOciDecoder()->execute($mappingTransfer, $ociContent);
-        
+
         return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray($map, true);
     }
 

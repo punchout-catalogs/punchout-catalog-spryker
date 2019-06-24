@@ -20,6 +20,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalog
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\DataImport\Step\PunchoutCatalogConnectionWriterStep;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReader;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\EntryPoint\RequestEntryPointReaderInterface;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessor;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\RequestProcessor\RequestProcessorInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction\Mapper;
@@ -248,5 +249,13 @@ class PunchoutCatalogBusinessFactory extends DataImportBusinessFactory
     public function getStoreFacade(): PunchoutCatalogToStoreFacadeInterface
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::FACADE_STORE);
+    }
+
+    /**
+     * @return \PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Converter
+     */
+    public function createMappingConverter(): Converter
+    {
+        return new Converter();
     }
 }

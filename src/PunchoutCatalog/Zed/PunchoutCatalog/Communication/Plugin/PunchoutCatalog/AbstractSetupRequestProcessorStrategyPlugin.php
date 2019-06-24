@@ -7,22 +7,20 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatalog;
 
-use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\CompanyUserTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\MessageTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCommonContextTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
-
+use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
+use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 
 /**
- * @todo The methods in this class are not open for extension + some of them are fake abstract methods (facade)
- *
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Communication\PunchoutCatalogCommunicationFactory getFactory()
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig getConfig()
@@ -36,22 +34,6 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      */
     protected const CUSTOMER_LOGIN_MODE_SINGLE = 'single_user';
     protected const CUSTOMER_LOGIN_MODE_DYNAMIC = 'dynamic_user_creation';
-
-    /**
-     * @param string $mapping
-     *
-     * @return array
-     */
-    protected function convertToArray(string $mapping): ?array
-    {
-        $mapping = parent::convertToArray($mapping);
-        
-        if (is_array($mapping) && !empty($mapping['cart_item']) && empty($mapping['multi_lines'])) {
-            $mapping['cart_item']['multi_lines'] = true;
-        }
-        
-        return $mapping;
-    }
 
     /**
      * Specification:
@@ -69,17 +51,17 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
     {
         $punchoutCatalogRequestTransfer->requireContext();
         $punchoutCatalogRequestTransfer->getContext()->requirePunchoutCatalogConnection();
-    
+
         $documentTransfer = $this->decode($punchoutCatalogRequestTransfer);
         $punchoutCatalogRequestTransfer->getContext()->setRawData($documentTransfer->toArray());
-        
+
         $customerTransfer = $this->prepareCustomerTransfer($punchoutCatalogRequestTransfer, $documentTransfer);
-        
+
         /** @var \Generated\Shared\Transfer\OauthResponseTransfer $oAuthResponseTransfer */
         $oAuthResponseTransfer = $this->getFactory()
             ->getOauthCompanyUserFacade()
             ->createCompanyUserAccessToken($customerTransfer);
-        
+
         if (!$oAuthResponseTransfer->getIsValid() && $oAuthResponseTransfer->getError()) {
             throw new AuthenticateException($oAuthResponseTransfer->getError()->getMessage());
         } elseif (!$oAuthResponseTransfer->getIsValid() || !$oAuthResponseTransfer->getAccessToken()) {
@@ -91,16 +73,91 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $landingUrl = $this->getFactory()
             ->createUrlHandler()
             ->getLoginUrl($oAuthResponseTransfer->getAccessToken(), $storeName);
-        
+
         //Mark Request as Success TRX
         $punchoutCatalogRequestTransfer->setIsSuccess(true);
-        
+
         return (new PunchoutCatalogSetupResponseTransfer())
             ->setContext((clone $punchoutCatalogRequestTransfer->getContext())->setRawData(null))
             ->setContentType(PunchoutCatalogConstsInterface::CONTENT_TYPE_TEXT_XML)
             ->setIsSuccess(true)
             ->setContent($this->createEntryResponse($landingUrl));
     }
+
+    /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer
+     */
+    abstract protected function decode(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestDocumentTransfer;
+
+    /**
+     * @param PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+     * @param PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
+     *
+     * @return CustomerTransfer
+     */
+    protected function prepareCustomerTransfer(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer,
+        PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
+    )
+    {
+        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
+
+        if ($connection->getSetup()->getLoginMode() == self::CUSTOMER_LOGIN_MODE_DYNAMIC) {
+            $documentTransfer->requireCustomer();
+            $customerStrategy = $this->getFactory()->createCustomerLoginDynamicStrategy();
+        } else {
+            $customerStrategy = $this->getFactory()->createCustomerLoginSingleStrategy();
+        }
+
+        $impersonationDetails = $this->prepareImpersonationDetails(
+            $punchoutCatalogRequestTransfer, $documentTransfer
+        );
+
+        /** @var CustomerTransfer $customerTransfer */
+        $customerTransfer = $customerStrategy->getCustomerTransfer($connection, $documentTransfer->getCustomer());
+        $customerTransfer->setPunchoutCatalogImpersonationDetails($impersonationDetails);
+
+        return $customerTransfer;
+    }
+
+    /**
+     * @param PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+     * @param PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
+     *
+     * @return array
+     */
+    protected function prepareImpersonationDetails(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer,
+        PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
+    )
+    {
+        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
+
+        return [
+            PunchoutCatalogConstsInterface::IS_PUNCHOUT => true,
+            'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData()->toArray(),
+            'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
+            'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
+            'punchout_catalog_connection_cart' => [
+                'default_supplier_id' => $connection->getCart()->getDefaultSupplierId(),
+                'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
+                'bundle_mode' => $connection->getCart()->getBundleMode(),
+            ],
+            PunchoutCatalogConstsInterface::PUNCHOUT_LOGIN_MODE => $connection->getSetup()->getLoginMode(),
+            //store it in session - for sake of different customizations - currently can't use it as
+            //oAuth token table has 1024 symbold only length for storing all impersonalization details
+            //'punchout_data' => $documentTransfer->toArray(),
+        ];
+    }
+
+    /**
+     * @param string $landingUrl
+     *
+     * @return string
+     */
+    abstract protected function createEntryResponse(string $landingUrl): string;
 
     /**
      * Specification:
@@ -121,74 +178,6 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
             ->setIsSuccess(false)
             ->setContent($this->createErrorResponse($messageTransfer));
     }
-    
-    /**
-     * @param PunchoutCatalogSetupRequestTransfer         $punchoutCatalogRequestTransfer
-     * @param PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
-     *
-     * @return CustomerTransfer
-     */
-    protected function prepareCustomerTransfer(
-        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer,
-        PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
-    )
-    {
-        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
-        
-        if ($connection->getSetup()->getLoginMode() == self::CUSTOMER_LOGIN_MODE_DYNAMIC) {
-            $documentTransfer->requireCustomer();
-            $customerStrategy = $this->getFactory()->createCustomerLoginDynamicStrategy();
-        } else {
-            $customerStrategy = $this->getFactory()->createCustomerLoginSingleStrategy();
-        }
-    
-        $impersonationDetails = $this->prepareImpersonationDetails(
-            $punchoutCatalogRequestTransfer, $documentTransfer
-        );
-        
-        /** @var CustomerTransfer $customerTransfer */
-        $customerTransfer = $customerStrategy->getCustomerTransfer($connection, $documentTransfer->getCustomer());
-        $customerTransfer->setPunchoutCatalogImpersonationDetails($impersonationDetails);
-        
-        return $customerTransfer;
-    }
-    
-    /**
-     * @param PunchoutCatalogSetupRequestTransfer         $punchoutCatalogRequestTransfer
-     * @param PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
-     *
-     * @return array
-     */
-    protected function prepareImpersonationDetails(
-        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer,
-        PunchoutCatalogSetupRequestDocumentTransfer $documentTransfer
-    )
-    {
-        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
-        
-        return [
-            PunchoutCatalogConstsInterface::IS_PUNCHOUT => true,
-            'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData()->toArray(),
-            'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
-            'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
-            'punchout_catalog_connection_cart' => [
-                'default_supplier_id' => $connection->getCart()->getDefaultSupplierId(),
-                'max_description_length' => $connection->getCart()->getMaxDescriptionLength(),
-                'bundle_mode' => $connection->getCart()->getBundleMode(),
-            ],
-            self::CUSTOMER_LOGIN_MODE_SINGLE => $connection->getSetup()->getLoginMode(),
-            //store it in session - for sake of different customizations - currently can't use it as
-            //oAuth token table has 1024 symbold only length for storing all impersonalization details
-            //'punchout_data' => $documentTransfer->toArray(),
-        ];
-    }
-    
-    /**
-     * @param string $landingUrl
-     *
-     * @return string
-     */
-    abstract protected function createEntryResponse(string $landingUrl): string;
 
     /**
      * @param \Generated\Shared\Transfer\MessageTransfer $messageTransfer
@@ -196,11 +185,4 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
      * @return string
      */
     abstract protected function createErrorResponse(MessageTransfer $messageTransfer): string;
-
-    /**
-     * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
-     *
-     * @return \Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer
-     */
-    abstract protected function decode(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer): PunchoutCatalogSetupRequestDocumentTransfer;
 }
