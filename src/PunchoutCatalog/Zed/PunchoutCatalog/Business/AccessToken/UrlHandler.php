@@ -41,7 +41,7 @@ class UrlHandler implements UrlHandlerInterface
             'returnUrl' => $returnUrl ?? 'home',
         ];
         
-        return $this->punchoutCatalogConfig->getBaseUrlYves($storeName)
+        return $this->punchoutCatalogConfig->getBaseUrlYvesByStore($storeName)
             . '/' . $locale
             . '/' . static::USER_LOGIN_URL
             . '/' . $accessToken . '?' . http_build_query($params);
