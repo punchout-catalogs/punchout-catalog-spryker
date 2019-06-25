@@ -140,12 +140,7 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
      */
     protected function mapProtocolOperationToConnectionType(?string $protocolOperation): ?string
     {
-        switch ($protocolOperation) {
-            case self::PROTOCOL_OPERATION_SETUP_REQUEST:
-                return self::CONNECTION_TYPE_SETUP_REQUEST;
-            default:
-                return null;
-        }
+        return $protocolOperation === self::PROTOCOL_OPERATION_SETUP_REQUEST ? self::CONNECTION_TYPE_SETUP_REQUEST : null;
     }
 
     /**
