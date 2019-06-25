@@ -119,10 +119,18 @@ class PunchoutCatalogConfig extends DataImportConfig
      * @param string $storeName
      *
      * @return string
-     *
-     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
      */
-    public function getBaseUrlYves(string $storeName): string
+    public function getBaseUrlYvesByStore(string $storeName): string
+    {
+        return $this->getBaseUrlYves()[$storeName];
+    }
+
+    /**
+     * @throws \PunchoutCatalog\Zed\PunchoutCatalog\Exception\MissingYvesUrlConfigurationException
+     *
+     * @return string[]
+     */
+    protected function getBaseUrlYves(): array
     {
         throw new MissingYvesUrlConfigurationException(
             'Missing configuration! You need to configure Yves URL ' .
@@ -130,7 +138,7 @@ class PunchoutCatalogConfig extends DataImportConfig
             'to be able to generate login URL with access token for remote systems.'
         );
     }
-    
+
     /**
      * @return string
      *

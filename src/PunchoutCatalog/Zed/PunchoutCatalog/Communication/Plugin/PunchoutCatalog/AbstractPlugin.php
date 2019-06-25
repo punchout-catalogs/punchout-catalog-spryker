@@ -93,7 +93,7 @@ abstract class AbstractPlugin extends CoreAbstractPlugin
      */
     protected function getYvesHostname(string $storeName): string
     {
-        $yvesUrl = $this->getConfig()->getBaseUrlYves($storeName);
+        $yvesUrl = $this->getConfig()->getBaseUrlYvesByStore($storeName);
 
         return parse_url($yvesUrl)['host'];
     }
