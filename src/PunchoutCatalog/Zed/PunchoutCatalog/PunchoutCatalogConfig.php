@@ -25,7 +25,7 @@ class PunchoutCatalogConfig extends DataImportConfig
      */
     protected const PUNCHOUT_REQUEST_URL = '/punchout-catalog/request';
     protected const PUNCHOUT_DEFAULT_LOCALE_NAME = 'en_US';
-    protected const PUNCHOUT_DEFAULT_LOCALE = 'de';
+    protected const PUNCHOUT_DEFAULT_LOCALE = 'en';
 
     /**
      * @return \Generated\Shared\Transfer\DataImporterConfigurationTransfer

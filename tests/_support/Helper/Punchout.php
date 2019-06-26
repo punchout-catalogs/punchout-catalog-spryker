@@ -11,8 +11,19 @@ use Codeception\Util\XmlStructure;
 
 class Punchout extends \Codeception\Module
 {
-    public static function getSetupRequestData()
+    public static function getOciSetupRequestData()
     {
+        return [
+            "HOOK_URL" => "http://localhost:8899/simulator/cart/receive.php",
+            "username" => "user_1",
+            "password" => "user_1_pass",
+        ];
+    }
+
+    public static function getCxmlSetupRequestData()
+    {
+        $username = 'cxml' . rand(100, 999);
+
         return <<<XML_DATA
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.1.007/cXML.dtd">
@@ -42,11 +53,11 @@ class Punchout extends \Codeception\Module
 
             <Extrinsic name="FirstName">cXML</Extrinsic>
             <Extrinsic name="LastName">Tester</Extrinsic>
-            <Extrinsic name="UserEmail">cxml3453432332434@punchoutcatalogs.net</Extrinsic>
+            <Extrinsic name="UserEmail">$username@punchoutcatalogs.net</Extrinsic>
 
             <Contact>
                 <Name xml:lang="en-US">cXML Tester</Name>
-                <Email>cxml3453432332434@punchoutcatalogs.net</Email>
+                <Email>$username@punchoutcatalogs.net</Email>
             </Contact>
 
             <BrowserFormPost>
@@ -85,27 +96,69 @@ XML_DATA;
         $this->getModule('PhpBrowser')->_savePageSource($dir . $name . '.html');
     }
 
-    public function isCxml($xml)
+    /**
+     * Assert is $xml has cXML format
+     *
+     * @param $xml
+     */
+    public function seeCxml($xml)
     {
         $this->assertContains('<cXML', $xml, 'is cXML');
     }
 
+    /**
+     * Retrieve cxml content from web page
+     *
+     * @return bool|string
+     * @throws \Codeception\Exception\ModuleException
+     */
     public function getBase64CxmlCartResponse()
     {
         /** @var InnerBrowser $module */
         $module = $this->getModule('PhpBrowser');
         $html = $module->_getResponseContent();
         $structure = new XmlStructure(Xml::toXml($html));
-        return $structure->matchElement('#punchoutCartForm [name="cxml-base64"]')->getAttribute('value');
+        $value = $structure->matchElement('#punchoutCartForm [name="cxml-base64"]')->getAttribute('value');
+        return base64_decode($value);
     }
 
-    public function getAccessUrl()
+    /**
+     * Retrieve cxml access url from web page
+     *
+     * @return string
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function getAccessUrlFromXml()
     {
         $response = $this->getModule('REST')->response;
         $xml = Xml::toXml($response);
         $structure = new XmlStructure($xml);
         $url = $structure->matchElement('//cXML/Response/PunchOutSetupResponse/StartPage/URL')->textContent;
         return $url;
+    }
+
+    /**
+     * Retrieve oci access url from web page
+     *
+     * @return string
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function getAccessUrlFromOci()
+    {
+        $response = $this->getModule('REST')->response;
+        $xml = Xml::toXml($response);
+        $structure = new XmlStructure($xml);
+        $url = $structure->matchElement('//body/script')->textContent;
+        return trim(str_replace(["window.location.href = '", "';"], ['', ''], $url));
+    }
+
+    /**
+     * @param $xml
+     * @param $text
+     */
+    public function canSeeCxmlContains($xml, $text)
+    {
+        $this->assertContains($text, $xml);
     }
 
 }
