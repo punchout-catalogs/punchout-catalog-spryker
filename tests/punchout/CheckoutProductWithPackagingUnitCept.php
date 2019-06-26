@@ -23,9 +23,11 @@ $i->seeCurrentUrlEquals('/en');
 
 $i->wantTo('Add product to cart');
 
-$i->amOnPage('/en/canon-powershot-n-35');
+$i->amOnPage('/en/Asus-HDMI-HDMI-215?attribute%5Bpackaging_unit%5D=Ring+%28500m%29');
+$i->savePage('product');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
+$i->savePage('cart');
 
 
 $i->wantTo('Transfer cart');
@@ -35,6 +37,5 @@ $i->click('[data-qa="punchout-catalog.cart.go-to-transfer"]');
 $i->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
 $data = $i->getBase64CxmlCartResponse();
 $i->seeCxml($data);
-$i->canSeeCxmlContains($data, '<ShortName>Canon PowerShot N</ShortName>');
-$i->canSeeCxmlContains($data, '<Money currency="EUR">267.72</Money>');
 $i->canSeeCxmlContains($data, '<UnitOfMeasure>EA</UnitOfMeasure>');
+$i->savePage('transfer');
