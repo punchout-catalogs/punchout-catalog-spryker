@@ -5,9 +5,9 @@ $i = new PunchoutTester($scenario);
 $i->haveHttpHeader('content-type', 'text/xml');
 
 
-$i->wantTo('perform correct cxml setup request format and see result');
+$i->wantTo('perform correct cxml setup request and see result');
 
-$i->sendPOST('/request?business-unit=16', \Helper\Punchout::getCxmlSetupRequestData());
+$i->sendPOST('/request?business-unit=16&store=de', \Helper\Punchout::getCxmlSetupRequestData());
 $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
 $i->seeResponseIsXml();
 $i->canSeeXmlResponseIncludes('<Status code="200" text="OK"/>');

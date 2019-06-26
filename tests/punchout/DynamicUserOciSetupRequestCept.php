@@ -4,9 +4,9 @@
 $i = new PunchoutTester($scenario);
 
 
-$i->wantTo('perform correct oci setup request format and see result');
+$i->wantTo('perform correct oci setup request and see result');
 
-$i->sendPOST('/request?business-unit=16', \Helper\Punchout::getOciSetupRequestData());
+$i->sendPOST('/request?business-unit=16&store=de', \Helper\Punchout::getOciSetupRequestData());
 $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
 
 
