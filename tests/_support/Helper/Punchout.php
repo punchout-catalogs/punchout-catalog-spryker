@@ -20,7 +20,7 @@ class Punchout extends \Codeception\Module
         ];
     }
 
-    public static function getCxmlSetupRequestData()
+    public static function getCxmlDynamicSetupRequestData($identity = 'user_1', $sharedSecret = 'user_1_pass')
     {
         $username = 'cxml' . rand(100, 999);
 
@@ -31,18 +31,18 @@ class Punchout extends \Codeception\Module
     <Header>
         <From>
             <Credential domain="http://localhost:8899">
-                <Identity>user_1</Identity>
+                <Identity>$identity</Identity>
             </Credential>
         </From>
         <To>
-            <Credential domain="user_1_pass">
-                <Identity>pass_1</Identity>
+            <Credential domain="http://localhost:8899">
+                <Identity>$identity</Identity>
             </Credential>
         </To>
         <Sender>
             <Credential domain="http://localhost:8899">
-                <Identity>user_1</Identity>
-                <SharedSecret>user_1_pass</SharedSecret>
+                <Identity>$identity</Identity>
+                <SharedSecret>$sharedSecret</SharedSecret>
             </Credential>
             <UserAgent>Punchout Cloud Simulator 0.1.0</UserAgent>
         </Sender>

@@ -7,7 +7,7 @@ $i->haveHttpHeader('content-type', 'text/xml');
 
 $i->wantTo('perform correct cxml setup request and see result');
 
-$i->sendPOST('/request?business-unit=16&store=de', \Helper\Punchout::getCxmlSetupRequestData());
+$i->sendPOST('/request?business-unit=16&store=de', \Helper\Punchout::getCxmlDynamicSetupRequestData());
 $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
 $i->seeResponseIsXml();
 $i->canSeeXmlResponseIncludes('<Status code="200" text="OK"/>');
