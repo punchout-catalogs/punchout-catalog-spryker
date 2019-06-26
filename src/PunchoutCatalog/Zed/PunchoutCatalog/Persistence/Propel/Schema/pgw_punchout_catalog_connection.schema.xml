@@ -88,6 +88,7 @@
     <table name="pgw_punchout_catalog_transaction" phpName="PgwPunchoutCatalogTransaction">
         <column name="id_punchout_catalog_transaction" required="true" type="INTEGER" autoIncrement="true" primaryKey="true"/>
 
+        <!-- save business unit id from request without verification -->
         <column name="fk_company_business_unit" type="INTEGER" required="false"/>
 
         <column name="fk_punchout_catalog_connection" type="INTEGER" required="false"/>
@@ -109,10 +110,6 @@
         <behavior name="timestampable">
             <parameter name="disable_updated_at" value="true"/>
         </behavior>
-
-        <foreign-key name="pgw_punchout_catalog_connection-fk_company_business_unit" foreignTable="spy_company_business_unit" phpName="CompanyBusinessUnit">
-            <reference local="fk_company_business_unit" foreign="id_company_business_unit"/>
-        </foreign-key>
 
         <index name="index-pgw_punchout_catalog_transaction-fk_company_business_unit">
             <index-column name="fk_company_business_unit"/>
