@@ -509,6 +509,18 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $units = [
             'KILO' => 'KGM',
             'ITEM' => 'EA',
+            'BOX' => 'BX',
+            'GRAM' => 'GRM',
+            'TONE' => 'TNE',
+            'PUND' => 'LBR',
+            'METR' => 'MTR',
+            'CMET' => 'CMT',
+            'MMET' => 'MMT',
+            'KMET' => 'KMT',
+            'INCH' => 'INH',
+            'YARD' => 'YRD',
+            'FOOT' => 'FT',
+            'MILE' => 'M52',
         ];
 
         return $units[$value] ?? $value;
