@@ -36,7 +36,6 @@ $i->wantTo('Add second product to cart');
 $i->amOnPage('/en/samsung-galaxy-s6-edge-51?attribute%5Bstorage_capacity%5D=64+GB');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
-$i->savePage('cart');
 
 
 $i->wantTo('Transfer cart');

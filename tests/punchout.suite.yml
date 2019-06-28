@@ -4,6 +4,7 @@ modules:
         - \Helper\Punchout
         - REST
         - PhpBrowser
+        - Asserts
     config:
         REST:
             depends: PhpBrowser

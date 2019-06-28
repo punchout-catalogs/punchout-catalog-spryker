@@ -24,10 +24,8 @@ $i->seeCurrentUrlEquals('/en');
 $i->wantTo('Add product to cart');
 
 $i->amOnPage('/en/Asus-HDMI-HDMI-215?attribute%5Bpackaging_unit%5D=Ring+%28500m%29');
-$i->savePage('product');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
-$i->savePage('cart');
 
 
 $i->wantTo('Transfer cart');
@@ -38,4 +36,3 @@ $i->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
 $data = $i->getBase64CxmlCartResponse();
 $i->seeCxml($data);
 $i->canSeeCxmlContains($data, '<UnitOfMeasure>EA</UnitOfMeasure>');
-$i->savePage('transfer');

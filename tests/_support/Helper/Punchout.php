@@ -161,4 +161,11 @@ XML_DATA;
         $this->assertContains($text, $xml);
     }
 
+    /**
+     * @param $url
+     */
+    public function canSeeCorrectAccessUrl($url)
+    {
+        $this->assertRegExp('/[a-zA-Z0-9][a-zA-Z0-9-.]+\/en\/access-token\/[a-zA-Z0-9-_\.]+/m', $url);
+    }
 }

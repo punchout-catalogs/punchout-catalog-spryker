@@ -6,13 +6,25 @@ $i = new PunchoutTester($scenario);
 
 $i->wantTo('perform correct oci setup request and see result');
 
-$i->sendPOST('/request?business-unit=16&store=de', \Helper\Punchout::getOciSetupRequestData());
+$ociSetupRequestData = \Helper\Punchout::getOciSetupRequestData();
+$i->sendPOST('/request?business-unit=16&store=de', $ociSetupRequestData);
 $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
+
+$yvesUrl = $i->getAccessUrlFromOci();
+$i->canSeeCorrectAccessUrl($yvesUrl);
+
+
+$i->wantTo('perform correct oci setup request again with same user and see result');
+
+$ociSetupRequestData = \Helper\Punchout::getOciSetupRequestData();
+$i->sendPOST('/request?business-unit=16&store=de', $ociSetupRequestData);
+$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
+$yvesUrl2 = $i->getAccessUrlFromOci();
+$i->canSeeCorrectAccessUrl($yvesUrl2);
 
 
 $i->wantTo('Login by access url');
 
-$yvesUrl = $i->getAccessUrlFromOci();
 $i->amOnUrl($yvesUrl);
 $i->seeCurrentUrlEquals('/en');
 
@@ -22,7 +34,6 @@ $i->wantTo('Add product to cart');
 $i->amOnPage('/en/canon-powershot-n-35');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
-$i->savePage('cart');
 
 
 $i->wantTo('Transfer cart');
