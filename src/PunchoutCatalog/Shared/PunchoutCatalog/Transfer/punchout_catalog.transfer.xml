@@ -200,7 +200,7 @@
     <transfer name="PunchoutCatalogDocumentCartItem">
         <property name="lineNumber" type="int"/>
         <property name="internalId" type="string"/>
-        <property name="quantity" type="int"/>
+        <property name="quantity" type="float"/>
 
         <!-- PARENT/CHILD IDENTIFIER -->
         <property name="parentLineNumber" type="int"/>
