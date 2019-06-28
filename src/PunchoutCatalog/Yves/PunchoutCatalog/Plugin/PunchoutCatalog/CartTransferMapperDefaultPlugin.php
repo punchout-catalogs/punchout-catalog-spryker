@@ -21,6 +21,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected const BUNDLE_MODE_SINGLE = 'single';
     protected const BUNDLE_MODE_COMPOSITE = 'composite';
 
+    protected const TOTALS_MODE_HEADER = 'header';
+    protected const TOTALS_MODE_LINE = 'line';
+
     protected const BUNDLE_COMPOSITE_PRICE_LEVEL = 'groupLevel';
     protected const BUNDLE_COMPOSITE_ITEM_TYPE = 'composite';
     protected const BUNDLE_CHILD_ITEM_TYPE = 'item';

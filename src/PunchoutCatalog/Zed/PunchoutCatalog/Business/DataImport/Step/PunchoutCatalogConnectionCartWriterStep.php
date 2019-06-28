@@ -40,6 +40,7 @@ class PunchoutCatalogConnectionCartWriterStep implements DataImportStepInterface
         $cartEntity->setMaxDescriptionLength($dataSet[PunchoutCatalogConnectionCartDataSet::MAX_DESCRIPTION_LENGTH] ?? null);
         $cartEntity->setDefaultSupplierId($dataSet[PunchoutCatalogConnectionCartDataSet::DEFAULT_SUPPLIER_ID] ?? null);
         $cartEntity->setBundleMode($dataSet[PunchoutCatalogConnectionCartDataSet::BUNDLE_MODE] ?? null);
+        $cartEntity->setTotalsMode($dataSet[PunchoutCatalogConnectionCartDataSet::TOTALS_MODE] ?? null);
         $cartEntity->setEncoding($dataSet[PunchoutCatalogConnectionCartDataSet::ENCODING] ?? null);
 
         $cartEntity->save();

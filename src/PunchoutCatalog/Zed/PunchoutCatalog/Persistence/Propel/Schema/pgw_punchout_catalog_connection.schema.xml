@@ -78,6 +78,8 @@
 
         <column name="bundle_mode" type="VARCHAR" size="32" required="false"/>
 
+        <column name="totals_mode" type="VARCHAR" size="32" required="true" default="line"/>
+
         <foreign-key name="pgw_punchout_catalog_connection_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
             <reference local="id_punchout_catalog_connection_cart" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
