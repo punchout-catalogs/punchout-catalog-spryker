@@ -136,6 +136,7 @@
         <property name="maxDescriptionLength" type="int" />
         <property name="defaultSupplierId" type="string" />
         <property name="bundleMode" type="string" />
+        <property name="totalsMode" type="string" />
         <property name="encoding" type="string" />
         <property name="mapping" type="string" />
     </transfer>
