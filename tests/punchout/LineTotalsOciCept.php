@@ -14,15 +14,6 @@ $yvesUrl = $i->getAccessUrlFromOci();
 $i->canSeeCorrectAccessUrl($yvesUrl);
 
 
-$i->wantTo('perform correct oci setup request again with same user and see result');
-
-$ociSetupRequestData = \Helper\Punchout::getOciSetupRequestData();
-$i->sendPOST('/request?business-unit=16&store=de', $ociSetupRequestData);
-$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-$yvesUrl2 = $i->getAccessUrlFromOci();
-$i->canSeeCorrectAccessUrl($yvesUrl2);
-
-
 $i->wantTo('Login by access url');
 
 $i->amOnUrl($yvesUrl);
@@ -41,15 +32,29 @@ $i->wantTo('Transfer cart');
 $i->stopFollowingRedirects();
 $i->click('[data-qa="punchout-catalog.cart.go-to-transfer"]');
 $i->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
+
 $i->canSeeElement('input', [
-    'name' => 'NEW_ITEM-DESCRIPTION[1]',
-    'value' => 'Canon PowerShot N',
+    'name' => 'NEW_ITEM-DESCRIPTION[2]',
+    'value' => 'Estimated Tax',
 ]);
 $i->canSeeElement('input', [
-    'name' => 'NEW_ITEM-PRICE[1]',
-    'value' => '267.72',
+    'name' => 'NEW_ITEM-PRICE[2]',
+    'value' => '42.75',
 ]);
 $i->canSeeElement('input', [
-    'name' => 'NEW_ITEM-CURRENCY[1]',
+    'name' => 'NEW_ITEM-CURRENCY[2]',
+    'value' => 'EUR',
+]);
+
+$i->canSeeElement('input', [
+    'name' => 'NEW_ITEM-DESCRIPTION[3]',
+    'value' => 'Estimated Discount',
+]);
+$i->canSeeElement('input', [
+    'name' => 'NEW_ITEM-PRICE[3]',
+    'value' => '-29.75',
+]);
+$i->canSeeElement('input', [
+    'name' => 'NEW_ITEM-CURRENCY[3]',
     'value' => 'EUR',
 ]);

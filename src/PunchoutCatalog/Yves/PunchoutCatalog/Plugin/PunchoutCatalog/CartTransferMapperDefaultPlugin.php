@@ -76,6 +76,11 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected $cartCustomerMapping = [];
 
     /**
+     * @var int
+     */
+    private $lineNumber = 0;
+
+    /**
      * @param \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[] $cartItemTransformerPlugins
      */
     public function __construct(array $cartItemTransformerPlugins = [])
@@ -110,6 +115,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
         $cartRequestTransfer->setCart(new PunchoutCatalogDocumentCartTransfer());
 
+        $this->resetLineNumber();
         $this->prepareHeader($quoteTransfer, $cartRequestTransfer);
         $this->prepareCustomer($quoteTransfer, $cartRequestTransfer);
         $this->prepareLineItems($quoteTransfer, $cartRequestTransfer);
@@ -122,6 +128,15 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                 $this->cartMapping
             )
         );
+    }
+
+    /**
+     * Reset line number counter
+     * @see mapQuoteTransferToPunchoutCatalogCartRequestTransfer
+     */
+    protected function resetLineNumber()
+    {
+        $this->lineNumber = 0;
     }
 
     /**
@@ -286,7 +301,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     ): PunchoutCatalogCartRequestTransfer
     {
         $childItems = [];
-        $idx = $totalQty = 0;
+        $totalQty = 0;
 
         $cartItems = $this->getCartItems($quoteTransfer);
         if ($cartItems) {
@@ -296,7 +311,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                 $documentCartItemTransfer = $this->mapQuoteItemTransferToPunchoutCatalogDocumentCartItemTransfer(
                     $quoteTransfer,
                     $quoteItemTransfer,
-                    $documentCartItemTransfer->setLineNumber(++$idx)
+                    $documentCartItemTransfer->setLineNumber($this->getNextLineNumber())
                 );
 
                 if ($quoteItemTransfer->getChildBundleItems()->count()
@@ -334,7 +349,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                     $documentCartItemTransfer = $this->mapQuoteItemTransferToPunchoutCatalogDocumentCartItemTransfer(
                         $quoteTransfer,
                         $quoteItemTransfer,
-                        $documentCartItemTransfer->setLineNumber(++$idx)
+                        $documentCartItemTransfer->setLineNumber($this->getNextLineNumber())
                     );
 
                     $cartRequestTransfer->addCartItem($documentCartItemTransfer);
@@ -762,6 +777,14 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
+     * @return int
+     */
+    protected function getNextLineNumber()
+    {
+        return ++$this->lineNumber;
+    }
+
+    /**
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $cartRequestTransfer
      *
@@ -815,6 +838,30 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteTransfer $quoteTransfer, PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer
     {
+        if (empty($quoteTransfer->getTotals()) ||
+            empty($quoteTransfer->getTotals()->getTaxTotal()) ||
+            empty($quoteTransfer->getTotals()->getTaxTotal()->getAmount())) {
+            return $cartRequestTransfer;
+        }
+        $documentCartTransfer = $cartRequestTransfer->getCart();
+        $lineTaxTotalTransfer = new PunchoutCatalogDocumentCartItemTransfer();
+        $lineTaxTotalTransfer->setLineNumber($this->getNextLineNumber());
+        $lineTaxTotalTransfer->setQuantity(1);
+        $lineTaxTotalTransfer->setName('Estimated Tax');
+        $lineTaxTotalTransfer->setDescription($lineTaxTotalTransfer->getName());
+
+        if ($quoteTransfer->getCurrency() !== null) {
+            $lineTaxTotalTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
+        }
+
+        $amount = $this->toAmount($quoteTransfer->getTotals()->getTaxTotal()->getAmount(),
+            $documentCartTransfer->getCurrency());
+        $lineTaxTotalTransfer->setUnitPrice($amount);
+        $lineTaxTotalTransfer->setSumPrice($amount);
+        $lineTaxTotalTransfer->setUnitTotal($amount);
+        $lineTaxTotalTransfer->setSumTotal($amount);
+
+        $cartRequestTransfer->addCartItem($lineTaxTotalTransfer);
         return $cartRequestTransfer;
     }
 
@@ -828,7 +875,60 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteTransfer $quoteTransfer, PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer
     {
+        if (empty($quoteTransfer->getTotals()) ||
+            empty($quoteTransfer->getTotals()->getDiscountTotal())) {
+            return $cartRequestTransfer;
+        }
+        $documentCartTransfer = $cartRequestTransfer->getCart();
+        $lineDiscountTotalTransfer = new PunchoutCatalogDocumentCartItemTransfer();
+        $lineDiscountTotalTransfer->setLineNumber($this->getNextLineNumber());
+        $lineDiscountTotalTransfer->setQuantity(1);
+        $lineDiscountTotalTransfer->setName('Estimated Discount');
+        $lineDiscountTotalTransfer->setDescription($lineDiscountTotalTransfer->getName());
+
+        $discountDescription = $this->getDiscountDescription($quoteTransfer);
+        if ($discountDescription) {
+            $documentCartTransfer->setDiscountDescription($discountDescription);
+        }
+
+        if ($quoteTransfer->getCurrency() !== null) {
+            $lineDiscountTotalTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
+        }
+
+        // make discount amount with negative value if write it as line
+        $amount = -$this->toAmount($quoteTransfer->getTotals()->getDiscountTotal(), $documentCartTransfer->getCurrency());
+        $lineDiscountTotalTransfer->setUnitPrice($amount);
+        $lineDiscountTotalTransfer->setSumPrice($amount);
+        $lineDiscountTotalTransfer->setUnitTotal($amount);
+        $lineDiscountTotalTransfer->setSumTotal($amount);
+
+        $cartRequestTransfer->addCartItem($lineDiscountTotalTransfer);
         return $cartRequestTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string
+     */
+    protected function getDiscountDescription(QuoteTransfer $quoteTransfer)
+    {
+        $discountDescription = [];
+        if ($quoteTransfer->getVoucherDiscounts()) {
+            foreach ($quoteTransfer->getVoucherDiscounts() as $voucherDiscount) {
+                $discountDescription[] = $voucherDiscount->getDisplayName();
+            }
+        }
+
+        if ($quoteTransfer->getCartRuleDiscounts()) {
+            foreach ($quoteTransfer->getCartRuleDiscounts() as $documentCartTransferRuleDiscount) {
+                $discountDescription[] = $documentCartTransferRuleDiscount->getDisplayName();
+            }
+        }
+
+        $discountDescription = array_filter($discountDescription);
+
+        return implode("\n", $discountDescription);
     }
 
     /**
@@ -878,29 +978,14 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     {
         $documentCartTransfer = $cartRequestTransfer->getCart();
 
-        $coupons = [];
-        $discountDescription = [];
-        if ($quoteTransfer->getVoucherDiscounts()) {
-            foreach ($quoteTransfer->getVoucherDiscounts() as $voucherDiscount) {
-                $discountDescription[] = $voucherDiscount->getDisplayName();
-                $coupons[] = $voucherDiscount->getVoucherCode();
-            }
-        }
-
-        $coupons = array_filter($coupons);
+        $coupons = $this->getCoupons($quoteTransfer);
         if ($coupons) {
-            $documentCartTransfer->setCoupon(implode(',', $coupons));
+            $documentCartTransfer->setCoupon($coupons);
         }
 
-        if ($quoteTransfer->getCartRuleDiscounts()) {
-            foreach ($quoteTransfer->getCartRuleDiscounts() as $documentCartTransferRuleDiscount) {
-                $discountDescription[] = $documentCartTransferRuleDiscount->getDisplayName();
-            }
-        }
-
-        $discountDescription = array_filter($discountDescription);
+        $discountDescription = $this->getDiscountDescription($quoteTransfer);
         if ($discountDescription) {
-            $documentCartTransfer->setDiscountDescription(implode("\n", $discountDescription));
+            $documentCartTransfer->setDiscountDescription($discountDescription);
         }
 
         if ($quoteTransfer->getTotals()) {
@@ -909,5 +994,24 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             );
         }
         return $cartRequestTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return string
+     */
+    protected function getCoupons(QuoteTransfer $quoteTransfer)
+    {
+        $coupons = [];
+        if ($quoteTransfer->getVoucherDiscounts()) {
+            foreach ($quoteTransfer->getVoucherDiscounts() as $voucherDiscount) {
+                $coupons[] = $voucherDiscount->getVoucherCode();
+            }
+        }
+
+        $coupons = array_filter($coupons);
+
+        return implode(',', $coupons);
     }
 }
