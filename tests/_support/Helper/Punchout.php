@@ -11,6 +11,16 @@ use Codeception\Util\XmlStructure;
 
 class Punchout extends \Codeception\Module
 {
+    /**
+     * @param $selector
+     * @return \Symfony\Component\DomCrawler\Crawler
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function getElement($selector)
+    {
+        return $this->getModule('PhpBrowser')->_findElements($selector);
+    }
+
     public static function getOciSetupRequestData()
     {
         return [
