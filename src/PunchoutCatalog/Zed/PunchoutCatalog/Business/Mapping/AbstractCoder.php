@@ -115,7 +115,7 @@ abstract class AbstractCoder
 
         if (!$field->getIsMultiple() && is_array($result)) {
             reset($result);
-            $result = current($result);
+            $result = !empty($result) ? current($result) : null;
         }
 
         return $result;

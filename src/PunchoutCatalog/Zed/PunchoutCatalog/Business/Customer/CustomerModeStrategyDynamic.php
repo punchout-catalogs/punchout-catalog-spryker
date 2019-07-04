@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer;
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
@@ -94,11 +95,18 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
 
         //If not found -- create new user
         if ($customerId === null) {
+            try {
+                $documentCustomerTransfer->requireFirstName();
+                $documentCustomerTransfer->requireLastName();
+            } catch (RequiredTransferPropertyException $e) {
+                throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
+            }
+            
             $customerTransfer = new CustomerTransfer();
             $customerTransfer->setEmail($documentCustomerTransfer->getEmail());
             $customerTransfer->setFirstName($documentCustomerTransfer->getFirstName());
             $customerTransfer->setLastName($documentCustomerTransfer->getLastName());
-
+            
             $customerResponseTransfer = $this->customerFacade->addCustomer($customerTransfer);
 
             if (!$customerResponseTransfer->getIsSuccess()) {
