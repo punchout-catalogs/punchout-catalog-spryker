@@ -30,7 +30,9 @@ $i->submitForm('[action="/en/currency/switch"]', [
     'currency-iso-code' => 'CHF',
 ]);
 $i->canSeeOptionIsSelected('[name="currency-iso-code"]', 'Swiss Franc');
-
+$price = $i->getElement('.cart-summary .list .list__item .float-right')->last()->text();
+$price = trim($price, 'CHF');
+codecept_debug('Get product price from cart page: ' . $price);
 
 $i->wantTo('Transfer cart');
 
@@ -43,7 +45,7 @@ $i->canSeeElement('input', [
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-PRICE[1]',
-    'value' => '268.59',
+    'value' => $price,
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-CURRENCY[1]',
