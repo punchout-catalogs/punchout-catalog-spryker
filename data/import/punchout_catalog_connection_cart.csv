@@ -2,10 +2,7 @@ connection_name,default_supplier_id,max_description_length,bundle_mode,totals_mo
 Client 1 - cXml - User 1,spryker_sup_1,100,composite,header,base64,"{
   ""cart"": {
     ""fields"": {
-      ""cart_note"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
-      },
-      ""grand_total"": {
+      ""subtotal"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]""
       },
 
@@ -26,6 +23,9 @@ Client 1 - cXml - User 1,spryker_sup_1,100,composite,header,base64,"{
       ""currency"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency"",
 								""append"": true
+      },
+						""cart_note"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
       }
     }
   },
@@ -156,10 +156,7 @@ Client 1 - Oci - User 1,spryker_sup_2,128,composite,line,,"
 Client 1 - cXml - User 2,spryker_sup_3,,single,line,url-encoded,"{
   ""cart"": {
     ""fields"": {
-      ""cart_note"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
-      },
-      ""grand_total"": {
+      ""subtotal"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]""
       },
 
@@ -176,11 +173,15 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,line,url-encoded,"{
       ""discount_description"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Description[1]""
       },
+						
       ""currency"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Total[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Tax[1]/Money[1]/@currency,/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Discount[1]/Money[1]/@currency"",
         ""append"": true
       },
-
+						""cart_note"": {
+        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
+      },
+						
       ""custom_attributes"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/CustomAttributes/customOption()"",
         ""multiple"": true
