@@ -20,11 +20,28 @@ $i->amOnUrl($yvesUrl);
 $i->seeCurrentUrlEquals('/en');
 
 
+$i->wantTo('Select net price mode');
+
+$i->submitForm('[action="/en/price/mode-switch"]', [
+    'price-mode' => 'NET_MODE',
+]);
+$i->canSeeOptionIsSelected('[name="price-mode"]', 'Net prices');
+
+
 $i->wantTo('Add product to cart');
 
 $i->amOnPage('/en/canon-powershot-n-35');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
+$prices = $i->getElement('.cart-summary .list.spacing-y .list__item');
+$discount = $prices->first()->filter('.text-right')->text();
+$discount = trim($discount, '-');
+$discount = trim($discount);
+$discount = trim($discount, '€');
+codecept_debug('Get discount from cart page: ' . $discount);
+$tax = $prices->eq(2)->filter('.float-right')->first()->text();
+$tax = trim($tax, '€');
+codecept_debug('Get tax from cart page: ' . $tax);
 
 
 $i->wantTo('Transfer cart');
@@ -39,7 +56,7 @@ $i->canSeeElement('input', [
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-PRICE[2]',
-    'value' => '42.75',
+    'value' => $tax,
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-CURRENCY[2]',
@@ -52,7 +69,7 @@ $i->canSeeElement('input', [
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-PRICE[3]',
-    'value' => '-29.75',
+    'value' => '-'.$discount,
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-CURRENCY[3]',

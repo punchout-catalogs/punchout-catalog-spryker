@@ -36,6 +36,13 @@ $i->wantTo('Add second product to cart');
 $i->amOnPage('/en/samsung-galaxy-s6-edge-51?attribute%5Bstorage_capacity%5D=64+GB');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
+$prices = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right');
+$price1 = $prices->first()->text();
+$price2 = $prices->last()->text();
+$price1 = trim($price1, '€');
+$price2 = trim($price2, '€');
+codecept_debug('Get product #1 price from cart page: ' . $price1);
+codecept_debug('Get product #2 price from cart page: ' . $price2);
 
 
 $i->wantTo('Transfer cart');
@@ -53,10 +60,10 @@ $i->canSeeElement('input', [
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-PRICE[1]',
-    'value' => '115.2',
+    'value' => $price1,
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-PRICE[2]',
-    'value' => '112.5',
+    'value' => $price2,
 ]);
 

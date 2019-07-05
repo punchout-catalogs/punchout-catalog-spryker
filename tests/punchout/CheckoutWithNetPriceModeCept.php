@@ -25,7 +25,7 @@ $i->submitForm('[action="/en/currency/switch"]', [
 $i->canSeeOptionIsSelected('[name="currency-iso-code"]', 'Euro');
 
 
-$i->wantTo('Select gross mode');
+$i->wantTo('Select net price mode');
 
 $i->submitForm('[action="/en/price/mode-switch"]', [
     'price-mode' => 'NET_MODE',
@@ -38,7 +38,7 @@ $i->wantTo('Add product to cart');
 $i->amOnPage('/en/canon-ixus-180-10');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
-$price = $i->getElement('.cart-summary .list .list__item .float-right')->last()->text();
+$price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();
 $price = trim($price, '€');
 codecept_debug('Get product price from cart page: ' . $price);
 

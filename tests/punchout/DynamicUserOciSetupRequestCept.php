@@ -34,6 +34,9 @@ $i->wantTo('Add product to cart');
 $i->amOnPage('/en/canon-powershot-n-35');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
+$price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();
+$price = trim($price, '€');
+codecept_debug('Get product price from cart page: ' . $price);
 
 
 $i->wantTo('Transfer cart');
@@ -47,7 +50,7 @@ $i->canSeeElement('input', [
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-PRICE[1]',
-    'value' => '267.72',
+    'value' => $price,
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-CURRENCY[1]',

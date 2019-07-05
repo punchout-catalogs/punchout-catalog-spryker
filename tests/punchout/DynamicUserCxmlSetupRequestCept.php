@@ -38,6 +38,9 @@ $i->wantTo('Add product to cart');
 $i->amOnPage('/en/canon-powershot-n-35');
 $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
+$price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();
+$price = trim($price, '€');
+codecept_debug('Get product price from cart page: ' . $price);
 
 
 $i->wantTo('Transfer cart');
@@ -48,5 +51,5 @@ $i->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
 $data = $i->getBase64CxmlCartResponse();
 $i->seeCxml($data);
 $i->canSeeCxmlContains($data, '<ShortName>Canon PowerShot N</ShortName>');
-$i->canSeeCxmlContains($data, '<Money currency="EUR">267.72</Money>');
+$i->canSeeCxmlContains($data, '<Money currency="EUR">' . $price . '</Money>');
 $i->canSeeCxmlContains($data, '<UnitOfMeasure>EA</UnitOfMeasure>');

@@ -24,13 +24,21 @@ $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
 
 
+$i->wantTo('Select gross price mode');
+
+$i->submitForm('[action="/en/price/mode-switch"]', [
+    'price-mode' => 'GROSS_MODE',
+]);
+$i->canSeeOptionIsSelected('[name="price-mode"]', 'Gross prices');
+
+
 $i->wantTo('Change currency');
 
 $i->submitForm('[action="/en/currency/switch"]', [
     'currency-iso-code' => 'CHF',
 ]);
 $i->canSeeOptionIsSelected('[name="currency-iso-code"]', 'Swiss Franc');
-$price = $i->getElement('.cart-summary .list .list__item .float-right')->last()->text();
+$price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();
 $price = trim($price, 'CHF');
 codecept_debug('Get product price from cart page: ' . $price);
 
