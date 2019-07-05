@@ -143,21 +143,17 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
      * @param int $idCustomer
      * @param int $idCompany
      *
-     * @return int|null
+     * @return array
      */
-    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompany): ?int
+    public function findIdCompanyUsersInCompany(int $idCustomer, int $idCompany): array
     {
         $query = $this->getFactory()
             ->getCompanyUserQuery()
+            ->select('id_company_user')
             ->filterByIsActive(true)
             ->filterByFkCustomer($idCustomer)
             ->filterByFkCompany($idCompany);
 
-        $companyUser = $query->findOne();
-        if ($companyUser === null) {
-            return null;
-        }
-
-        return $companyUser->getIdCompanyUser();
+        return $query->find()->toArray();
     }
 }

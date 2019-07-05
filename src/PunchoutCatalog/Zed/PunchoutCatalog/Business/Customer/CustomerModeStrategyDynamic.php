@@ -11,12 +11,12 @@ use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer;
-use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyBusinessUnitFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCustomerFacadeInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface;
+use Spryker\Shared\Kernel\Transfer\Exception\RequiredTransferPropertyException;
 
 class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
 {
@@ -24,6 +24,8 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
      * @uses \PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer\CustomerModeStrategySingle::getCustomerTransfer
      */
     protected const ERROR_MISSING_COMPANY_USER = 'punchout-catalog.error.missing-company-user';
+
+    protected const ERROR_TOO_MANY_COMPANY_USERS = 'punchout-catalog.error.too-many-company-users';
 
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogRepositoryInterface
@@ -132,12 +134,19 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
 
             //Check if customer connected with current company
             //Omit case if user assign to another BU
-            $companyUserId = $this->punchoutCatalogRepository->findIdCompanyUserInCompany(
+
+            $companyUserIds = $this->punchoutCatalogRepository->findIdCompanyUsersInCompany(
                 $customerTransfer->getIdCustomer(), $currentBusinessUnit->getFkCompany());
 
-            if (empty($companyUserId)) {
+            if (count($companyUserIds) > 1) {
+                throw new AuthenticateException(self::ERROR_TOO_MANY_COMPANY_USERS);
+            }
+
+            if (empty($companyUserIds)) {
                 throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
             }
+
+            $companyUserId = $companyUserIds[0];
 
             $companyUserTransfer = $this->companyUserFacade->getCompanyUserById($companyUserId);
         }

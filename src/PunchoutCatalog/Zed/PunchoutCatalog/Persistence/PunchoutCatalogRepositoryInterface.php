@@ -63,7 +63,7 @@ interface PunchoutCatalogRepositoryInterface
      * @param int $idCustomer
      * @param int $idCompany
      *
-     * @return int|null
+     * @return array
      */
-    public function findIdCompanyUserInCompany(int $idCustomer, int $idCompany): ?int;
+    public function findIdCompanyUsersInCompany(int $idCustomer, int $idCompany): array;
 }
