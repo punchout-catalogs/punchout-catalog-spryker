@@ -28,6 +28,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected const BUNDLE_COMPOSITE_ITEM_TYPE = 'composite';
     protected const BUNDLE_CHILD_ITEM_TYPE = 'item';
 
+    protected const PRICE_MODE_NET = 'NET_MODE';
+    protected const PRICE_MODE_GROSS = 'GROSS_MODE';
+
     protected const CHILD_DESCRIPTION_SEPARATOR = ' x ';
 
     /**
@@ -831,7 +834,8 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteTransfer $quoteTransfer, PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer
     {
-        if (empty($quoteTransfer->getTotals()) ||
+        if ($this->isGrossPriceMode($quoteTransfer) ||
+            empty($quoteTransfer->getTotals()) ||
             empty($quoteTransfer->getTotals()->getTaxTotal()) ||
             empty($quoteTransfer->getTotals()->getTaxTotal()->getAmount())) {
             return $cartRequestTransfer;
@@ -949,6 +953,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         QuoteTransfer $quoteTransfer, PunchoutCatalogCartRequestTransfer $cartRequestTransfer
     ): PunchoutCatalogCartRequestTransfer
     {
+        if ($this->isGrossPriceMode($quoteTransfer)) {
+            return $cartRequestTransfer;
+        }
         $documentCartTransfer = $cartRequestTransfer->getCart();
 
         if ($quoteTransfer->getTotals()) {
@@ -1006,5 +1013,15 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $coupons = array_filter($coupons);
 
         return implode(',', $coupons);
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     *
+     * @return boolean
+     */
+    protected function isGrossPriceMode(QuoteTransfer $quoteTransfer)
+    {
+        return $quoteTransfer->getPriceMode() == self::PRICE_MODE_GROSS;
     }
 }
