@@ -846,6 +846,8 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $lineTaxTotalTransfer->setQuantity(1);
         $lineTaxTotalTransfer->setName('Estimated Tax');
         $lineTaxTotalTransfer->setDescription($lineTaxTotalTransfer->getName());
+        $lineTaxTotalTransfer->setLongDescription($lineTaxTotalTransfer->getName());
+
         $lineTaxTotalTransfer->setSupplierId($this->getDefaultSupplierId());
 
         if ($quoteTransfer->getCurrency() !== null) {
@@ -883,6 +885,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $lineDiscountTotalTransfer->setQuantity(1);
         $lineDiscountTotalTransfer->setName('Estimated Discount');
         $lineDiscountTotalTransfer->setDescription($lineDiscountTotalTransfer->getName());
+        $lineDiscountTotalTransfer->setLongDescription($lineDiscountTotalTransfer->getName());
         $lineDiscountTotalTransfer->setSupplierId($this->getDefaultSupplierId());
 
         $discountDescription = $this->getDiscountDescription($quoteTransfer);
