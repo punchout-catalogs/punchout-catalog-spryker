@@ -534,17 +534,10 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             $this->toAmount($quoteItemTransfer->getSumPrice(), $documentCartItemTransfer->getCurrency())
         );
         $documentCartItemTransfer->setUnitTotal(
-        //getUnitSubtotalAggregation - price
-        //$this->toAmount($quoteItemTransfer->getUnitSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
-        //$quoteItemTransfer->getSumPriceToPayAggregation() / $quoteItemTransfer->getQuantity() - price - discounts
-            $this->toAmount(
-                $quoteItemTransfer->getSumPriceToPayAggregation() / $quoteItemTransfer->getQuantity(), $documentCartItemTransfer->getCurrency())
+            $this->toAmount($quoteItemTransfer->getUnitSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
         );
         $documentCartItemTransfer->setSumTotal(
-        //getSumSubtotalAggregation - sum
-        //$this->toAmount($quoteItemTransfer->getSumSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
-        //getSumPriceToPayAggregation - sum - discounts
-            $this->toAmount($quoteItemTransfer->getSumPriceToPayAggregation(), $documentCartItemTransfer->getCurrency())
+            $this->toAmount($quoteItemTransfer->getSumSubtotalAggregation(), $documentCartItemTransfer->getCurrency())
         );
 
         //Taxes
