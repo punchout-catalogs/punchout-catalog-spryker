@@ -40,6 +40,12 @@ class DecoderTest extends Unit
                         ->setName('last_name')
                         ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name=\'LastName\']']))
                     ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
+                        ->setName('middle_name')
+                        ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name=\'MiddleName\']']))
+                    ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
+                        ->setName('non_exist_attr')
+                        ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/Qwerty1/Qwerty2/@nonExistingAttr']))
+                    ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
                         ->setName('email')
                         ->setPath(['/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name=\'UserEmail\']']))
                     ->setName('customer')
@@ -149,6 +155,8 @@ class DecoderTest extends Unit
                 'first_name' => 'cXML',
                 'last_name' => 'Tester',
                 'email' => 'cxml@punchoutcatalogs.net',
+                'middle_name' => null,
+                'non_exist_attr' => null,
             ],
             'cart_item' => [
                 [

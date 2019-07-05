@@ -22,6 +22,7 @@ class DecoderTest extends Unit
         $source = $this->getSetupRequestOci();
         $document = $this->decoder->execute($mapping, $source);
 
+        $this->assertNull($document['customer']['middle_name'], 'Empty node should be null');
         $this->assertEquals($this->getSetupRequestData(), $document, 'Should be the same data');
     }
 
@@ -39,6 +40,9 @@ class DecoderTest extends Unit
                     ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
                         ->setName('last_name')
                         ->setPath(['last_name']))
+                    ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
+                        ->setName('middle_name')
+                        ->setPath(['middle_name']))
                     ->addField((new PunchoutCatalogMappingObjectFieldTransfer())
                         ->setName('email')
                         ->setPath(['email']))
@@ -69,6 +73,7 @@ class DecoderTest extends Unit
                 'first_name' => 'oci',
                 'last_name' => 'Tester',
                 'email' => 'oci@punchoutcatalogs.net',
+                'middle_name' => null,
             ],
         ];
     }
