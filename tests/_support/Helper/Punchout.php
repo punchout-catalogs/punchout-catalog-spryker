@@ -23,15 +23,15 @@ class Punchout extends \Codeception\Module
 
     public static function getOciSetupRequestData()
     {
-        $username = 'oci' . uniqid();
-        
+        $username = 'oci' . rand(100, 999);
+
         return [
             "HOOK_URL" => "http://localhost:8899/simulator/cart/receive.php",
             "username" => "user_1",
             "password" => "user_1_pass",
-            "first_name" => "Oci",
-            "last_name" => "Tester",
             "email" => "$username@punchoutcatalogs.net",
+            "first_name" => "OCI name",
+            "last_name" => "OCI last name",
         ];
     }
 
