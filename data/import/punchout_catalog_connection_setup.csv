@@ -1,8 +1,8 @@
 connection_name,business_unit_key,company_user_key,login_mode
 Client 1 - cXml - User 1,business-unit-regular-1,,dynamic_user_creation
 Client 1 - Oci - User 1,business-unit-regular-1,,dynamic_user_creation
-Client 1 - cXml - User 2,business-unit-mitte-3,BoB--1,single_user
-Client 2 - Oci - User 2,business-unit-mitte-3,BoB--1,single_user
+Client 1 - cXml - User 2,Supplier_Department,Ottom--3,single_user
+Client 2 - Oci - User 2,Supplier_Department,Ottom--3,single_user
 Client 2 - cXml - User 1,business-unit-regular-1,,dynamic_user_creation
 Client 3 - cXml - User 3,business-unit-mitte-1,,dynamic_user_creation
 Client 2 - cXml - User 20,business-unit-regular-1,,dynamic_user_creation
