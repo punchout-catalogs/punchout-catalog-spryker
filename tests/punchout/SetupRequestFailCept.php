@@ -33,13 +33,6 @@ $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
 $i->seeResponseIsXml();
 $i->canSeeXmlResponseIncludes('<Status code="500" text="Internal Server Error">Missed Company User</Status>');
 
-$i->wantTo('perform correct cxml setup request with existent user who belongs to several business units and see result');
-
-$i->sendPOST('/request?business-unit=13&store=de', \Helper\Punchout::getCxmlDynamicSetupRequestData('user_30', 'user_30_pass', 'henry.tudor@spryker.com'));
-$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-$i->seeResponseIsXml();
-$i->canSeeXmlResponseIncludes('<Status code="500" text="Internal Server Error">Customer should have only one Company user to login</Status>');
-
 $i->wantTo('perform correct cxml setup request to inactive connection and see result');
 
 $i->sendPOST('/request?business-unit=13&store=de', \Helper\Punchout::getCxmlDynamicSetupRequestData('user_20', 'user_20_pass'));
@@ -53,3 +46,10 @@ $i->sendPOST('/request?business-unit=16&store=de', \Helper\Punchout::getCxmlDyna
 $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
 $i->seeResponseIsXml();
 $i->canSeeXmlResponseIncludes('<Status code="500" text="Internal Server Error">Missed Company User</Status>');
+
+$i->wantTo('perform correct cxml setup request with existent user who belongs to several business units and see result');
+
+$i->sendPOST('/request?business-unit=13&store=de', \Helper\Punchout::getCxmlDynamicSetupRequestData('user_30', 'user_30_pass', 'henry.tudor@spryker.com'));
+$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
+$i->seeResponseIsXml();
+$i->canSeeXmlResponseIncludes('<Status code="500" text="Internal Server Error">Customer should have only one Company user to login</Status>');
