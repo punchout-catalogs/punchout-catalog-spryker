@@ -35,10 +35,12 @@ class Punchout extends \Codeception\Module
         ];
     }
 
-    public static function getCxmlDynamicSetupRequestData($identity = 'user_1', $sharedSecret = 'user_1_pass')
+    public static function getCxmlDynamicSetupRequestData($identity = 'user_1', $sharedSecret = 'user_1_pass', $email = null)
     {
-        $username = 'cxml' . uniqid();
-
+        if (empty($email)) {
+            $email = 'cxml' . uniqid() . '@punchoutcatalogs.net';
+        }
+        
         return <<<XML_DATA
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE cXML SYSTEM "http://xml.cxml.org/schemas/cXML/1.1.007/cXML.dtd">
@@ -68,11 +70,11 @@ class Punchout extends \Codeception\Module
 
             <Extrinsic name="FirstName">cXML</Extrinsic>
             <Extrinsic name="LastName">Tester</Extrinsic>
-            <Extrinsic name="UserEmail">$username@punchoutcatalogs.net</Extrinsic>
+            <Extrinsic name="UserEmail">$email</Extrinsic>
 
             <Contact>
                 <Name xml:lang="en-US">cXML Tester</Name>
-                <Email>$username@punchoutcatalogs.net</Email>
+                <Email>$email</Email>
             </Contact>
 
             <BrowserFormPost>

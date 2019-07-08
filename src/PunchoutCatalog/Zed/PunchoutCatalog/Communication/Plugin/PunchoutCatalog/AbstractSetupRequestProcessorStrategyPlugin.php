@@ -105,7 +105,6 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
 
         if ($connection->getSetup()->getLoginMode() == self::CUSTOMER_LOGIN_MODE_DYNAMIC) {
-            $documentTransfer->requireCustomer();
             $customerStrategy = $this->getFactory()->createCustomerLoginDynamicStrategy();
         } else {
             $customerStrategy = $this->getFactory()->createCustomerLoginSingleStrategy();

@@ -62,6 +62,7 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
             ->filterByFormat($connectionCredentialSearch->getFormat())
             ->filterByType($connectionCredentialSearch->getType())
             ->filterByUsername($connectionCredentialSearch->getUsername())
+            ->filterByIsActive(1)
             ->findOne();
 
         if (!$connectionEntity) {

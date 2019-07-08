@@ -136,7 +136,8 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
             //Omit case if user assign to another BU
 
             $companyUserIds = $this->punchoutCatalogRepository->findIdCompanyUsersInCompany(
-                $customerTransfer->getIdCustomer(), $currentBusinessUnit->getFkCompany());
+                $customerTransfer->getIdCustomer(), $currentBusinessUnit->getFkCompany()
+            );
 
             if (count($companyUserIds) > 1) {
                 throw new AuthenticateException(self::ERROR_TOO_MANY_COMPANY_USERS);
