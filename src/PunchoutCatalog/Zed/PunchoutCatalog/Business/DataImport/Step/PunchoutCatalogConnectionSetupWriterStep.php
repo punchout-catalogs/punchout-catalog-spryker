@@ -46,6 +46,8 @@ class PunchoutCatalogConnectionSetupWriterStep implements DataImportStepInterfac
 
         if ($businessUnit && $businessUnit->getIdCompanyBusinessUnit()) {
             $setupEntity->setFkCompanyBusinessUnit($businessUnit->getIdCompanyBusinessUnit());
+        } else {
+            $setupEntity->setFkCompanyBusinessUnit(null);
         }
 
         $companyUser = SpyCompanyUserQuery::create()->findOneByKey(

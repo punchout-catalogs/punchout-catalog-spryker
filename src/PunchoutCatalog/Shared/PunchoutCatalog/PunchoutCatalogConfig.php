@@ -11,5 +11,5 @@ use Spryker\Shared\Kernel\AbstractSharedConfig;
 
 class PunchoutCatalogConfig extends AbstractSharedConfig
 {
-    public const VAULT_TYPE_PUNCHOUT_CATALOG_CONNECTION_PASSWORD = 'punchout-catalog-connection-password';
+    public const VAULT_TYPE_PUNCHOUT_CATALOG_CONNECTION_PASSWORD = 'pwg_punchout_catalog_connection.password';
 }
