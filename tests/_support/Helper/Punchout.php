@@ -23,16 +23,21 @@ class Punchout extends \Codeception\Module
 
     public static function getOciSetupRequestData()
     {
+        $username = 'oci' . uniqid();
+        
         return [
             "HOOK_URL" => "http://localhost:8899/simulator/cart/receive.php",
             "username" => "user_1",
             "password" => "user_1_pass",
+            "first_name" => "Oci",
+            "last_name" => "Tester",
+            "email" => "$username@punchoutcatalogs.net",
         ];
     }
 
     public static function getCxmlDynamicSetupRequestData($identity = 'user_1', $sharedSecret = 'user_1_pass')
     {
-        $username = 'cxml' . rand(100, 999);
+        $username = 'cxml' . uniqid();
 
         return <<<XML_DATA
 <?xml version="1.0" encoding="UTF-8"?>
