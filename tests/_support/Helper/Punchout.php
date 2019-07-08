@@ -23,10 +23,14 @@ class Punchout extends \Codeception\Module
 
     public static function getOciSetupRequestData()
     {
+        $username = 'oci' . rand(100, 999);
         return [
             "HOOK_URL" => "http://localhost:8899/simulator/cart/receive.php",
             "username" => "user_1",
             "password" => "user_1_pass",
+            "email" => "$username@punchoutcatalogs.net",
+            "first_name" => "OCI name",
+            "last_name" => "OCI last name",
         ];
     }
 
@@ -156,6 +160,8 @@ XML_DATA;
     public function getAccessUrlFromOci()
     {
         $response = $this->getModule('REST')->response;
+        codecept_debug('response');
+        codecept_debug($response);
         $xml = Xml::toXml($response);
         $structure = new XmlStructure($xml);
         $url = $structure->matchElement('//body/script')->textContent;
