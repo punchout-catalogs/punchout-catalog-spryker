@@ -102,3 +102,18 @@ business-unit-mitte-1,user_30,user_30_pass,,1,setup_request,cxml,Client 3 - cXml
     }
   }
 }"
+business-unit-mitte-1,user_30,user_30_pass,,1,setup_request,oci,Client 3 - Oci - User 3,"{
+  ""customer"": {
+    ""fields"": {
+      ""first_name"": {
+        ""path"": ""first_name""
+      },
+      ""last_name"": {
+        ""path"": ""last_name""
+      },
+      ""email"": {
+        ""path"": ""email""
+      }
+    }
+  }
+}"

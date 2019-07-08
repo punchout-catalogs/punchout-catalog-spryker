@@ -357,3 +357,4 @@ Client 2 - Oci - User 2,spryker_sup_6,,single,line,,"
 Client 2 - cXml - User 1,spryker_sup_4,,composite,header,url-encoded,{}
 Client 3 - cXml - User 3,spryker_sup_5,,composite,line,base64,{}
 Client 2 - cXml - User 20,spryker_sup_5,,composite,line,base64,{}
+Client 3 - Oci - User 3,spryker_sup_5,,composite,line,,{}
