@@ -38,18 +38,11 @@ $i->wantTo('perform correct cxml setup request with existent user who belongs to
 $i->sendPOST('/request?business-unit=13&store=de', \Helper\Punchout::getCxmlDynamicSetupRequestData('user_30', 'user_30_pass', 'henry.tudor@spryker.com'));
 $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
 $i->seeResponseIsXml();
-$i->canSeeXmlResponseIncludes('<Status code="500" text="Internal Server Error">Too many Company Users associated with the provided email</Status>');
+$i->canSeeXmlResponseIncludes('<Status code="500" text="Internal Server Error">Customer should have only one Company user to login</Status>');
 
 $i->wantTo('perform correct cxml setup request to inactive connection and see result');
 
 $i->sendPOST('/request?business-unit=13&store=de', \Helper\Punchout::getCxmlDynamicSetupRequestData('user_20', 'user_20_pass'));
-$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-$i->seeResponseIsXml();
-$i->canSeeXmlResponseIncludes('<Status code="401" text="Unauthorized">Authentication Failed</Status>');
-
-$i->wantTo('perform correct cxml setup request to wrong Business Unit in URL and see result');
-
-$i->sendPOST('/request?business-unit=13&store=de', \Helper\Punchout::getCxmlDynamicSetupRequestData());
 $i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
 $i->seeResponseIsXml();
 $i->canSeeXmlResponseIncludes('<Status code="401" text="Unauthorized">Authentication Failed</Status>');

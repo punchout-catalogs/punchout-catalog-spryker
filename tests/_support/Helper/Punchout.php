@@ -21,17 +21,18 @@ class Punchout extends \Codeception\Module
         return $this->getModule('PhpBrowser')->_findElements($selector);
     }
 
-    public static function getOciSetupRequestData()
+    public static function getOciSetupRequestData($username = 'user_1', $password = 'user_1_pass', $email = null)
     {
-        $username = 'oci' . rand(100, 999);
-
+        if (empty($email)) {
+            $email = 'oci' . uniqid() . '@punchoutcatalogs.net';
+        }
         return [
             "HOOK_URL" => "http://localhost:8899/simulator/cart/receive.php",
-            "username" => "user_1",
-            "password" => "user_1_pass",
-            "email" => "$username@punchoutcatalogs.net",
-            "first_name" => "OCI name",
-            "last_name" => "OCI last name",
+            "username" => $username,
+            "password" => $password,
+            "email" => $email,
+            "first_name" => "Oci",
+            "last_name" => "Tester",
         ];
     }
 
