@@ -51,8 +51,11 @@ class PunchoutCatalogConnectionSetupWriterStep implements DataImportStepInterfac
         $companyUser = SpyCompanyUserQuery::create()->findOneByKey(
             $dataSet[PunchoutCatalogConnectionSetupDataSet::COMPANY_USER_KEY]
         );
+        
         if ($companyUser && $companyUser->getIdCompanyUser()) {
             $setupEntity->setFkCompanyUser($companyUser->getIdCompanyUser());
+        } else {
+            $setupEntity->setFkCompanyUser(null);
         }
 
         $setupEntity->setLoginMode($dataSet[PunchoutCatalogConnectionSetupDataSet::SETUP_LOGIN_MODE]);
