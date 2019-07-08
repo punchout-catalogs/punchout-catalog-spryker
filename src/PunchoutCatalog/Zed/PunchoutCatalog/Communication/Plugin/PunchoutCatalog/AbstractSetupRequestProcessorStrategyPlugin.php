@@ -106,8 +106,10 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
 
         if ($connection->getSetup()->getLoginMode() == self::CUSTOMER_LOGIN_MODE_DYNAMIC) {
             $customerStrategy = $this->getFactory()->createCustomerLoginDynamicStrategy();
-        } else {
+        } elseif ($connection->getSetup()->getLoginMode() == self::CUSTOMER_LOGIN_MODE_SINGLE) {
             $customerStrategy = $this->getFactory()->createCustomerLoginSingleStrategy();
+        } else {
+            throw new AuthenticateException(self::ERROR_UNEXPECTED);
         }
 
         $impersonationDetails = $this->prepareImpersonationDetails(

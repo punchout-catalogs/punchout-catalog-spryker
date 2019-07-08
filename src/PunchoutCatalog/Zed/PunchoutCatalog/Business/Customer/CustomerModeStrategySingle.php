@@ -51,15 +51,12 @@ class CustomerModeStrategySingle implements CustomerModeStrategyInterface
     {
         $connectionTransfer->requireSetup();
         $connectionTransfer->getSetup()->requireFkCompanyUser();
-        $connectionTransfer->getSetup()->requireFkCompanyBusinessUnit();
     
         $companyUserTransfer = $this->companyUserFacade->findCompanyUserById(
             $connectionTransfer->getSetup()->getFkCompanyUser()
         );
         
-        if (null === $companyUserTransfer
-            || $companyUserTransfer->getFkCompanyBusinessUnit() != $connectionTransfer->getSetup()->getFkCompanyBusinessUnit()
-        ) {
+        if (null === $companyUserTransfer) {
             throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
         }
         

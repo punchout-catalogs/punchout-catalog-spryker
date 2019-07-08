@@ -19,7 +19,7 @@ class PunchoutCatalogConnectionWriterStep implements DataImportStepInterface
     /**
      * @uses \PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConfig::VAULT_TYPE_PUNCHOUT_CATALOG_CONNECTION_PASSWORD
      */
-    protected const VAULT_PASSWORD_DATA_TYPE = 'punchout-catalog-connection-password';
+    protected const VAULT_PASSWORD_DATA_TYPE = 'pwg_punchout_catalog_connection.password';
 
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToVaultFacadeInterface
