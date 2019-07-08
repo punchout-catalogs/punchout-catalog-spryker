@@ -85,7 +85,12 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
         if (null === $documentCustomerTransfer) {
             throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
         }
-        $documentCustomerTransfer->requireEmail();
+        
+        try {
+            $documentCustomerTransfer->requireEmail();
+        } catch (RequiredTransferPropertyException $e) {
+            throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
+        }
 
         $currentBusinessUnitId = $connectionTransfer->getSetup()->getFkCompanyBusinessUnit();
         $currentBusinessUnit = $this->companyBusinessUnitFacade->findCompanyBusinessUnitById($currentBusinessUnitId);
