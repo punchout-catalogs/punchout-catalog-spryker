@@ -132,8 +132,13 @@ class RequestProcessor implements RequestProcessorInterface
     protected function processException(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer, \Exception $exception): ?PunchoutCatalogSetupResponseTransfer
     {
         if ($exception instanceof AuthenticateException) {
-            $code = self::ERROR_AUTHENTICATION;
-            $message = $this->translate($exception->getMessage(), $this->punchoutCatalogConfig->getDefaultLocaleName());
+            if ($exception->getMessage() == self::ERROR_INVALID_DATA) {
+                $code = self::ERROR_INVALID_DATA;
+                $message = $this->translate($exception->getMessage(), $this->punchoutCatalogConfig->getDefaultLocaleName());
+            } else {
+                $code = self::ERROR_AUTHENTICATION;
+                $message = $this->translate($exception->getMessage(), $this->punchoutCatalogConfig->getDefaultLocaleName());
+            }
         } elseif (($exception instanceof InvalidArgumentException)
             || ($exception instanceof RequiredTransferPropertyException)
         ) {
