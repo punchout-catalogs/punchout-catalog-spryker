@@ -60,7 +60,7 @@ class PackingUnitCartItemTransformerPlugin extends AbstractPlugin implements Car
                 $childItem->setSku($amountLeadProduct->getProduct()->getSku());
                 $childItem->setUnitPrice($cartItem->getUnitPrice());
                 $childItem->setSumPrice($cartItem->getSumPrice());
-                $childItem->setQuantity($cartItem->getAmount());
+                $childItem->setQuantity($cartItem->getAmount() / $cartItem->getQuantity());
                 $childItem->setUnitPriceToPayAggregation($cartItem->getUnitPriceToPayAggregation());
                 $childItem->setSumPriceToPayAggregation($cartItem->getSumPriceToPayAggregation());
 
@@ -68,6 +68,7 @@ class PackingUnitCartItemTransformerPlugin extends AbstractPlugin implements Car
                 if (!empty($concreteAttributes['packaging_unit'])) {
                     $cartItem->setName($concreteAttributes['packaging_unit']);
                 }
+                
                 $cartItem->setChildBundleItems(new ArrayObject([$childItem]));
                 $transformedCartItems[] = $cartItem;
             } else {
