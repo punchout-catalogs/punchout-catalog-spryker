@@ -32,7 +32,9 @@ class RequestProcessor implements RequestProcessorInterface
     protected const ERROR_INVALID_DATA = 'punchout-catalog.error.invalid-data';
 
     protected const ERROR_UNEXPECTED = 'punchout-catalog.error.unexpected';
-
+    
+    protected const ERROR_AUTHENTICATION = 'punchout-catalog.error.authentication';
+    
     /**
      * @var \PunchoutCatalog\Zed\PunchoutCatalog\Business\Authenticator\ConnectionAuthenticatorInterface
      */
@@ -130,13 +132,16 @@ class RequestProcessor implements RequestProcessorInterface
     protected function processException(PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer, \Exception $exception): ?PunchoutCatalogSetupResponseTransfer
     {
         if ($exception instanceof AuthenticateException) {
-            $code = $exception->getMessage();
+            $code = self::ERROR_AUTHENTICATION;
+            $message = $this->translate($exception->getMessage(), $this->punchoutCatalogConfig->getDefaultLocaleName());
         } elseif (($exception instanceof InvalidArgumentException)
             || ($exception instanceof RequiredTransferPropertyException)
         ) {
             $code = self::ERROR_INVALID_DATA;
+            $message = $this->translate($code, $this->punchoutCatalogConfig->getDefaultLocaleName());
         } else {
             $code = self::ERROR_UNEXPECTED;
+            $message = $this->translate($code, $this->punchoutCatalogConfig->getDefaultLocaleName());
         }
 
         $errorStrategy = $this->requestProcessorPlugins[static::DEFAULT_FORMAT];
@@ -146,8 +151,6 @@ class RequestProcessor implements RequestProcessorInterface
                 break;
             }
         }
-
-        $message = $this->translate($code, $this->punchoutCatalogConfig->getDefaultLocaleName());
 
         $messageTransfer = (new MessageTransfer())->setValue($code)->setTranslatedMessage($message);
 
