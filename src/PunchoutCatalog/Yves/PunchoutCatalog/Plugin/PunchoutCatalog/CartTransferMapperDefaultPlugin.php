@@ -191,8 +191,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
      *
      * @return int
      */
-    protected function toAmount(int $amount, ?string $isoCode)
+    protected function toAmount(int $amount = null, ?string $isoCode)
     {
+        $amount = (int)$amount;
         $currency = $this->moneyClient->fromInteger($amount, $isoCode);
 
         $fraction = 10;
