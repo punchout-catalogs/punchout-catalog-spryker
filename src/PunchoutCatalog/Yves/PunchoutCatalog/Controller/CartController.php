@@ -23,7 +23,8 @@ class CartController extends AbstractController
 {
     protected const REDIRECT_URL = 'cart';
     protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is-not-punchout';
-
+    protected const ERROR_MESSAGE_IS_NOT_ALLOWED  = 'punchout-catalog.error.is-not-allowed';
+   
     /**
      * Returns transferred cart
      *
@@ -35,6 +36,9 @@ class CartController extends AbstractController
     {
         if (!$this->isPunchoutCustomer()) {
             return $this->addErrorMessage(static::ERROR_MESSAGE_IS_NOT_PUNCHOUT)
+                ->redirectResponseInternal(static::REDIRECT_URL);
+        } elseif (!$this->isAllowedTransfer()) {
+            return $this->addErrorMessage(static::ERROR_MESSAGE_IS_NOT_ALLOWED)
                 ->redirectResponseInternal(static::REDIRECT_URL);
         }
 
@@ -53,7 +57,7 @@ class CartController extends AbstractController
         $cartResponseTransfer = $this->getFactory()
             ->getPunchoutCatalogClient()
             ->processCartTransfer($punchoutCatalogCartRequestTransfer);
-        //dd($punchoutCatalogCartRequestTransfer);
+
         if ($cartResponseTransfer->getIsSuccess()) {
             return $this->handleSuccessResponse($cartResponseTransfer, $request);
         } else {
@@ -68,7 +72,19 @@ class CartController extends AbstractController
     {
         return ($this->getPunchoutImpersonationDetails() && $this->getPunchoutImpersonationDetails()[PunchoutCatalogConstsInterface::IS_PUNCHOUT]);
     }
-
+    
+    /**
+     * @return bool
+     */
+    protected function isAllowedTransfer(): bool
+    {
+        $validateQuoteResponseTransfer = $this->getFactory()
+            ->getCartClient()
+            ->validateQuote();
+        
+        return $validateQuoteResponseTransfer->getIsSuccessful();
+    }
+    
     /**
      * @return array|null
      */

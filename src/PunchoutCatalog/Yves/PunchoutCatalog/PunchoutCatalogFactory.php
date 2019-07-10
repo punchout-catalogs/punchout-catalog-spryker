@@ -14,6 +14,7 @@ use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProd
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientInterface;
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCartClientInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceInterface;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapper;
 use PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperInterface;
@@ -99,7 +100,15 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_QUOTE);
     }
-
+    
+    /**
+     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCartClientInterface
+     */
+    public function getCartClient(): PunchoutCatalogToCartClientInterface
+    {
+        return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_CART);
+    }
+    
     /**
      * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceInterface
      */

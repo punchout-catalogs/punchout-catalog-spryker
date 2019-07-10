@@ -14,6 +14,7 @@ use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProd
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductStorageClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToPunchoutCatalogClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToQuoteClientBridge;
+use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCartClientBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceBridge;
 use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\CartTransferMapperDefaultPlugin;
 use Spryker\Shared\Kernel\Store;
@@ -29,7 +30,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     public const STORE = 'STORE';
     public const CLIENT_GLOSSARY_STORAGE = 'CLIENT_GLOSSARY_STORAGE';
     public const CLIENT_QUOTE = 'CLIENT_QUOTE';
-    public const CLIENT_CART_PAGE = 'CLIENT_CART_PAGE';
+    public const CLIENT_CART = 'CLIENT_CART';
     public const CLIENT_MONEY = 'CLIENT_MONEY';
     public const CLIENT_CUSTOMER = 'CLIENT_CUSTOMER';
     public const CLIENT_PUNCHOUT_CATALOG = 'CLIENT_PUNCHOUT_CATALOG';
@@ -51,6 +52,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
         $container = $this->addGlossaryStorageClient($container);
         $container = $this->addMoneyClient($container);
         $container = $this->addQuoteClient($container);
+        $container = $this->addCartClient($container);
         $container = $this->addProductStorageClient($container);
         $container = $this->addPunchoutCatalogClient($container);
         $container = $this->addCustomerClient($container);
@@ -118,7 +120,21 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
 
         return $container;
     }
-
+    
+    /**
+     * @param \Spryker\Yves\Kernel\Container $container
+     *
+     * @return \Spryker\Yves\Kernel\Container
+     */
+    protected function addCartClient(Container $container): Container
+    {
+        $container[self::CLIENT_CART] = function (Container $container) {
+            return new PunchoutCatalogToCartClientBridge($container->getLocator()->cart()->client());
+        };
+        
+        return $container;
+    }
+    
     /**
      * @param \Spryker\Yves\Kernel\Container $container
      *
