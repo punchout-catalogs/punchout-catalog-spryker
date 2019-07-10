@@ -189,7 +189,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
      * @param int $amount
      * @param string|null $isoCode
      *
-     * @return int
+     * @return float
      */
     protected function toAmount(int $amount = null, ?string $isoCode)
     {
@@ -822,6 +822,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     {
         $this->prepareLineTaxTotal($quoteTransfer, $cartRequestTransfer);
         $this->prepareLineDiscountTotal($quoteTransfer, $cartRequestTransfer);
+        $this->prepareLinesExpenses($quoteTransfer, $cartRequestTransfer);
         return $cartRequestTransfer;
     }
 
@@ -867,6 +868,50 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $lineTaxTotalTransfer->setSumTotal($amount);
 
         $cartRequestTransfer->addCartItem($lineTaxTotalTransfer);
+        return $cartRequestTransfer;
+    }
+
+    /**
+     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
+     * @param \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer $cartRequestTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer
+     */
+    protected function prepareLinesExpenses(
+        QuoteTransfer $quoteTransfer, PunchoutCatalogCartRequestTransfer $cartRequestTransfer
+    ): PunchoutCatalogCartRequestTransfer
+    {
+        foreach ($quoteTransfer->getExpenses() as $expense) {
+            $lineExpenseTransfer = new PunchoutCatalogDocumentCartItemTransfer();
+
+            $lineExpenseTransfer->setInternalId($this->getQuoteItemInternalId());
+            $lineExpenseTransfer->setSupplierId($this->getDefaultSupplierId());
+            $lineExpenseTransfer->setLocale($this->toLang($this->currentLocale));
+
+            $lineExpenseTransfer->setLineNumber($this->getNextLineNumber());
+            $lineExpenseTransfer->setQuantity(1);
+
+            $name = $this->glossaryStorageClient->translate(
+                $expense->getName(),
+                $this->currentLocale
+            );
+            $lineExpenseTransfer->setName($name);
+            $lineExpenseTransfer->setDescription($lineExpenseTransfer->getName());
+            $lineExpenseTransfer->setLongDescription($lineExpenseTransfer->getDescription());
+
+            if ($quoteTransfer->getCurrency() !== null) {
+                $lineExpenseTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
+            }
+
+            $amount = $this->toAmount($expense->getSumPrice(), $lineExpenseTransfer->getCurrency());
+
+            $lineExpenseTransfer->setUnitPrice($amount);
+            $lineExpenseTransfer->setSumPrice($amount);
+            $lineExpenseTransfer->setUnitTotal($amount);
+            $lineExpenseTransfer->setSumTotal($amount);
+
+            $cartRequestTransfer->addCartItem($lineExpenseTransfer);
+        }
         return $cartRequestTransfer;
     }
 
