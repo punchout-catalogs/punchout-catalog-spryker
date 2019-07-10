@@ -11,6 +11,9 @@ use Codeception\Util\XmlStructure;
 
 class Punchout extends \Codeception\Module
 {
+    const BUSINESS_UNIT_USER_1 = 16;
+    const BUSINESS_UNIT_USER_2 = 19;
+    
     /**
      * @param $selector
      * @return \Symfony\Component\DomCrawler\Crawler
@@ -141,6 +144,22 @@ XML_DATA;
     }
     
     /**
+     * Retrieve cxml content from web page
+     *
+     * @return bool|string
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function getUrlEncodedCxmlCartResponse()
+    {
+        /** @var InnerBrowser $module */
+        $module = $this->getModule('PhpBrowser');
+        $html = $module->_getResponseContent();
+        $structure = new XmlStructure(Xml::toXml($html));
+        $value = $structure->matchElement('#punchoutCartForm [name="cxml-urlencoded"]')->getAttribute('value');
+        return $value;
+    }
+    
+    /**
      * Retrieve html content from web page
      *
      * @return bool|string
@@ -191,7 +210,16 @@ XML_DATA;
     {
         $this->assertContains($text, $xml);
     }
-
+    
+    /**
+     * @param $xml
+     * @param $text
+     */
+    public function canNotSeeCxmlContains($xml, $text)
+    {
+        $this->assertNotContains($text, $xml);
+    }
+    
     /**
      * @param $url
      */

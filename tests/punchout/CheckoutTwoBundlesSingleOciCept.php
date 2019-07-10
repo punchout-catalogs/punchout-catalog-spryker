@@ -5,8 +5,8 @@ $i = new PunchoutTester($scenario);
 
 $i->wantTo('perform correct oci setup request and see result');
 $i->setupRequestOci(
-    \Helper\Punchout::BUSINESS_UNIT_USER_1,
-    \Helper\Punchout::getOciSetupRequestData()
+    \Helper\Punchout::BUSINESS_UNIT_USER_2,
+    \Helper\Punchout::getOciSetupRequestData('user_2', 'user_2_pass')
 );
 
 $i->switchToGrossPrices();
@@ -44,9 +44,7 @@ foreach ($bundles as $bundle) {
     $i->assertNotEmptyOciElementBasicElements($elements[$idx]);
     
     $i->assertEmpty($elements[$idx]['PARENT_ID']);
-    
-    $i->assertNotEmpty($elements[$idx]['ITEM_TYPE']);
-    $i->assertEquals('R', $elements[$idx]['ITEM_TYPE']);
+    $i->assertEmpty($elements[$idx]['ITEM_TYPE']);
     
     $i->assertEquals('1', $elements[$idx]['QUANTITY']);
     $i->assertEquals($bundle['sku'], $elements[$idx]['VENDORMAT']);
@@ -54,18 +52,28 @@ foreach ($bundles as $bundle) {
     $i->assertEquals($bundle['price'], $elements[$idx]['PRICE']);
     $i->assertEquals('EA', $elements[$idx]['UNIT']);
     
-    $i->wantTo('check children products of the product SKU: ' . $bundle['sku']);
+    $i->wantTo('check there is not any child product of the product SKU: ' . $bundle['sku']);
+    $i->assertTrue(!isset($tree[$idx]));
+}
+
+$i->wantTo('check two all products exists in OCI Order Message and all are simple items');
+$i->assertNotEmpty($elements);
+
+$skus = array_column($bundles, 'sku');
+$skus[] = 'tax';
+$skus[] = 'discount';
+$skus[] = 'expense';
+
+/** @var array $el */
+foreach ($elements as $elIdx => $el) {
+    $i->wantTo('check is product common values ' . $elIdx);
+    $i->assertNotEmptyOciElementBasicElements($el);
     
-    $i->assertNotEmpty($tree[$idx]);
+    $i->assertEmpty($el['PARENT_ID']);
+    $i->assertEmpty($el['ITEM_TYPE']);
     
-    foreach ($tree[$idx] as $childIdx => $child) {
-        $i->wantTo('assert bundle product SKU: ' . $bundle['sku'] . ' child SKU #' . $childIdx);
-        $i->assertNotEmptyOciElementBasicElements($child);
-        
-        $i->assertNotEmpty($child['PARENT_ID']);
-        $i->assertEquals($idx, $child['PARENT_ID']);
-        
-        $i->assertNotEmpty($child['ITEM_TYPE']);
-        $i->assertEquals('O', $child['ITEM_TYPE']);
-    }
+    $sku = $el['VENDORMAT'];
+    
+    $i->wantTo('check if SKU is expected: ' . $sku);
+    $i->assertTrue(in_array($sku, $skus));
 }

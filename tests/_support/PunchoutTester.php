@@ -20,11 +20,11 @@ class PunchoutTester extends \Codeception\Actor
 {
     use _generated\PunchoutTesterActions;
     
-    public function setupRequestCxml($cxmlDynamicSetupRequestData)
+    public function setupRequestCxml($bu, $cxmlDynamicSetupRequestData)
     {
         $this->haveHttpHeader('content-type', 'text/xml');
         
-        $this->sendPOST('/request?business-unit=16&store=de', $cxmlDynamicSetupRequestData);
+        $this->sendPOST('/request?business-unit=' . $bu . '&store=de', $cxmlDynamicSetupRequestData);
         $this->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
         $this->seeResponseIsXml();
         
@@ -42,9 +42,9 @@ class PunchoutTester extends \Codeception\Actor
         return $this;
     }
     
-    public function setupRequestOci(array $ociSetupRequestData)
+    public function setupRequestOci($bu, array $ociSetupRequestData)
     {
-        $this->sendPOST('/request?business-unit=16&store=de', $ociSetupRequestData);
+        $this->sendPOST('/request?business-unit=' . $bu . '&store=de', $ociSetupRequestData);
         $this->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
     
         $yvesUrl = $this->getAccessUrlFromOci();
@@ -140,13 +140,13 @@ class PunchoutTester extends \Codeception\Actor
     
     public function getXpathValue(\SimpleXMLElement $el, string $xpath)
     {
-        return current($el->xpath($xpath));
+        $value = current($el->xpath($xpath));
+        return ($value !== null && $value !== false) ? trim($value) : null;
     }
     
     public function assertNotEmptyOciElementBasicElements(array $el)
     {
         $this->assertNotEmpty($el['QUANTITY']);
-        $this->assertNotEmpty($el['VENDORMAT']);
         $this->assertNotEmpty($el['DESCRIPTION']);
         $this->assertNotEmpty($el['PRICE']);
         $this->assertNotEmpty($el['UNIT']);
@@ -154,6 +154,7 @@ class PunchoutTester extends \Codeception\Actor
         $this->assertNotEmpty($el['CURRENCY']);
         $this->assertNotEmpty($el['LONGTEXT']);
         $this->assertNotEmpty($el['VENDOR']);
+        $this->assertNotEmpty($el['VENDORMAT']);
         return $this;
     }
     
@@ -166,8 +167,8 @@ class PunchoutTester extends \Codeception\Actor
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/SupplierID[1]'));
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/BuyerPartID[1]'));
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/ManufacturerPartID[1]'));
-        $this->assertNotEmpty($this->getXpathValue($el, 'ItemID[1]/SupplierPartAuxiliaryID[1]'));
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemID[1]/SupplierPartID[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemID[1]/SupplierPartAuxiliaryID[1]'));
         return $this;
     }
 }
