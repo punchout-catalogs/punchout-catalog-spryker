@@ -10,8 +10,10 @@ $i->setupRequestOci(
 );
 
 $i->switchToGrossPrices();
+
 $i->addToCartBundleProductSony210();
 $i->addToCartBundleProductHp211();
+
 $i->cartTransfer();
 
 $i->wantTo('check two bundle products exists in OCI Order Message');

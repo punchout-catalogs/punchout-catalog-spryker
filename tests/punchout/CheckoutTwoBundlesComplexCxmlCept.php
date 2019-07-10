@@ -4,15 +4,16 @@
 $i = new PunchoutTester($scenario);
 
 $i->wantTo('perform correct cxml setup request and see result');
-
 $i->setupRequestCxml(
     \Helper\Punchout::BUSINESS_UNIT_USER_1,
     \Helper\Punchout::getCxmlDynamicSetupRequestData()
 );
 
 $i->switchToGrossPrices();
+
 $i->addToCartBundleProductSony210();
 $i->addToCartBundleProductHp211();
+
 $i->cartTransfer();
 
 $data = $i->getBase64CxmlCartResponse();

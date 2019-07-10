@@ -75,19 +75,41 @@ class PunchoutTester extends \Codeception\Actor
         $this->canSeeOptionIsSelected('[name="price-mode"]', 'Net prices');
     }
     
+    public function switchCurrencySwissFranc()
+    {
+        $this->wantTo('Change currency');
+        $this->submitForm('[action="/en/currency/switch"]', [
+            'currency-iso-code' => 'CHF',
+        ]);
+        $this->canSeeOptionIsSelected('[name="currency-iso-code"]', 'Swiss Franc');
+    }
+    
+    public function addProductToCart($url)
+    {
+        $this->wantTo('Add product to cart: ' . $url);
+        $this->amOnPage($url);
+        $this->click('[id="add-to-cart-button"]');
+        return $this;
+    }
+    
     public function addToCartBundleProductSony210()
     {
-        $this->wantTo('Add sony-bundle-210 product to cart');
-        $this->amOnPage('/en/sony-bundle-210');
-        $this->click('[id="add-to-cart-button"]');
+        return $this->addProductToCart('/en/sony-bundle-210');
     }
     
     public function addToCartBundleProductHp211()
     {
-        $this->wantTo('Add hp-bundle-211 product to cart');
-        $this->amOnPage('/en/hp-bundle-211');
-        $this->click('[id="add-to-cart-button"]');
-        return $this;
+        return $this->addProductToCart('/en/hp-bundle-211');
+    }
+    
+    public function addToCartCanonIxus180()
+    {
+        return $this->addProductToCart('/en/canon-ixus-180-10');
+    }
+    
+    public function addToCartCanonPowerShot35()
+    {
+        return $this->addProductToCart('/en/canon-powershot-n-35');
     }
     
     public function cartTransfer()

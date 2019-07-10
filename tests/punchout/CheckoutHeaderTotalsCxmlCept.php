@@ -2,39 +2,16 @@
 /** @var \Helper\Punchout | PunchoutTester $i */
 /** @var \Codeception\Scenario $scenario */
 $i = new PunchoutTester($scenario);
-$i->haveHttpHeader('content-type', 'text/xml');
-
 
 $i->wantTo('perform correct cxml setup request and see result');
+$i->setupRequestCxml(
+    \Helper\Punchout::BUSINESS_UNIT_USER_1,
+    \Helper\Punchout::getCxmlDynamicSetupRequestData()
+);
 
-$cxmlDynamicSetupRequestData = \Helper\Punchout::getCxmlDynamicSetupRequestData();
-$i->sendPOST('/request?business-unit=16&store=de', $cxmlDynamicSetupRequestData);
-$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-$i->seeResponseIsXml();
-$i->canSeeXmlResponseIncludes('<Status code="200" text="OK"/>');
-$i->canSeeResponseContains('/access-token/');
-$yvesUrl = $i->getAccessUrlFromXml();
-$i->canSeeCorrectAccessUrl($yvesUrl);
+$i->switchToNetPrices();
+$i->addToCartCanonPowerShot35();
 
-
-$i->wantTo('Login by access url');
-
-$i->amOnUrl($yvesUrl);
-$i->seeCurrentUrlEquals('/en');
-
-
-$i->wantTo('Select net price mode');
-
-$i->submitForm('[action="/en/price/mode-switch"]', [
-    'price-mode' => 'NET_MODE',
-]);
-$i->canSeeOptionIsSelected('[name="price-mode"]', 'Net prices');
-
-
-$i->wantTo('Add product to cart');
-
-$i->amOnPage('/en/canon-powershot-n-35');
-$i->click('[id="add-to-cart-button"]');
 $i->see('cart');
 $prices = $i->getElement('.cart-summary .list.spacing-y .list__item');
 $discount = $prices->first()->filter('.text-right')->text();
@@ -51,11 +28,8 @@ $tax = trim($tax, '€');
 codecept_debug('Get tax from cart page: ' . $tax);
 $i->savePage('cart');
 
-$i->wantTo('Transfer cart');
+$i->cartTransfer();
 
-$i->stopFollowingRedirects();
-$i->click('[data-qa="punchout-catalog.cart.go-to-transfer"]');
-$i->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
 $data = $i->getBase64CxmlCartResponse();
 codecept_debug($data);
 $i->seeCxml($data);

@@ -11,8 +11,10 @@ $i->setupRequestCxml(
 );
 
 $i->switchToGrossPrices();
+
 $i->addToCartBundleProductSony210();
 $i->addToCartBundleProductHp211();
+
 $i->cartTransfer();
 
 $data = $i->getUrlEncodedCxmlCartResponse();
