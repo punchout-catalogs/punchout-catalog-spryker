@@ -852,6 +852,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $lineTaxTotalTransfer->setLineNumber($this->getNextLineNumber());
         $lineTaxTotalTransfer->setQuantity(1);
         $lineTaxTotalTransfer->setName('Estimated Tax');
+        $lineTaxTotalTransfer->setSku('tax');
         $lineTaxTotalTransfer->setDescription($lineTaxTotalTransfer->getName());
         $lineTaxTotalTransfer->setLongDescription($lineTaxTotalTransfer->getDescription());
 
@@ -895,7 +896,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                 $expense->getName(),
                 $this->currentLocale
             );
+            
             $lineExpenseTransfer->setName($name);
+            $lineExpenseTransfer->setSku('expense');
             $lineExpenseTransfer->setDescription($lineExpenseTransfer->getName());
             $lineExpenseTransfer->setLongDescription($lineExpenseTransfer->getDescription());
 
@@ -939,6 +942,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $lineDiscountTotalTransfer->setLineNumber($this->getNextLineNumber());
         $lineDiscountTotalTransfer->setQuantity(1);
         $lineDiscountTotalTransfer->setName('Estimated Discount');
+        $lineDiscountTotalTransfer->setSku('discount');
         $lineDiscountTotalTransfer->setDescription($lineDiscountTotalTransfer->getName());
 
         $discountDescription = $this->getDiscountDescription($quoteTransfer);
