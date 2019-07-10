@@ -41,14 +41,15 @@ $discount = $prices->first()->filter('.text-right')->text();
 $discount = trim($discount, '-');
 $discount = trim($discount);
 $discount = trim($discount, '€');
+$totalItemCount = $prices->count();
 codecept_debug('Get discount from cart page: ' . $discount);
-$grandTotal = $prices->eq(3)->filter('.float-right')->first()->text();
+$grandTotal = $prices->eq($totalItemCount - 1)->filter('.float-right')->first()->text();
 $grandTotal = trim($grandTotal, '€');
 codecept_debug('Get grand total from cart page: ' . $grandTotal);
-$tax = $prices->eq(2)->filter('.float-right')->first()->text();
+$tax = $prices->eq($totalItemCount - 2)->filter('.float-right')->first()->text();
 $tax = trim($tax, '€');
 codecept_debug('Get tax from cart page: ' . $tax);
-
+$i->savePage('cart');
 
 $i->wantTo('Transfer cart');
 

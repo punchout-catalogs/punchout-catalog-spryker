@@ -35,11 +35,12 @@ $i->click('[id="add-to-cart-button"]');
 $i->see('cart');
 $prices = $i->getElement('.cart-summary .list.spacing-y .list__item');
 $discount = $prices->first()->filter('.text-right')->text();
+$totalItemCount = $prices->count();
 $discount = trim($discount, '-');
 $discount = trim($discount);
 $discount = trim($discount, '€');
 codecept_debug('Get discount from cart page: ' . $discount);
-$tax = $prices->eq(2)->filter('.float-right')->first()->text();
+$tax = $prices->eq($totalItemCount - 2)->filter('.float-right')->first()->text();
 $tax = trim($tax, '€');
 codecept_debug('Get tax from cart page: ' . $tax);
 
@@ -69,7 +70,7 @@ $i->canSeeElement('input', [
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-PRICE[3]',
-    'value' => '-'.$discount,
+    'value' => '-' . $discount,
 ]);
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-CURRENCY[3]',
