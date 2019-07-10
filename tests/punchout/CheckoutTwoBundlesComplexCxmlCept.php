@@ -24,43 +24,54 @@ $i->wantTo('check two bundle products');
 
 $xml = simplexml_load_string($data);
 
-/** @var \SimpleXMLElement $node1 */
-$b1 = current($xml->xpath('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="210_123"]/../..'));
-$b1Attrs = (array)$b1->attributes();
-$b1Attrs = $b1Attrs['@attributes'];
+$bundles = [
+    [
+        'idx' => '1',
+        'sku' => '210_123',
+        'price' => '1000',
+        'name' => 'Sony Bundle',
+    ],
+    [
+        'idx' => '2',
+        'sku' => '211_123',
+        'price' => '705',
+        'name' => 'HP Bundle',
+    ],
+];
 
-$i->assertEquals('1', $b1Attrs['quantity']);
-$i->assertEquals('composite', $b1Attrs['itemType']);
-$i->assertEquals('groupLevel', $b1Attrs['compositeItemType']);
-
-/** @var \SimpleXMLElement $node2 */
-$b2 = current($xml->xpath('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="211_123"]/../..'));
-$b2Attrs = (array)$b2->attributes();
-$b2Attrs = $b2Attrs['@attributes'];
-
-$i->assertEquals('1', $b2Attrs['quantity']);
-$i->assertEquals('composite', $b2Attrs['itemType']);
-$i->assertEquals('groupLevel', $b2Attrs['compositeItemType']);
-
-$i->canSeeCxmlContains($data, 'parentLineNumber="'.$b1Attrs['lineNumber'].'" itemType="item"');
-$i->canSeeCxmlContains($data, 'parentLineNumber="'.$b2Attrs['lineNumber'].'" itemType="item"');
-
-$i->wantTo('check children products');
-
-$b1Children = $xml->xpath('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="'.$b1Attrs['lineNumber'].'"]');
-$b2Children = $xml->xpath('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="'.$b2Attrs['lineNumber'].'"]');
-
-$i->assertNotEmpty($b1Children);
-$i->assertNotEmpty($b2Children);
-
-foreach ([$b1Children, $b2Children] as $idx => $children) {
-    $i->wantTo('check children products of the product #' . $idx);
+foreach ($bundles as $bundle) {
+    $i->wantTo('assert bundle product SKU: ' . $bundle['sku']);
+    $idx = $bundle['idx'];
     
-    foreach ($children as $item) {
-        $itemAttrs = (array)$item->attributes();
-        $itemAttrs = $itemAttrs['@attributes'];
+    /** @var \SimpleXMLElement $el */
+    $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="%s"]/../..', $bundle['sku']);
+    $el = current($xml->xpath($xpath));
+    $i->assertNotEmpty($el);
+    $i->assertNotEmptyCxmlElementBasicElements($el);
+    
+    $i->assertEquals($idx, $i->getAttributeValue($el, 'lineNumber'));
+    $i->assertEquals('1', $i->getAttributeValue($el, 'quantity'));
+    $i->assertEquals('composite', $i->getAttributeValue($el, 'itemType'));
+    $i->assertEquals('groupLevel', $i->getAttributeValue($el, 'compositeItemType'));
+    
+    $i->assertEquals($bundle['name'],$i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
+    $i->assertEquals($bundle['price'],$i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+    
+    $lineNumber = $i->getAttributeValue($el, 'lineNumber');
+    $i->canSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');
+    
+    $childrenXpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="%s"]', $lineNumber);
+    $children = $xml->xpath($childrenXpath);
+    $i->assertNotEmpty($children);
+    
+    $i->wantTo('check children products of the product SKU: ' . $bundle['sku']);
+    
+    /** @var \SimpleXMLElement $childEl */
+    foreach ($children as $childIdx => $childEl) {
+        $i->wantTo('assert bundle product SKU: ' . $bundle['sku'] . ' child SKU #' . $childIdx);
         
-        $i->assertNotEmpty($itemAttrs['quantity']);
-        $i->assertEquals('item', $itemAttrs['itemType']);
+        $i->assertNotEmpty($i->getAttributeValue($childEl, 'quantity'));
+        $i->assertEquals('item', $i->getAttributeValue($childEl, 'itemType'));
+        $i->assertNotEmptyCxmlElementBasicElements($childEl);
     }
 }

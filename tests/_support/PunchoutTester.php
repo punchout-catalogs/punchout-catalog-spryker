@@ -131,4 +131,43 @@ class PunchoutTester extends \Codeception\Actor
         }
         return $data;
     }
+    
+    public function getAttributeValue(\SimpleXMLElement $el, string $attr)
+    {
+        $attrs = (array)$el->attributes();
+        return isset($attrs['@attributes'][$attr]) ? $attrs['@attributes'][$attr] : null;
+    }
+    
+    public function getXpathValue(\SimpleXMLElement $el, string $xpath)
+    {
+        return current($el->xpath($xpath));
+    }
+    
+    public function assertNotEmptyOciElementBasicElements(array $el)
+    {
+        $this->assertNotEmpty($el['QUANTITY']);
+        $this->assertNotEmpty($el['VENDORMAT']);
+        $this->assertNotEmpty($el['DESCRIPTION']);
+        $this->assertNotEmpty($el['PRICE']);
+        $this->assertNotEmpty($el['UNIT']);
+        $this->assertNotEmpty($el['EXT_PRODUCT_ID']);
+        $this->assertNotEmpty($el['CURRENCY']);
+        $this->assertNotEmpty($el['LONGTEXT']);
+        $this->assertNotEmpty($el['VENDOR']);
+        return $this;
+    }
+    
+    public function assertNotEmptyCxmlElementBasicElements(\SimpleXMLElement $el)
+    {
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/Description[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/UnitOfMeasure[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/SupplierID[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/BuyerPartID[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/ManufacturerPartID[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemID[1]/SupplierPartAuxiliaryID[1]'));
+        $this->assertNotEmpty($this->getXpathValue($el, 'ItemID[1]/SupplierPartID[1]'));
+        return $this;
+    }
 }
