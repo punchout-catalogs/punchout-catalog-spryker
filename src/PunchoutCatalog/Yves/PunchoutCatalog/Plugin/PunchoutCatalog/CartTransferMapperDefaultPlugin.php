@@ -452,10 +452,10 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
      *
      * @return string
      */
-    protected function getQuoteItemInternalId(QuoteItemTransfer $quoteItemTransfer): string
+    protected function getQuoteItemInternalId(QuoteItemTransfer $quoteItemTransfer = null): string
     {
         $internalId = md5(
-            json_encode($quoteItemTransfer->toArray())
+            json_encode($quoteItemTransfer ? $quoteItemTransfer->toArray() : null)
             . '_' . microtime(true)
             . '_' . uniqid('', true)
         );
@@ -843,13 +843,17 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         }
         $documentCartTransfer = $cartRequestTransfer->getCart();
         $lineTaxTotalTransfer = new PunchoutCatalogDocumentCartItemTransfer();
+        
+        $lineTaxTotalTransfer->setInternalId($this->getQuoteItemInternalId());
+        $lineTaxTotalTransfer->setSupplierId($this->getDefaultSupplierId());
+        $lineTaxTotalTransfer->setLocale($this->toLang($this->currentLocale));
+        
         $lineTaxTotalTransfer->setLineNumber($this->getNextLineNumber());
         $lineTaxTotalTransfer->setQuantity(1);
         $lineTaxTotalTransfer->setName('Estimated Tax');
         $lineTaxTotalTransfer->setDescription($lineTaxTotalTransfer->getName());
         $lineTaxTotalTransfer->setLongDescription($lineTaxTotalTransfer->getDescription());
 
-        $lineTaxTotalTransfer->setSupplierId($this->getDefaultSupplierId());
 
         if ($quoteTransfer->getCurrency() !== null) {
             $lineTaxTotalTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
@@ -882,11 +886,15 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         }
         $documentCartTransfer = $cartRequestTransfer->getCart();
         $lineDiscountTotalTransfer = new PunchoutCatalogDocumentCartItemTransfer();
+    
+        $lineDiscountTotalTransfer->setInternalId($this->getQuoteItemInternalId());
+        $lineDiscountTotalTransfer->setSupplierId($this->getDefaultSupplierId());
+        $lineDiscountTotalTransfer->setLocale($this->toLang($this->currentLocale));
+        
         $lineDiscountTotalTransfer->setLineNumber($this->getNextLineNumber());
         $lineDiscountTotalTransfer->setQuantity(1);
         $lineDiscountTotalTransfer->setName('Estimated Discount');
         $lineDiscountTotalTransfer->setDescription($lineDiscountTotalTransfer->getName());
-        $lineDiscountTotalTransfer->setSupplierId($this->getDefaultSupplierId());
 
         $discountDescription = $this->getDiscountDescription($quoteTransfer);
         if ($discountDescription) {
