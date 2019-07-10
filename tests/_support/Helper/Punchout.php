@@ -139,7 +139,20 @@ XML_DATA;
         $value = $structure->matchElement('#punchoutCartForm [name="cxml-base64"]')->getAttribute('value');
         return base64_decode($value);
     }
-
+    
+    /**
+     * Retrieve html content from web page
+     *
+     * @return bool|string
+     * @throws \Codeception\Exception\ModuleException
+     */
+    public function getHtmlResponse()
+    {
+        /** @var InnerBrowser $module */
+        $module = $this->getModule('PhpBrowser');
+        return $module->_getResponseContent();
+    }
+    
     /**
      * Retrieve cxml access url from web page
      *

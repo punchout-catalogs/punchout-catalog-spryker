@@ -100,4 +100,35 @@ class PunchoutTester extends \Codeception\Actor
         $this->click('[data-qa="punchout-catalog.cart.go-to-transfer"]');
         $this->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
     }
+    
+    public function getOciFormElements()
+    {
+        $data = [];
+        $elements = $this->getElement('input');
+        
+        /** @var \DOMElement $element */
+        foreach ($elements as $element) {
+            $name = $element->getAttribute('name');
+            $value = $element->getAttribute('value');
+
+            if (strpos($name, 'NEW_ITEM-LONGTEXT') === 0) {
+                preg_match('~NEW_ITEM-(.*)_(\d+):132\[\]~', $name, $matches);
+            } else {
+                preg_match('~NEW_ITEM-(.*)\[(\d+)\]~', $name, $matches);
+            }
+            
+            $data[$matches[2]][$matches[1]] = $value;
+        }
+
+        return $data;
+    }
+    
+    public function toOciElementsTree(array $elements)
+    {
+        $data = [];
+        foreach ($elements as $idx => $el) {
+            $data[$el['PARENT_ID']][$idx] = $el;
+        }
+        return $data;
+    }
 }
