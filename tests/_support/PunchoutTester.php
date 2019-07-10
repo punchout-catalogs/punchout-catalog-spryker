@@ -20,10 +20,6 @@ class PunchoutTester extends \Codeception\Actor
 {
     use _generated\PunchoutTesterActions;
     
-    /**
-     * Define custom actions here
-     */
-    
     public function setupRequestCxml($cxmlDynamicSetupRequestData)
     {
         $this->haveHttpHeader('content-type', 'text/xml');
@@ -46,6 +42,21 @@ class PunchoutTester extends \Codeception\Actor
         return $this;
     }
     
+    public function setupRequestOci(array $ociSetupRequestData)
+    {
+        $this->sendPOST('/request?business-unit=16&store=de', $ociSetupRequestData);
+        $this->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
+    
+        $yvesUrl = $this->getAccessUrlFromOci();
+        $this->canSeeCorrectAccessUrl($yvesUrl);
+    
+        $this->wantTo('Login by access url');
+    
+        $this->amOnUrl($yvesUrl);
+        
+        $this->seeCurrentUrlEquals('/en');
+    }
+    
     public function switchToGrossPrices()
     {
         $this->wantTo('Select gross mode');
@@ -53,6 +64,15 @@ class PunchoutTester extends \Codeception\Actor
         $this->submitForm('[action="/en/price/mode-switch"]', ['price-mode' => 'GROSS_MODE']);
         
         $this->canSeeOptionIsSelected('[name="price-mode"]', 'Gross prices');
+    }
+    
+    public function switchToNetPrices()
+    {
+        $this->wantTo('Select net price mode');
+    
+        $this->submitForm('[action="/en/price/mode-switch"]', ['price-mode' => 'NET_MODE']);
+        
+        $this->canSeeOptionIsSelected('[name="price-mode"]', 'Net prices');
     }
     
     public function addToCartBundleProductSony210()
