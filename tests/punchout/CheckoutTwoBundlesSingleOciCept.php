@@ -56,7 +56,7 @@ foreach ($bundles as $bundle) {
     $i->assertTrue(!isset($tree[$idx]));
 }
 
-$i->wantTo('check two all products exists in OCI Order Message and all are simple items');
+$i->wantTo('check all products exists in OCI Order Message and all are simple items');
 $i->assertNotEmpty($elements);
 
 $skus = array_column($bundles, 'sku');

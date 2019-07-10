@@ -69,7 +69,7 @@ foreach ($bundles as $bundle) {
     $i->assertEmpty($children);
 }
 
-$i->wantTo('check two all products exists in cXML Order Message and all are simple items');
+$i->wantTo('check all products exists in cXML Order Message and all are simple items');
 
 $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn');
 $elements = $xml->xpath($xpath);
