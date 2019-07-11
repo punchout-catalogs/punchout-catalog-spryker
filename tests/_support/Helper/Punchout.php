@@ -24,7 +24,8 @@ class Punchout extends \Codeception\Module
     
     const PRODUCT_PU_ASUS_HDMI_217_PACK_RING_500 = 'Asus-HDMI-HDMI-215?attribute[packaging_unit]=Ring+(500m)';
     const PRODUCT_PU_SCREW_218_PACK_GIFTBOX = 'Screw-218?attribute[packaging_unit]=Giftbox';
-    
+    const PRODUCT_PU_SCREW_218_PACK_MIXED = 'Screw-218?attribute[packaging_unit]=Mixed';
+
     /**
      * @param $selector
      * @return \Symfony\Component\DomCrawler\Crawler

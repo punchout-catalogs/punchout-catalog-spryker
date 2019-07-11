@@ -9,9 +9,9 @@ $i->setupRequestCxml(
     \Helper\Punchout::getCxmlDynamicSetupRequestData()
 );
 
-$sku = '218_1234';
-
 $i->switchToGrossPrices();
+
+$sku = '218_1234';
 
 $i->addProductToCartWithOptions(
     \Helper\Punchout::PRODUCT_PU_SCREW_218_PACK_GIFTBOX,
@@ -64,13 +64,13 @@ foreach ($bundles as $bundle) {
     $i->assertNotEmptyCxmlElementBasicElements($el);
     
     $i->assertEquals($idx, $i->getAttributeValue($el, 'lineNumber'));
-    $i->assertEquals($bundle['quantity'], $i->getAttributeValue($el, 'quantity'));
+    $i->assertEquals($bundle['quantity'], $i->getAttributeValue($el, 'quantity'));//
     $i->assertEquals('composite', $i->getAttributeValue($el, 'itemType'));
     $i->assertEquals('groupLevel', $i->getAttributeValue($el, 'compositeItemType'));
     $i->assertEmpty($i->getAttributeValue($el, 'parentLineNumber'));
     
-    $i->assertEquals($bundle['name'],$i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
-    $i->assertEquals($bundle['price'],$i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+    $i->assertEquals($bundle['name'],$i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));//
+    $i->assertEquals($bundle['price'],$i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));//
     
     $lineNumber = $i->getAttributeValue($el, 'lineNumber');
     $i->canSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');
@@ -88,7 +88,7 @@ foreach ($bundles as $bundle) {
         $i->wantTo('assert bundle product SKU: ' . $bundle['sku'] . ' child SKU #' . $childIdx);
         
         $i->assertEquals('item', $i->getAttributeValue($childEl, 'itemType'));
-        $i->assertEquals($amount, $i->getAttributeValue($childEl, 'quantity'));
+        $i->assertEquals($amount, $i->getAttributeValue($childEl, 'quantity'));//
         $i->assertNotEmptyCxmlElementBasicElements($childEl);
     }
 }
