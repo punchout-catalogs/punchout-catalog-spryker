@@ -11,8 +11,8 @@ $i->setupRequestOci(
 
 $i->switchToGrossPrices();
 
-$i->addToCartBundleProductSony210();
-$i->addToCartBundleProductHp211();
+$i->addProductToCart(\Helper\Punchout::PRODUCT_BUNDLE_SONY_210);
+$i->addProductToCart(\Helper\Punchout::PRODUCT_BUNDLE_HP_211);
 
 $i->cartTransfer();
 

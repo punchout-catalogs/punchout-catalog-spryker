@@ -9,7 +9,7 @@ $i->setupRequestCxml(
     \Helper\Punchout::getCxmlDynamicSetupRequestData()
 );
 
-$i->addProductToCart('/en/Asus-HDMI-HDMI-215?attribute%5Bpackaging_unit%5D=Ring+%28500m%29');
+$i->addProductToCart(\Helper\Punchout::PRODUCT_PU_ASUS_HDMI_217_PACK_RING_500);
 $i->see('cart');
 
 $quantity = $i->getElement('[data-qa="quantity-input"]')->last()->attr('value');

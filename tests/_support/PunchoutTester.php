@@ -84,34 +84,16 @@ class PunchoutTester extends \Codeception\Actor
         $this->canSeeOptionIsSelected('[name="currency-iso-code"]', 'Swiss Franc');
     }
     
-    public function addProductToCart($url)
+    public function addProductToCart($urlKey, $lang = 'en')
     {
+        $url = "/$lang/$urlKey";
+        
         $this->wantTo('Add product to cart: ' . $url);
         $this->amOnPage($url);
         $this->click('[id="add-to-cart-button"]');
         return $this;
     }
-    
-    public function addToCartBundleProductSony210()
-    {
-        return $this->addProductToCart('/en/sony-bundle-210');
-    }
-    
-    public function addToCartBundleProductHp211()
-    {
-        return $this->addProductToCart('/en/hp-bundle-211');
-    }
-    
-    public function addToCartCanonIxus180()
-    {
-        return $this->addProductToCart('/en/canon-ixus-180-10');
-    }
-    
-    public function addToCartCanonPowerShot35()
-    {
-        return $this->addProductToCart('/en/canon-powershot-n-35');
-    }
-    
+
     public function cartTransfer()
     {
         $this->see('cart');

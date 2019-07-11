@@ -9,7 +9,7 @@ $i->setupRequestOci(
     \Helper\Punchout::getOciSetupRequestData()
 );
 
-$i->addToCartCanonIxus180();
+$i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_CANON_IXUS_180);
 $i->switchToGrossPrices();
 $i->switchCurrencySwissFranc();
 

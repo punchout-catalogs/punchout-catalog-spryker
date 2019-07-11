@@ -14,6 +14,14 @@ class Punchout extends \Codeception\Module
     const BUSINESS_UNIT_USER_1 = 16;
     const BUSINESS_UNIT_USER_2 = 19;
     
+    const PRODUCT_BUNDLE_SONY_210 = 'sony-bundle-210';
+    const PRODUCT_BUNDLE_HP_211 = 'hp-bundle-211';
+    
+    const PRODUCT_SIMPLE_CANON_IXUS_180 = 'canon-ixus-180-10';
+    const PRODUCT_SIMPLE_CANON_POWERSHOT_35 = 'canon-powershot-n-35';
+    
+    const PRODUCT_PU_ASUS_HDMI_217_PACK_RING_500 = 'Asus-HDMI-HDMI-215?attribute[packaging_unit]=Ring+(500m)';
+    
     /**
      * @param $selector
      * @return \Symfony\Component\DomCrawler\Crawler

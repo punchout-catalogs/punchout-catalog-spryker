@@ -10,7 +10,7 @@ $i->setupRequestOci(
 );
 
 $i->switchToNetPrices();
-$i->addToCartCanonPowerShot35();
+$i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_CANON_POWERSHOT_35);
 $i->see('cart');
 
 $prices = $i->getElement('.cart-summary .list.spacing-y .list__item');
