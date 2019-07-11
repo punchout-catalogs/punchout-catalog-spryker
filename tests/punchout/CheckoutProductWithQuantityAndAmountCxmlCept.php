@@ -9,18 +9,22 @@ $i->setupRequestCxml(
     \Helper\Punchout::getCxmlDynamicSetupRequestData()
 );
 
-$i->wantTo('Add product to cart');
+$sku = '218_1234';
 
-$i->amOnPage('/en/Screw-218?attribute%5Bpackaging_unit%5D=Giftbox');
+$i->switchToGrossPrices();
 
-$i->submitForm('[action="/en/cart/add/218_1234"]', [
-    'sales-unit-quantity' => 0.01,
-    'quantity' => 2,
-    'id-product-measurement-sales-unit' => 21,
-    'amount-sales-unit' => ['218_1234' => 1000],
-    'amount' => ['218_1234' => 400],
-    'amount-id-product-measurement-sales-unit' => ['218_1234' => 12]
-]);
+$i->addProductToCartWithOptions(
+    \Helper\Punchout::PRODUCT_PU_SCREW_218_PACK_GIFTBOX,
+    $sku,
+    [
+        'sales-unit-quantity' => 0.01,
+        'quantity' => 2,
+        'id-product-measurement-sales-unit' => 21,
+        'amount-sales-unit' => [$sku => 1000],
+        'amount' => [$sku => 400],
+        'amount-id-product-measurement-sales-unit' => [$sku => 12]
+    ]
+);
 
 $i->see('cart');
 
@@ -30,11 +34,7 @@ codecept_debug('Get product quantity from cart page: ' . $quantity);
 $amount = $i->getElement('.packaging-unit-cart .packaging-unit-cart__value')->last()->text();
 codecept_debug('Get product amount from cart page: ' . $amount);
 
-$i->wantTo('Transfer cart');
-
-$i->stopFollowingRedirects();
-$i->click('[data-qa="punchout-catalog.cart.go-to-transfer"]');
-$i->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
+$i->cartTransfer();
 
 $data = $i->getBase64CxmlCartResponse();
 
@@ -42,3 +42,57 @@ $i->seeCxml($data);
 
 $i->canSeeCxmlContains($data, "<ItemIn lineNumber=\"1\" itemType=\"composite\" compositeItemType=\"groupLevel\" quantity=\"$quantity\">");
 $i->canSeeCxmlContains($data, "<ItemIn lineNumber=\"2\" parentLineNumber=\"1\" itemType=\"item\" quantity=\"$amount\">");
+
+
+$xml = simplexml_load_string($data);
+$i->assertTrue($xml instanceof \SimpleXMLElement);
+
+$bundles = [
+    [
+        'idx' => '1',
+        'sku' => $sku,
+        'price' => '65',
+        'name' => 'Giftbox',
+        'quantity' => $quantity,
+    ],
+];
+
+foreach ($bundles as $bundle) {
+    $i->wantTo('assert bundle product SKU: ' . $bundle['sku']);
+    $idx = $bundle['idx'];
+    
+    /** @var \SimpleXMLElement $el */
+    $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="%s"]/../..', $bundle['sku']);
+    $el = current($xml->xpath($xpath));
+    $i->assertNotEmpty($el);
+    $i->assertNotEmptyCxmlElementBasicElements($el);
+    
+    $i->assertEquals($idx, $i->getAttributeValue($el, 'lineNumber'));
+    $i->assertEquals($bundle['quantity'], $i->getAttributeValue($el, 'quantity'));
+    $i->assertEquals('composite', $i->getAttributeValue($el, 'itemType'));
+    $i->assertEquals('groupLevel', $i->getAttributeValue($el, 'compositeItemType'));
+    $i->assertEmpty($i->getAttributeValue($el, 'parentLineNumber'));
+    
+    $i->assertEquals($bundle['name'],$i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
+    $i->assertEquals($bundle['price'],$i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+    
+    $lineNumber = $i->getAttributeValue($el, 'lineNumber');
+    $i->canSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');
+    
+    $childrenXpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="%s"]', $lineNumber);
+    $children = $xml->xpath($childrenXpath);
+    
+    $i->wantTo('check number children products is 1 of the product SKU: ' . $bundle['sku']);
+    $i->assertTrue(count($children) == 1);
+    
+    $i->wantTo('check children products of the product SKU: ' . $bundle['sku']);
+    
+    /** @var \SimpleXMLElement $childEl */
+    foreach ($children as $childIdx => $childEl) {
+        $i->wantTo('assert bundle product SKU: ' . $bundle['sku'] . ' child SKU #' . $childIdx);
+        
+        $i->assertEquals('item', $i->getAttributeValue($childEl, 'itemType'));
+        $i->assertEquals($amount, $i->getAttributeValue($childEl, 'quantity'));
+        $i->assertNotEmptyCxmlElementBasicElements($childEl);
+    }
+}

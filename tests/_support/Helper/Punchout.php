@@ -23,6 +23,7 @@ class Punchout extends \Codeception\Module
     const PRODUCT_SIMPLE_CANON_POWERSHOT_35 = 'canon-powershot-n-35';
     
     const PRODUCT_PU_ASUS_HDMI_217_PACK_RING_500 = 'Asus-HDMI-HDMI-215?attribute[packaging_unit]=Ring+(500m)';
+    const PRODUCT_PU_SCREW_218_PACK_GIFTBOX = 'Screw-218?attribute[packaging_unit]=Giftbox';
     
     /**
      * @param $selector

@@ -55,24 +55,27 @@ class PunchoutTester extends \Codeception\Actor
         $this->amOnUrl($yvesUrl);
         
         $this->seeCurrentUrlEquals('/en');
+        return $this;
     }
     
     public function switchToGrossPrices()
     {
         $this->wantTo('Select gross mode');
-        
-        $this->submitForm('[action="/en/price/mode-switch"]', ['price-mode' => 'GROSS_MODE']);
-        
+        $this->submitForm('[action="/en/price/mode-switch"]', [
+            'price-mode' => 'GROSS_MODE'
+        ]);
         $this->canSeeOptionIsSelected('[name="price-mode"]', 'Gross prices');
+        return $this;
     }
     
     public function switchToNetPrices()
     {
         $this->wantTo('Select net price mode');
-    
-        $this->submitForm('[action="/en/price/mode-switch"]', ['price-mode' => 'NET_MODE']);
-        
+        $this->submitForm('[action="/en/price/mode-switch"]', [
+            'price-mode' => 'NET_MODE'
+        ]);
         $this->canSeeOptionIsSelected('[name="price-mode"]', 'Net prices');
+        return $this;
     }
     
     public function switchCurrencySwissFranc()
@@ -82,6 +85,7 @@ class PunchoutTester extends \Codeception\Actor
             'currency-iso-code' => 'CHF',
         ]);
         $this->canSeeOptionIsSelected('[name="currency-iso-code"]', 'Swiss Franc');
+        return $this;
     }
     
     public function addProductToCart($urlKey, $lang = 'en')
@@ -93,16 +97,25 @@ class PunchoutTester extends \Codeception\Actor
         $this->click('[id="add-to-cart-button"]');
         return $this;
     }
-
+    
+    public function addProductToCartWithOptions($urlKey, $sku, array $options, $lang = 'en')
+    {
+        $url = "/$lang/$urlKey";
+        
+        $this->wantTo('Add product to cart: ' . $url);
+        $this->amOnPage($url);
+        $this->submitForm('[action="/'.$lang.'/cart/add/'.$sku.'"]', $options);
+        return $this;
+    }
+    
     public function cartTransfer()
     {
         $this->see('cart');
-    
         $this->wantTo('Transfer cart');
-    
         $this->stopFollowingRedirects();
         $this->click('[data-qa="punchout-catalog.cart.go-to-transfer"]');
         $this->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
+        return $this;
     }
     
     public function getOciFormElements()
@@ -152,7 +165,7 @@ class PunchoutTester extends \Codeception\Actor
     {
         $this->assertNotEmpty($el['QUANTITY']);
         $this->assertNotEmpty($el['DESCRIPTION']);
-        $this->assertNotEmpty($el['PRICE']);
+        $this->assertTrue(null !== $el['PRICE']);
         $this->assertNotEmpty($el['UNIT']);
         $this->assertNotEmpty($el['EXT_PRODUCT_ID']);
         $this->assertNotEmpty($el['CURRENCY']);
@@ -166,7 +179,7 @@ class PunchoutTester extends \Codeception\Actor
     {
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/Description[1]'));
-        $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+        $this->assertTrue(null !== $this->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/UnitOfMeasure[1]'));
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/SupplierID[1]'));
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemDetail[1]/BuyerPartID[1]'));
