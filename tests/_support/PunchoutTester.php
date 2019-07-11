@@ -204,6 +204,12 @@ class PunchoutTester extends \Codeception\Actor
         return current($xml->xpath($xpath));
     }
     
+    public function getCxmlItemsByParentLineNumber(\SimpleXMLElement $xml, $lineNumber)
+    {
+        $childrenXpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="%s"]', $lineNumber);
+        return $xml->xpath($childrenXpath);
+    }
+    
     public function assertCxmlProductItemBundleSingleSpecific(\SimpleXMLElement $el)
     {
         $this->assertEmpty($this->getAttributeValue($el, 'itemType'));

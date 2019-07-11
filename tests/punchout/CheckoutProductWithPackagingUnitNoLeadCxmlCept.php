@@ -57,8 +57,7 @@ foreach ($products as $product) {
     $i->canNotSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');
     
     $i->wantTo('check there is not any child product of the product SKU: ' . $product['sku']);
-    $childrenXpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="%s"]', $lineNumber);
-    $children = $xml->xpath($childrenXpath);
+    $children = $i->getCxmlItemsByParentLineNumber($xml, $lineNumber);
     $i->assertEmpty($children);
 }
 

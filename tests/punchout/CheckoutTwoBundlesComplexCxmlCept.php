@@ -62,8 +62,7 @@ foreach ($products as $product) {
     $lineNumber = $i->getAttributeValue($el, 'lineNumber');
     $i->canSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');
     
-    $childrenXpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="%s"]', $lineNumber);
-    $children = $xml->xpath($childrenXpath);
+    $children = $i->getCxmlItemsByParentLineNumber($xml, $lineNumber);
     $i->assertNotEmpty($children);
     
     $i->wantTo('check children products of the product SKU: ' . $product['sku']);
