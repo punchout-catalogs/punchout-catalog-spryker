@@ -56,11 +56,11 @@ foreach ($products as $product) {
     $i->assertNotEmptyCxmlElementBasicElements($el);
 
     $i->assertEquals($idx, $i->getAttributeValue($el, 'lineNumber'));
-    $i->assertEquals($product['quantity'], $i->getAttributeValue($el, 'quantity'));
     $i->assertEmpty($i->getAttributeValue($el, 'itemType'));
     $i->assertEmpty($i->getAttributeValue($el, 'compositeItemType'));
     $i->assertEmpty($i->getAttributeValue($el, 'parentLineNumber'));
-
+    
+    $i->assertEquals($product['quantity'], $i->getAttributeValue($el, 'quantity'));
     $i->assertEquals($product['name'], $i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
     $i->assertEquals($product['price'], $i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
     $i->assertEquals($product['currency'], $i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]/@currency'));

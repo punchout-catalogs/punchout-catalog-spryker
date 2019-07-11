@@ -9,16 +9,22 @@ $i->setupRequestCxml(
     \Helper\Punchout::getCxmlDynamicSetupRequestData()
 );
 
-$i->switchToGrossPrices();
-$i->addProductToCart(\Helper\Punchout::PRODUCT_PU_ASUS_HDMI_217_PACK_RING_500);
-$i->see('cart');
+$sku = '218_1233';
+$quantity = 2;
 
-$quantity = $i->getElement('[data-qa="quantity-input"]')->last()->attr('value');
-codecept_debug('Get product quantity from cart page: ' . $quantity);
+$i->switchToGrossPrices();
+
+$i->addProductToCartWithOptions(
+    \Helper\Punchout::PRODUCT_PU_SCREW_218_PACK_MIXED,
+    $sku,
+    [
+        'quantity' => $quantity,
+    ]
+);
 
 $i->cartTransfer();
-
 $data = $i->getBase64CxmlCartResponse();
+
 $i->seeCxml($data);
 
 $xml = simplexml_load_string($data);
@@ -27,9 +33,9 @@ $i->assertTrue($xml instanceof \SimpleXMLElement);
 $products = [
     [
         'idx' => '1',
-        'sku' => '215_124',
-        'price' => '12.5',
-        'name' => 'ASUS HDMI-HDMI Red',
+        'sku' => '218_1233',
+        'price' => '32.5',
+        'name' => 'Mixed Screws boxes',
         'currency' => 'EUR',
         'quantity' => $quantity,
         'uom' => 'EA',

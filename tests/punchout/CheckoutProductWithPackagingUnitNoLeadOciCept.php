@@ -5,18 +5,26 @@ $i = new PunchoutTester($scenario);
 
 $i->wantTo('perform correct oci setup request and see result');
 $i->setupRequestOci(
-    \Helper\Punchout::BUSINESS_UNIT_USER_2,
-    \Helper\Punchout::getOciSetupRequestData('user_2', 'user_2_pass')
+    \Helper\Punchout::BUSINESS_UNIT_USER_1,
+    \Helper\Punchout::getOciSetupRequestData()
 );
 
 $i->switchToGrossPrices();
 
-$i->addProductToCart(\Helper\Punchout::PRODUCT_BUNDLE_SONY_210);
-$i->addProductToCart(\Helper\Punchout::PRODUCT_BUNDLE_HP_211);
+$sku = '218_1233';
+$quantity = 2;
+
+$i->switchToGrossPrices();
+
+$i->addProductToCartWithOptions(
+    \Helper\Punchout::PRODUCT_PU_SCREW_218_PACK_MIXED,
+    $sku,
+    [
+        'quantity' => $quantity,
+    ]
+);
 
 $i->cartTransfer();
-
-$i->wantTo('check two bundle products exists in OCI Order Message');
 
 $elements = $i->getOciFormElements();
 $tree = $i->toOciElementsTree($elements);
@@ -26,24 +34,17 @@ $i->assertNotEmpty($elements);
 $products = [
     [
         'idx' => '1',
-        'sku' => '210_123',
-        'price' => '1000',
-        'name' => 'Sony Bundle',
-        'quantity' => 1,
-        'uom' => 'EA',
-    ],
-    [
-        'idx' => '2',
-        'sku' => '211_123',
-        'price' => '705',
-        'name' => 'HP Bundle',
-        'quantity' => 1,
+        'sku' => '218_1233',
+        'price' => '32.5',
+        'name' => 'Mixed Screws boxes',
+        'currency' => 'EUR',
+        'quantity' => $quantity,
         'uom' => 'EA',
     ],
 ];
 
 foreach ($products as $product) {
-    $i->wantTo('assert bundle product SKU: ' . $product['sku']);
+    $i->wantTo('assert product product SKU: ' . $product['sku']);
     $idx = $product['idx'];
     
     $i->assertNotEmpty($elements[$idx]);

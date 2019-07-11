@@ -43,19 +43,20 @@ $tree = $i->toOciElementsTree($elements);
 
 $i->assertNotEmpty($elements);
 
-$bundles = [
+$products = [
     [
         'idx' => '1',
         'sku' => $sku,
         'price' => '65',
         'name' => 'Giftbox',
         'quantity' => $quantity,
+        'uom' => 'EA',
     ],
 ];
 
-foreach ($bundles as $bundle) {
-    $i->wantTo('assert bundle product SKU: ' . $bundle['sku']);
-    $idx = $bundle['idx'];
+foreach ($products as $product) {
+    $i->wantTo('assert bundle product SKU: ' . $product['sku']);
+    $idx = $product['idx'];
     
     $i->assertNotEmpty($elements[$idx]);
     $i->assertNotEmptyOciElementBasicElements($elements[$idx]);
@@ -65,18 +66,18 @@ foreach ($bundles as $bundle) {
     $i->assertNotEmpty($elements[$idx]['ITEM_TYPE']);
     $i->assertEquals('R', $elements[$idx]['ITEM_TYPE']);
     
-    $i->assertEquals($bundle['quantity'], $elements[$idx]['QUANTITY']);//
-    $i->assertEquals($bundle['sku'], $elements[$idx]['VENDORMAT']);//
-    $i->assertEquals($bundle['name'], $elements[$idx]['DESCRIPTION']);//
-    $i->assertEquals($bundle['price'], $elements[$idx]['PRICE']);//
-    $i->assertEquals('EA', $elements[$idx]['UNIT']);
+    $i->assertEquals($product['quantity'], $elements[$idx]['QUANTITY']);
+    $i->assertEquals($product['sku'], $elements[$idx]['VENDORMAT']);
+    $i->assertEquals($product['name'], $elements[$idx]['DESCRIPTION']);
+    $i->assertEquals($product['price'], $elements[$idx]['PRICE']);
+    $i->assertEquals($product['uom'], $elements[$idx]['UNIT']);
     
-    $i->wantTo('check children products of the product SKU: ' . $bundle['sku']);
+    $i->wantTo('check children products of the product SKU: ' . $product['sku']);
     
     $i->assertNotEmpty($tree[$idx]);
     
     foreach ($tree[$idx] as $childIdx => $child) {
-        $i->wantTo('assert bundle product SKU: ' . $bundle['sku'] . ' child SKU #' . $childIdx);
+        $i->wantTo('assert bundle product SKU: ' . $product['sku'] . ' child SKU #' . $childIdx);
         
         $i->assertNotEmpty($child['PARENT_ID']);
         $i->assertEquals($idx, $child['PARENT_ID']);
