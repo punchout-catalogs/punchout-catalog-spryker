@@ -1,8 +1,8 @@
 <?php
 
 /**
- * MIT License
- * For full license information, please view the LICENSE file that was distributed with this source code.
+ * Copyright © 2018-present PunchOut Catalogs LLC. All rights reserved.
+ * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
  */
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\DataImport;
