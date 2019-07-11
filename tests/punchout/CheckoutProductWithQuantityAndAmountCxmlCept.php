@@ -40,10 +40,6 @@ $data = $i->getBase64CxmlCartResponse();
 
 $i->seeCxml($data);
 
-$i->canSeeCxmlContains($data, "<ItemIn lineNumber=\"1\" itemType=\"composite\" compositeItemType=\"groupLevel\" quantity=\"$quantity\">");
-$i->canSeeCxmlContains($data, "<ItemIn lineNumber=\"2\" parentLineNumber=\"1\" itemType=\"item\" quantity=\"$amount\">");
-
-
 $xml = simplexml_load_string($data);
 $i->assertTrue($xml instanceof \SimpleXMLElement);
 
