@@ -4,68 +4,63 @@
 $i = new PunchoutTester($scenario);
 
 $i->wantTo('perform correct cxml setup request and see result');
-
 $i->setupRequestCxml(
-    \Helper\Punchout::BUSINESS_UNIT_USER_2,
-    \Helper\Punchout::getCxmlDynamicSetupRequestData('user_2', 'user_2_pass')
+    \Helper\Punchout::BUSINESS_UNIT_USER_1,
+    \Helper\Punchout::getCxmlDynamicSetupRequestData()
 );
 
 $i->switchToGrossPrices();
+$i->addProductToCart(\Helper\Punchout::PRODUCT_PU_ASUS_HDMI_217_PACK_RING_500);
+$i->see('cart');
 
-$i->addProductToCart(\Helper\Punchout::PRODUCT_BUNDLE_SONY_210);
-$i->addProductToCart(\Helper\Punchout::PRODUCT_BUNDLE_HP_211);
+$quantity = $i->getElement('[data-qa="quantity-input"]')->last()->attr('value');
+codecept_debug('Get product quantity from cart page: ' . $quantity);
 
 $i->cartTransfer();
 
-$data = $i->getUrlEncodedCxmlCartResponse();
+$data = $i->getBase64CxmlCartResponse();
 $i->seeCxml($data);
-
-$i->canSeeCxmlContains($data, '<SupplierPartID>210_123</SupplierPartID>');
-$i->canSeeCxmlContains($data, '<SupplierPartID>211_123</SupplierPartID>');
-
-$i->wantTo('check two bundle products exists in cXML Order Message');
 
 $xml = simplexml_load_string($data);
 $i->assertTrue($xml instanceof \SimpleXMLElement);
 
-$bundles = [
+$products = [
     [
         'idx' => '1',
-        'sku' => '210_123',
-        'price' => '1000',
-        'name' => 'Sony Bundle',
-    ],
-    [
-        'idx' => '2',
-        'sku' => '211_123',
-        'price' => '705',
-        'name' => 'HP Bundle',
+        'sku' => '215_124',
+        'price' => '12.5',
+        'name' => 'ASUS HDMI-HDMI Red',
+        'currency' => 'EUR',
+        'quantity' => $quantity,
+        'uom' => 'EA',
     ],
 ];
 
-foreach ($bundles as $bundle) {
-    $i->wantTo('check bundle product SKU: ' . $bundle['sku']);
-    $idx = $bundle['idx'];
+foreach ($products as $product) {
+    $i->wantTo('check product SKU: ' . $product['sku']);
+    $idx = $product['idx'];
     
     /** @var \SimpleXMLElement $el */
-    $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="%s"]/../..', $bundle['sku']);
+    $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="%s"]/../..', $product['sku']);
     $el = current($xml->xpath($xpath));
     $i->assertNotEmpty($el);
     $i->assertNotEmptyCxmlElementBasicElements($el);
     
     $i->assertEquals($idx, $i->getAttributeValue($el, 'lineNumber'));
-    $i->assertEquals('1', $i->getAttributeValue($el, 'quantity'));
+    $i->assertEquals($product['quantity'], $i->getAttributeValue($el, 'quantity'));
     $i->assertEmpty($i->getAttributeValue($el, 'itemType'));
     $i->assertEmpty($i->getAttributeValue($el, 'compositeItemType'));
     $i->assertEmpty($i->getAttributeValue($el, 'parentLineNumber'));
     
-    $i->assertEquals($bundle['name'],$i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
-    $i->assertEquals($bundle['price'],$i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+    $i->assertEquals($product['name'],$i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
+    $i->assertEquals($product['price'],$i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+    $i->assertEquals($product['currency'],$i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]/@currency'));
+    $i->assertEquals($product['uom'],$i->getXpathValue($el, 'ItemDetail[1]/UnitOfMeasure[1]'));
     
     $lineNumber = $i->getAttributeValue($el, 'lineNumber');
     $i->canNotSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');
     
-    $i->wantTo('check there is not any child product of the product SKU: ' . $bundle['sku']);
+    $i->wantTo('check there is not any child product of the product SKU: ' . $product['sku']);
     $childrenXpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn[@parentLineNumber="%s"]', $lineNumber);
     $children = $xml->xpath($childrenXpath);
     $i->assertEmpty($children);
@@ -77,7 +72,7 @@ $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn');
 $elements = $xml->xpath($xpath);
 $i->assertNotEmpty($elements);
 
-$skus = array_column($bundles, 'sku');
+$skus = array_column($products, 'sku');
 $skus = array_merge($skus, \Helper\Punchout::ALL_TOTAL_SKUS);
 
 /** @var \SimpleXMLElement $el */

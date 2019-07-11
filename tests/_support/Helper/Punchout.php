@@ -14,6 +14,8 @@ class Punchout extends \Codeception\Module
     const BUSINESS_UNIT_USER_1 = 16;
     const BUSINESS_UNIT_USER_2 = 19;
     
+    const ALL_TOTAL_SKUS = ['tax', 'discount', 'expense'];
+
     const PRODUCT_BUNDLE_SONY_210 = 'sony-bundle-210';
     const PRODUCT_BUNDLE_HP_211 = 'hp-bundle-211';
     

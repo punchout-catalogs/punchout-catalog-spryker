@@ -62,9 +62,7 @@ $i->wantTo('check all products exists in OCI Order Message and all are simple it
 $i->assertNotEmpty($elements);
 
 $skus = array_column($bundles, 'sku');
-$skus[] = 'tax';
-$skus[] = 'discount';
-$skus[] = 'expense';
+$skus = array_merge($skus, \Helper\Punchout::ALL_TOTAL_SKUS);
 
 /** @var array $el */
 foreach ($elements as $elIdx => $el) {
