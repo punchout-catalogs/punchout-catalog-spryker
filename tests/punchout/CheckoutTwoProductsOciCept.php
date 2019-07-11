@@ -16,7 +16,6 @@ $i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_SAMSUNG_GALAXY_OPT_128GB);
 
 $i->wantTo('Add second product to cart');
 $i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_SAMSUNG_GALAXY_OPT_64GB);
-
 $i->see('cart');
 
 $prices = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right');

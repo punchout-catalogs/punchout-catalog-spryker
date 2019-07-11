@@ -6,7 +6,7 @@ $i->haveHttpHeader('content-type', 'text/xml');
 
 
 $i->wantTo('perform correct cxml setup request and see result');
-$i->setupRequestCxml(
+$i->setupRequestCxmlGetUrl(
     \Helper\Punchout::BUSINESS_UNIT_USER_1,
     \Helper\Punchout::getCxmlDynamicSetupRequestData()
 );
@@ -19,7 +19,6 @@ $i->setupRequestCxml(
 );
 
 $i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_CANON_POWERSHOT_35);
-
 $i->see('cart');
 
 $price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();

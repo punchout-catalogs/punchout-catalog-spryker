@@ -4,7 +4,7 @@
 $i = new PunchoutTester($scenario);
 
 $i->wantTo('perform correct oci setup request and see result');
-$i->setupRequestOci(
+$i->setupRequestOciGetUrl(
     \Helper\Punchout::BUSINESS_UNIT_USER_1,
     \Helper\Punchout::getOciSetupRequestData()
 );
@@ -16,7 +16,6 @@ $i->setupRequestOci(
 );
 
 $i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_CANON_POWERSHOT_35);
-
 $i->see('cart');
 
 $price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();

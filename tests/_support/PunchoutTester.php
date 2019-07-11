@@ -22,6 +22,16 @@ class PunchoutTester extends \Codeception\Actor
     
     public function setupRequestCxml($bu, $cxmlDynamicSetupRequestData)
     {
+        $yvesUrl = $this->setupRequestCxmlGetUrl($bu, $cxmlDynamicSetupRequestData);
+        
+        $this->wantTo('Login by access url');
+        $this->amOnUrl($yvesUrl);
+        $this->seeCurrentUrlEquals('/en');
+        return $this;
+    }
+    
+    public function setupRequestCxmlGetUrl($bu, $cxmlDynamicSetupRequestData)
+    {
         $this->haveHttpHeader('content-type', 'text/xml');
         
         $this->sendPOST('/request?business-unit=' . $bu . '&store=de', $cxmlDynamicSetupRequestData);
@@ -33,29 +43,27 @@ class PunchoutTester extends \Codeception\Actor
         
         $yvesUrl = $this->getAccessUrlFromXml();
         $this->canSeeCorrectAccessUrl($yvesUrl);
-        
-        $this->wantTo('Login by access url');
-        
-        $this->amOnUrl($yvesUrl);
-    
-        $this->seeCurrentUrlEquals('/en');
-        return $this;
+        return $yvesUrl;
     }
     
     public function setupRequestOci($bu, array $ociSetupRequestData)
     {
-        $this->sendPOST('/request?business-unit=' . $bu . '&store=de', $ociSetupRequestData);
-        $this->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-    
-        $yvesUrl = $this->getAccessUrlFromOci();
-        $this->canSeeCorrectAccessUrl($yvesUrl);
+        $yvesUrl = $this->setupRequestOciGetUrl($bu, $ociSetupRequestData);
     
         $this->wantTo('Login by access url');
-    
         $this->amOnUrl($yvesUrl);
-        
         $this->seeCurrentUrlEquals('/en');
         return $this;
+    }
+    
+    public function setupRequestOciGetUrl($bu, array $ociSetupRequestData)
+    {
+        $this->sendPOST('/request?business-unit=' . $bu . '&store=de', $ociSetupRequestData);
+        $this->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
+        
+        $yvesUrl = $this->getAccessUrlFromOci();
+        $this->canSeeCorrectAccessUrl($yvesUrl);
+        return $yvesUrl;
     }
     
     public function switchToGrossPrices()

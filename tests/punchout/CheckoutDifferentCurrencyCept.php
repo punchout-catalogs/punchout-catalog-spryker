@@ -12,6 +12,7 @@ $i->setupRequestOci(
 $i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_CANON_IXUS_180);
 $i->switchToGrossPrices();
 $i->switchCurrencySwissFranc();
+$i->see('cart');
 
 $price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();
 $price = trim($price, 'CHF');

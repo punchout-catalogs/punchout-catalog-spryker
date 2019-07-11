@@ -11,8 +11,8 @@ $i->setupRequestCxml(
 
 $i->switchToNetPrices();
 $i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_CANON_POWERSHOT_35);
-
 $i->see('cart');
+
 $prices = $i->getElement('.cart-summary .list.spacing-y .list__item');
 $discount = $prices->first()->filter('.text-right')->text();
 $discount = trim($discount, '-');
