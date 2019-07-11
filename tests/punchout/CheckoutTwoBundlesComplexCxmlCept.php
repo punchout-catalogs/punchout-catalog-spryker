@@ -35,6 +35,7 @@ $products = [
         'name' => 'Sony Bundle',
         'quantity' => 1,
         'uom' => 'EA',
+        'currency' => 'EUR',
     ],
     [
         'idx' => '2',
@@ -43,6 +44,7 @@ $products = [
         'name' => 'HP Bundle',
         'quantity' => 1,
         'uom' => 'EA',
+        'currency' => 'EUR',
     ],
 ];
 
@@ -51,21 +53,11 @@ foreach ($products as $product) {
     $idx = $product['idx'];
     
     /** @var \SimpleXMLElement $el */
-    $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="%s"]/../..', $product['sku']);
-    $el = current($xml->xpath($xpath));
+    $el = $i->getCxmlItemBySku($xml, $product['sku']);
+    
     $i->assertNotEmpty($el);
-    $i->assertNotEmptyCxmlElementBasicElements($el);
-    
-    $i->assertEquals($idx, $i->getAttributeValue($el, 'lineNumber'));
-    $i->assertEquals('composite', $i->getAttributeValue($el, 'itemType'));
-    $i->assertEquals('groupLevel', $i->getAttributeValue($el, 'compositeItemType'));
-    $i->assertEmpty($i->getAttributeValue($el, 'parentLineNumber'));
-    
-    $i->assertEquals($product['quantity'], $i->getAttributeValue($el, 'quantity'));
-    $i->assertEquals($product['name'], $i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
-    $i->assertEquals($product['price'], $i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
-    $i->assertEquals($product['currency'], $i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]/@currency'));
-    $i->assertEquals($product['uom'], $i->getXpathValue($el, 'ItemDetail[1]/UnitOfMeasure[1]'));
+    $i->assertCxmlProductItem($el, $product);
+    $i->assertCxmlProductItemBundleComplexSpecific($el);
     
     $lineNumber = $i->getAttributeValue($el, 'lineNumber');
     $i->canSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');

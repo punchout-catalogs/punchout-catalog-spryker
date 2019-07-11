@@ -36,6 +36,7 @@ $products = [
         'name' => 'Sony Bundle',
         'quantity' => 1,
         'uom' => 'EA',
+        'currency' => 'EUR',
     ],
     [
         'idx' => '2',
@@ -44,6 +45,7 @@ $products = [
         'name' => 'HP Bundle',
         'quantity' => 1,
         'uom' => 'EA',
+        'currency' => 'EUR',
     ],
 ];
 
@@ -52,21 +54,11 @@ foreach ($products as $product) {
     $idx = $product['idx'];
     
     /** @var \SimpleXMLElement $el */
-    $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="%s"]/../..', $product['sku']);
-    $el = current($xml->xpath($xpath));
+    $el = $i->getCxmlItemBySku($xml, $product['sku']);
+    
     $i->assertNotEmpty($el);
-    $i->assertNotEmptyCxmlElementBasicElements($el);
-    
-    $i->assertEquals($idx, $i->getAttributeValue($el, 'lineNumber'));
-    $i->assertEmpty($i->getAttributeValue($el, 'itemType'));
-    $i->assertEmpty($i->getAttributeValue($el, 'compositeItemType'));
-    $i->assertEmpty($i->getAttributeValue($el, 'parentLineNumber'));
-    
-    $i->assertEquals($product['quantity'], $i->getAttributeValue($el, 'quantity'));
-    $i->assertEquals($product['name'], $i->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
-    $i->assertEquals($product['price'], $i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
-    $i->assertEquals($product['currency'], $i->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]/@currency'));
-    $i->assertEquals($product['uom'], $i->getXpathValue($el, 'ItemDetail[1]/UnitOfMeasure[1]'));
+    $i->assertCxmlProductItem($el, $product);
+    $i->assertCxmlProductItemBundleSingleSpecific($el);
     
     $lineNumber = $i->getAttributeValue($el, 'lineNumber');
     $i->canNotSeeCxmlContains($data, 'parentLineNumber="'.$lineNumber.'" itemType="item"');
@@ -85,15 +77,4 @@ $i->assertNotEmpty($elements);
 
 $skus = array_column($products, 'sku');
 $skus = array_merge($skus, \Helper\Punchout::ALL_TOTAL_SKUS);
-
-/** @var \SimpleXMLElement $el */
-foreach ($elements as $elIdx => $el) {
-    $i->wantTo('check is product common values ' . $elIdx);
-    $i->assertEmpty($i->getAttributeValue($el, 'parentLineNumber'));
-    $i->assertNotEmptyCxmlElementBasicElements($el);
-    
-    $sku = $i->getXpathValue($el, 'ItemID[1]/SupplierPartID[1]');
-    
-    $i->wantTo('check if SKU is expected: ' . $sku);
-    $i->assertTrue(in_array($sku, $skus));
-}
+$i->assertCxmlSkus($elements, $skus);

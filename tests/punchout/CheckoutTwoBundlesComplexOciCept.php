@@ -31,6 +31,7 @@ $products = [
         'name' => 'Sony Bundle',
         'quantity' => 1,
         'uom' => 'EA',
+        'currency' => 'EUR',
     ],
     [
         'idx' => '2',
@@ -39,6 +40,7 @@ $products = [
         'name' => 'HP Bundle',
         'quantity' => 1,
         'uom' => 'EA',
+        'currency' => 'EUR',
     ],
 ];
 
@@ -47,18 +49,8 @@ foreach ($products as $product) {
     $idx = $product['idx'];
     
     $i->assertNotEmpty($elements[$idx]);
-    $i->assertNotEmptyOciElementBasicElements($elements[$idx]);
-    
-    $i->assertEmpty($elements[$idx]['PARENT_ID']);
-    
-    $i->assertNotEmpty($elements[$idx]['ITEM_TYPE']);
-    $i->assertEquals('R', $elements[$idx]['ITEM_TYPE']);
-    
-    $i->assertEquals($product['quantity'], $elements[$idx]['QUANTITY']);
-    $i->assertEquals($product['sku'], $elements[$idx]['VENDORMAT']);
-    $i->assertEquals($product['name'], $elements[$idx]['DESCRIPTION']);
-    $i->assertEquals($product['price'], $elements[$idx]['PRICE']);
-    $i->assertEquals($product['uom'], $elements[$idx]['UNIT']);
+    $i->assertOciProductItemBundleComplexSpecific($elements[$idx]);
+    $i->assertOciProductItem($elements[$idx], $product);
     
     $i->wantTo('check children products of the product SKU: ' . $product['sku']);
     

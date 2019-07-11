@@ -40,17 +40,8 @@ foreach ($products as $product) {
     $idx = $product['idx'];
     
     $i->assertNotEmpty($elements[$idx]);
-    $i->assertNotEmptyOciElementBasicElements($elements[$idx]);
-    
-    $i->assertEmpty($elements[$idx]['PARENT_ID']);
-    $i->assertEmpty($elements[$idx]['ITEM_TYPE']);
-    
-    $i->assertEquals($product['quantity'], $elements[$idx]['QUANTITY']);
-    $i->assertEquals($product['sku'], $elements[$idx]['VENDORMAT']);
-    $i->assertEquals($product['name'], $elements[$idx]['DESCRIPTION']);
-    $i->assertEquals($product['price'], $elements[$idx]['PRICE']);
-    $i->assertEquals($product['uom'], $elements[$idx]['UNIT']);
-    $i->assertEquals($product['currency'], $elements[$idx]['CURRENCY']);
+    $i->assertOciProductItemBundleSingleSpecific($elements[$idx]);
+    $i->assertOciProductItem($elements[$idx], $product);
     
     $i->wantTo('check there is not any child product of the product SKU: ' . $product['sku']);
     $i->assertTrue(!isset($tree[$idx]));

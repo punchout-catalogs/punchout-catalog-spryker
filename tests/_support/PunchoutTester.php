@@ -188,4 +188,86 @@ class PunchoutTester extends \Codeception\Actor
         $this->assertNotEmpty($this->getXpathValue($el, 'ItemID[1]/SupplierPartAuxiliaryID[1]'));
         return $this;
     }
+    
+    public function getCxmlItemBySku(\SimpleXMLElement $xml, $sku)
+    {
+        /** @var \SimpleXMLElement $el */
+        $xpath = sprintf('/cXML/Message/PunchOutOrderMessage/ItemIn/ItemID/SupplierPartID[.="%s"]/../..', $sku);
+        return current($xml->xpath($xpath));
+    }
+    
+    public function assertCxmlProductItemBundleSingleSpecific(\SimpleXMLElement $el)
+    {
+        $this->assertEmpty($this->getAttributeValue($el, 'itemType'));
+        $this->assertEmpty($this->getAttributeValue($el, 'compositeItemType'));
+        $this->assertEmpty($this->getAttributeValue($el, 'parentLineNumber'));
+        return $this;
+    }
+    
+    public function assertCxmlProductItemBundleComplexSpecific(\SimpleXMLElement $el)
+    {
+        $this->assertEquals('composite', $this->getAttributeValue($el, 'itemType'));
+        $this->assertEquals('groupLevel', $this->getAttributeValue($el, 'compositeItemType'));
+        $this->assertEmpty($this->getAttributeValue($el, 'parentLineNumber'));
+        return $this;
+    }
+    
+    public function assertCxmlProductItem(\SimpleXMLElement $el, array $product)
+    {
+        $this->assertNotEmptyCxmlElementBasicElements($el);
+        
+        $this->assertEquals($product['idx'], $this->getAttributeValue($el, 'lineNumber'));
+        $this->assertEquals($product['quantity'], $this->getAttributeValue($el, 'quantity'));
+        $this->assertEquals($product['name'], $this->getXpathValue($el, 'ItemDetail[1]/Description[1]/ShortName[1]'));
+        $this->assertEquals($product['price'], $this->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]'));
+        $this->assertEquals($product['currency'], $this->getXpathValue($el, 'ItemDetail[1]/UnitPrice[1]/Money[1]/@currency'));
+        $this->assertEquals($product['uom'], $this->getXpathValue($el, 'ItemDetail[1]/UnitOfMeasure[1]'));
+        return $this;
+    }
+    
+    public function assertCxmlSkus(array $elements, $skus)
+    {
+        /** @var \SimpleXMLElement $el */
+        foreach ($elements as $elIdx => $el) {
+            $this->wantTo('check is product common values ' . $elIdx);
+            
+            $this->assertEmpty($this->getAttributeValue($el, 'parentLineNumber'));
+            $this->assertNotEmptyCxmlElementBasicElements($el);
+    
+            $sku = $this->getXpathValue($el, 'ItemID[1]/SupplierPartID[1]');
+            $this->wantTo('check if SKU is expected: ' . $sku);
+            $this->assertTrue(in_array($sku, $skus));
+        }
+        return $this;
+    }
+    
+    public function assertOciProductItemBundleSingleSpecific(array $el)
+    {
+        $this->assertEmpty($el['PARENT_ID']);
+        $this->assertEmpty($el['ITEM_TYPE']);
+        return $this;
+    }
+    
+    public function assertOciProductItemBundleComplexSpecific(array $el)
+    {
+        $this->assertEmpty($el['PARENT_ID']);
+    
+        $this->assertNotEmpty($el['ITEM_TYPE']);
+        $this->assertEquals('R', $el['ITEM_TYPE']);
+        return $this;
+    }
+    
+    
+    public function assertOciProductItem(array $el, array $product)
+    {
+        $this->assertNotEmptyOciElementBasicElements($el);
+    
+        $this->assertEquals($product['quantity'], $el['QUANTITY']);
+        $this->assertEquals($product['sku'], $el['VENDORMAT']);
+        $this->assertEquals($product['name'], $el['DESCRIPTION']);
+        $this->assertEquals($product['price'], $el['PRICE']);
+        $this->assertEquals($product['uom'], $el['UNIT']);
+        $this->assertEquals($product['currency'], $el['CURRENCY']);
+        return $this;
+    }
 }

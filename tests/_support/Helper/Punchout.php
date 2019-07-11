@@ -22,6 +22,9 @@ class Punchout extends \Codeception\Module
     const PRODUCT_SIMPLE_CANON_IXUS_180 = 'canon-ixus-180-10';
     const PRODUCT_SIMPLE_CANON_POWERSHOT_35 = 'canon-powershot-n-35';
     
+    const PRODUCT_SIMPLE_SAMSUNG_GALAXY_OPT_128GB = 'samsung-galaxy-s6-edge-51?attribute[storage_capacity]=128+GB';
+    const PRODUCT_SIMPLE_SAMSUNG_GALAXY_OPT_64GB = 'samsung-galaxy-s6-edge-51?attribute[storage_capacity]=64+GB';
+    
     const PRODUCT_PU_ASUS_HDMI_217_PACK_RING_500 = 'Asus-HDMI-HDMI-215?attribute[packaging_unit]=Ring+(500m)';
     const PRODUCT_PU_SCREW_218_PACK_GIFTBOX = 'Screw-218?attribute[packaging_unit]=Giftbox';
     const PRODUCT_PU_SCREW_218_PACK_MIXED = 'Screw-218?attribute[packaging_unit]=Mixed';

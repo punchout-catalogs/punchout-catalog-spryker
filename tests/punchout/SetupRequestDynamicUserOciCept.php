@@ -3,47 +3,28 @@
 /** @var \Codeception\Scenario $scenario */
 $i = new PunchoutTester($scenario);
 
-
 $i->wantTo('perform correct oci setup request and see result');
-
-$ociSetupRequestData = \Helper\Punchout::getOciSetupRequestData();
-$i->sendPOST('/request?business-unit=16&store=de', $ociSetupRequestData);
-$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-
-$yvesUrl = $i->getAccessUrlFromOci();
-$i->canSeeCorrectAccessUrl($yvesUrl);
-
+$i->setupRequestOci(
+    \Helper\Punchout::BUSINESS_UNIT_USER_1,
+    \Helper\Punchout::getOciSetupRequestData()
+);
 
 $i->wantTo('perform correct oci setup request again with same user and see result');
+$i->setupRequestOci(
+    \Helper\Punchout::BUSINESS_UNIT_USER_1,
+    \Helper\Punchout::getOciSetupRequestData()
+);
 
-$ociSetupRequestData = \Helper\Punchout::getOciSetupRequestData();
-$i->sendPOST('/request?business-unit=16&store=de', $ociSetupRequestData);
-$i->seeResponseCodeIs(\Codeception\Util\HttpCode::OK);
-$yvesUrl2 = $i->getAccessUrlFromOci();
-$i->canSeeCorrectAccessUrl($yvesUrl2);
+$i->addProductToCart(\Helper\Punchout::PRODUCT_SIMPLE_CANON_POWERSHOT_35);
 
-
-$i->wantTo('Login by access url');
-
-$i->amOnUrl($yvesUrl);
-$i->seeCurrentUrlEquals('/en');
-
-
-$i->wantTo('Add product to cart');
-
-$i->amOnPage('/en/canon-powershot-n-35');
-$i->click('[id="add-to-cart-button"]');
 $i->see('cart');
+
 $price = $i->getElement('[data-qa="component cart-item-summary"] .list__item .float-right')->last()->text();
 $price = trim($price, '€');
 codecept_debug('Get product price from cart page: ' . $price);
 
+$i->cartTransfer();
 
-$i->wantTo('Transfer cart');
-
-$i->stopFollowingRedirects();
-$i->click('[data-qa="punchout-catalog.cart.go-to-transfer"]');
-$i->seeCurrentUrlEquals('/en/punchout-catalog/cart/transfer');
 $i->canSeeElement('input', [
     'name' => 'NEW_ITEM-DESCRIPTION[1]',
     'value' => 'Canon PowerShot N',

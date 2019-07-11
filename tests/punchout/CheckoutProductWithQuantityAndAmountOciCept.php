@@ -51,6 +51,7 @@ $products = [
         'name' => 'Giftbox',
         'quantity' => $quantity,
         'uom' => 'EA',
+        'currency' => 'EUR',
     ],
 ];
 
@@ -59,22 +60,12 @@ foreach ($products as $product) {
     $idx = $product['idx'];
     
     $i->assertNotEmpty($elements[$idx]);
-    $i->assertNotEmptyOciElementBasicElements($elements[$idx]);
+    $i->assertOciProductItemBundleComplexSpecific($elements[$idx]);
+    $i->assertOciProductItem($elements[$idx], $product);
     
-    $i->assertEmpty($elements[$idx]['PARENT_ID']);
-    
-    $i->assertNotEmpty($elements[$idx]['ITEM_TYPE']);
-    $i->assertEquals('R', $elements[$idx]['ITEM_TYPE']);
-    
-    $i->assertEquals($product['quantity'], $elements[$idx]['QUANTITY']);
-    $i->assertEquals($product['sku'], $elements[$idx]['VENDORMAT']);
-    $i->assertEquals($product['name'], $elements[$idx]['DESCRIPTION']);
-    $i->assertEquals($product['price'], $elements[$idx]['PRICE']);
-    $i->assertEquals($product['uom'], $elements[$idx]['UNIT']);
+    $i->assertTrue(count($tree[$idx]) == 1);
     
     $i->wantTo('check children products of the product SKU: ' . $product['sku']);
-    
-    $i->assertNotEmpty($tree[$idx]);
     
     foreach ($tree[$idx] as $childIdx => $child) {
         $i->wantTo('assert bundle product SKU: ' . $product['sku'] . ' child SKU #' . $childIdx);
