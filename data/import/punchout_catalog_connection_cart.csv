@@ -180,23 +180,6 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,line,url-encoded,"{
       },
 						""cart_note"": {
         ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Comments[1]""
-      },
-						
-      ""custom_attributes"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/CustomAttributes/customOption()"",
-        ""multiple"": true
-      },
-      ""custom_attributes/test1/code"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test1/Code""
-      },
-      ""custom_attributes/test1"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test1/Value""
-      },
-      ""custom_attributes/test2/code"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test2/Code""
-      },
-      ""custom_attributes/test2/value"": {
-        ""path"": ""/cXML/Message[1]/PunchOutOrderMessage[1]/PunchOutOrderMessageHeader[1]/Custom/Test2/Value""
       }
     }
   },
@@ -261,22 +244,6 @@ Client 1 - cXml - User 2,spryker_sup_3,,single,line,url-encoded,"{
       ""options"": {
         ""path"": ""ItemDetail[1]/Extrinsic/customOption()"",
         ""multiple"": true
-      },
-      ""custom_attributes"": {
-        ""path"": ""ItemDetail[1]/CustomAttributes/customOption()"",
-        ""multiple"": true
-      },
-      ""custom_attributes/group_key/code"": {
-        ""path"": ""ItemDetail[1]/Custom/group_key/Code""
-      },
-      ""custom_attributes/group_key"": {
-        ""path"": ""ItemDetail[1]/Custom/group_key/Value""
-      },
-      ""custom_attributes/abstract_sku/code"": {
-        ""path"": ""ItemDetail[1]/Custom/abstract_sku/Code""
-      },
-      ""custom_attributes/abstract_sku/value"": {
-        ""path"": ""ItemDetail[1]/Custom/abstract_sku/Value""
       }
     }
   },
