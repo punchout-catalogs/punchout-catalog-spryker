@@ -113,7 +113,7 @@
             <parameter name="disable_updated_at" value="true"/>
         </behavior>
 
-        <index name="index-pgw_punchout_catalog_transaction-fk_company_business_unit">
+        <index name="index-pgw_punchout_catalog_transaction-business_unit">
             <index-column name="fk_company_business_unit"/>
         </index>
 
@@ -121,7 +121,7 @@
             <reference local="fk_punchout_catalog_connection" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
 
-        <index name="index-pgw_punchout_catalog_transaction-fk_punchout_catalog_connection">
+        <index name="index-pgw_punchout_catalog_transaction-connection">
             <index-column name="fk_punchout_catalog_connection"/>
         </index>
 
