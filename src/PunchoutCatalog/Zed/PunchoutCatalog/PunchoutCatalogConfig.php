@@ -105,8 +105,6 @@ class PunchoutCatalogConfig extends DataImportConfig
     }
 
     /**
-     * @deprecated
-     *
      * @return string
      */
     public function getZedPunchoutUrl(): string

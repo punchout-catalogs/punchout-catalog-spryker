@@ -7,6 +7,7 @@
 
 namespace PunchoutCatalog\Yves\PunchoutCatalog;
 
+/** @deprecated */
 interface PunchoutCatalogConstants
 {
 }

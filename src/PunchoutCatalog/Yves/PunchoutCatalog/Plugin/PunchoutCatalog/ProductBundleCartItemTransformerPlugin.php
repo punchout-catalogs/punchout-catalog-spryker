@@ -59,6 +59,7 @@ class ProductBundleCartItemTransformerPlugin extends AbstractPlugin implements C
      */
     protected function getGroupedItems(array $cartItems, QuoteTransfer $quoteTransfer): array
     {
+        //TODO: Product bundle became strict dependency
         return $this->getFactory()
             ->getProductBundleClient()
             ->getGroupedBundleItems(new ArrayObject($cartItems), $quoteTransfer->getBundleItems());

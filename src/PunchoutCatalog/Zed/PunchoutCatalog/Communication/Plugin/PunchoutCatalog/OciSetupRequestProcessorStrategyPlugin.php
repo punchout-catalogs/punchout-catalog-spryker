@@ -75,6 +75,7 @@ class OciSetupRequestProcessorStrategyPlugin
     {
         $ociContent = $punchoutCatalogRequestTransfer->getContent();
         if (!is_array($ociContent)) {
+            // TODO: fix return type
             return [];
         }
 
