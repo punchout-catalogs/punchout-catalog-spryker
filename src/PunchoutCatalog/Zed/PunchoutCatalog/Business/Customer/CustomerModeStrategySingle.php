@@ -9,11 +9,9 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer;
 
 use Generated\Shared\Transfer\PunchoutCatalogDocumentCustomerTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
-use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Facade\PunchoutCatalogToCompanyUserFacadeInterface;
-
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 
 class CustomerModeStrategySingle implements CustomerModeStrategyInterface

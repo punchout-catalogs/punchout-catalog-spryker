@@ -18,8 +18,8 @@ use Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface;
 class PunchoutCatalogConnectionSetupWriterStep implements DataImportStepInterface
 {
     /**
-     * @module PunchoutCatalog
-     * @module Company
+     * @module CompanyBusinessUnit
+     * @module CompanyUser
      *
      * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
      *
