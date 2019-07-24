@@ -442,7 +442,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $documentCartItemTransfer->setCartNote($quoteItemTransfer->getCartNote());
         $code = 'ITEM';
 
-        //TODO: clarify hot to get correct EOM
+        //TODO: clarify how to get correct EOM
 //        if ($quoteItemTransfer->getQuantitySalesUnit() != null
 //            && $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit() != null) {
 //            $code = $quoteItemTransfer->getQuantitySalesUnit()->getProductMeasurementUnit()->getCode();
