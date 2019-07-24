@@ -160,7 +160,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     {
         $container[static::CLIENT_PUNCHOUT_CATALOG] = function (Container $container) {
             return new PunchoutCatalogToPunchoutCatalogClientBridge(
-                $container->getLocator()->punchOutCatalog()->client()
+                $container->getLocator()->punchoutCatalog()->client()
             );
         };
 
