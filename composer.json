@@ -7,7 +7,7 @@
     "ext-json": "*",
     "ext-mbstring": "*",
     "ext-simplexml": "*",
-    "spryker/cart": "^ 7.1.0",
+    "spryker/cart": "^7.1.0",
     "spryker/customer": "^7.0.0",
     "spryker/company-user": "^2.7.0",
     "spryker/company-business-unit": "^2.9.0",
