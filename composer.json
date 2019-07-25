@@ -17,7 +17,6 @@
     "spryker/kernel": "^3.33.0",
     "spryker/money": "^2.6.0",
     "spryker/oauth-company-user": "^2.0.0",
-    "spryker/product-bundle": "^6.0.0",
     "spryker/product-storage": "^1.11.0",
     "spryker/quote": "^2.0.0",
     "spryker/store": "^1.1.0",
@@ -27,6 +26,9 @@
   },
   "require-dev": {
     "spryker/code-sniffer": "*"
+  },
+  "suggest": {
+    "spryker/product-bundle": "Use at least ^6.0.0 to have ProductBundleCartItemTransformerPlugin"
   },
   "autoload": {
     "psr-4": {

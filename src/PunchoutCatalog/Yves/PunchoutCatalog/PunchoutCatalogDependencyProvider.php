@@ -190,6 +190,7 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
      */
     protected function addProductBundleClient(Container $container): Container
     {
+        // Optional dependency for Product Bundle compatibility
         $container[self::CLIENT_PRODUCT_BUNDLE] = function (Container $container) {
             return new PunchoutCatalogToProductBundleClientBridge($container->getLocator()->productBundle()->client());
         };

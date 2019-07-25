@@ -144,6 +144,8 @@ class PunchoutCatalogFactory extends AbstractFactory
     }
 
     /**
+     * Optional dependency for Product Bundle compatibility
+     *
      * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToProductBundleClientInterface
      */
     public function getProductBundleClient(): PunchoutCatalogToProductBundleClientInterface
