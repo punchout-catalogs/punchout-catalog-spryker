@@ -8,7 +8,6 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\Oci;
 
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Validator\ProtocolDataValidatorInterface;
 
 class ProtocolDataValidator implements ProtocolDataValidatorInterface

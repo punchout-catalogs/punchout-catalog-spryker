@@ -35,8 +35,7 @@ class PunchoutCatalogConnectionWriterStep implements DataImportStepInterface
     }
 
     /**
-     * @module PunchoutCatalog
-     * @module Company
+     * @module CompanyBusinessUnit
      *
      * @param \Spryker\Zed\DataImport\Business\Model\DataSet\DataSetInterface $dataSet
      *

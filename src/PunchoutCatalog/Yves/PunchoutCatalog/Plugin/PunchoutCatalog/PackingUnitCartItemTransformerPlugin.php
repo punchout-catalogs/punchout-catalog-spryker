@@ -39,7 +39,7 @@ class PackingUnitCartItemTransformerPlugin extends AbstractPlugin implements Car
     }
 
     /**
-     *
+     * @param \Generated\Shared\Transfer\ItemTransfer[] $cartItems
      * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
      *
      * @return \Generated\Shared\Transfer\ItemTransfer[]

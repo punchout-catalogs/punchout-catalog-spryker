@@ -8,7 +8,6 @@
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Transaction;
 
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
-use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
@@ -23,7 +22,7 @@ class Mapper implements MapperInterface
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer $responseTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
+     * @param \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer|null $entityTransfer
      *
      * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */
@@ -70,7 +69,7 @@ class Mapper implements MapperInterface
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer $requestTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
+     * @param \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer|nul $entityTransfer
      *
      * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */
@@ -128,7 +127,7 @@ class Mapper implements MapperInterface
 
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogCartResponseTransfer $cartResponseTransfer
-     * @param \Orm\Zed\PunchoutCatalog\Persistence\PgwPunchoutCatalogTransactionEntityTransfer $entityTransfer
+     * @param \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer|null $entityTransfer
      *
      * @return \Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer
      */

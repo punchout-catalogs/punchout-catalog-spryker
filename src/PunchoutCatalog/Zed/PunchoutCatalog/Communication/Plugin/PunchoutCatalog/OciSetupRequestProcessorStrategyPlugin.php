@@ -75,7 +75,7 @@ class OciSetupRequestProcessorStrategyPlugin
     {
         $ociContent = $punchoutCatalogRequestTransfer->getContent();
         if (!is_array($ociContent)) {
-            return [];
+            return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray([], true);
         }
 
         $mappingTransfer = $this->getFacade()->convertToMappingTransfer(
