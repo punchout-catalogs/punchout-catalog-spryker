@@ -27,6 +27,14 @@ class AmountFormattedCommandTest extends Unit
         $this->assertEquals('21444.19', $result);
     }
 
+    public function testExecuteWithRounding()
+    {
+        $transform = new PunchoutCatalogMappingTransformTransfer();
+        $value = '18.9998';
+        $result = $this->command->execute($transform, $value);
+        $this->assertEquals('19.00', $result);
+    }
+
     public function testCustomFormat()
     {
         $transform = new PunchoutCatalogMappingTransformTransfer();

@@ -108,8 +108,7 @@ class CxmlSetupRequestProcessorStrategyPlugin
 
         $xmlContent = new SimpleXMLElement($content);
         if (!$xmlContent) {
-            // TODO: fix return type
-            return [];
+            return (new PunchoutCatalogSetupRequestDocumentTransfer())->fromArray([], true);
         }
 
         $mappingTransfer = $this->getFacade()->convertToMappingTransfer(

@@ -22,8 +22,7 @@ class AmountFormattedCommand extends AmountCommand implements ITransform
     protected function toAmount($value): ?string
     {
         $value = parent::toAmount($value);
-        // @todo Need to fix should be probably fixed
-        $value = round($value, 2);//Need to fix // $65.00 (incorrect behavior for PHP_ROUND_HALF_UP)
-        return money_format('%.2n', $value); // $65.01 (correct)
+        $value = round($value, 2);
+        return money_format('%.2n', $value);
     }
 }
