@@ -191,11 +191,9 @@ class PunchoutCatalogDependencyProvider extends AbstractBundleDependencyProvider
     protected function addProductBundleClient(Container $container): Container
     {
         // Optional dependency for Product Bundle compatibility
-        if (class_exists('\Spryker\Client\ProductBundle\ProductBundleClient')) {
-            $container[self::CLIENT_PRODUCT_BUNDLE] = function (Container $container) {
-                return new PunchoutCatalogToProductBundleClientBridge($container->getLocator()->productBundle()->client());
-            };
-        }
+        $container[self::CLIENT_PRODUCT_BUNDLE] = function (Container $container) {
+            return new PunchoutCatalogToProductBundleClientBridge($container->getLocator()->productBundle()->client());
+        };
 
         return $container;
     }
