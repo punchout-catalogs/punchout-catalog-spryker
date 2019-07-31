@@ -58,8 +58,12 @@
 
         <column name="login_mode" type="VARCHAR" size="32" required="true"/>
 
-        <foreign-key name="pgw_punchout_catalog_connection_setup-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
+        <foreign-key name="pgw_punchout_catalog_connection_setup-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection" onDelete="CASCADE">
             <reference local="id_punchout_catalog_connection_setup" foreign="id_punchout_catalog_connection"/>
+        </foreign-key>
+
+        <foreign-key name="pgw_punchout_catalog_connection_setup-fk_company_user" foreignTable="spy_company_user" phpName="CompanyUser">
+            <reference local="fk_company_user" foreign="id_company_user"/>
         </foreign-key>
 
         <id-method-parameter value="pgw_punchout_catalog_connection_setup_pk_seq"/>
@@ -80,7 +84,7 @@
 
         <column name="totals_mode" type="VARCHAR" size="32" required="true" default="line"/>
 
-        <foreign-key name="pgw_punchout_catalog_connection_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection">
+        <foreign-key name="pgw_punchout_catalog_connection_cart-fk_connection" foreignTable="pgw_punchout_catalog_connection" phpName="PgwPunchoutCatalogConnection" onDelete="CASCADE">
             <reference local="id_punchout_catalog_connection_cart" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
 
