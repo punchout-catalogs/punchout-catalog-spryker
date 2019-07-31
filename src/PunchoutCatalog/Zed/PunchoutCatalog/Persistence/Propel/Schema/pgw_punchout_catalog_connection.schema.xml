@@ -62,7 +62,7 @@
             <reference local="id_punchout_catalog_connection_setup" foreign="id_punchout_catalog_connection"/>
         </foreign-key>
 
-        <foreign-key name="pgw_punchout_catalog_connection_setup-fk_company_user" foreignTable="spy_company_user" phpName="CompanmmyUser">
+        <foreign-key name="pgw_punchout_catalog_connection_setup-fk_company_user" foreignTable="spy_company_user" phpName="CompanyUser">
             <reference local="fk_company_user" foreign="id_company_user"/>
         </foreign-key>
 
