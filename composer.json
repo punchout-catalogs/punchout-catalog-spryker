@@ -1,6 +1,7 @@
 {
   "name": "punchout-catalogs/punchout-catalog-spryker",
   "description": "Punchout Catalog Module for Spryker eCommerce Platform",
+  "version": "2.0.2",
   "license": "proprietary",
   "require": {
     "php": ">=7.1",
