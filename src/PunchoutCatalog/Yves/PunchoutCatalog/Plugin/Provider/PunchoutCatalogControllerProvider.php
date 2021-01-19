@@ -10,6 +10,9 @@ namespace PunchoutCatalog\Yves\PunchoutCatalog\Plugin\Provider;
 use Silex\Application;
 use SprykerShop\Yves\ShopApplication\Plugin\Provider\AbstractYvesControllerProvider;
 
+/**
+ * @deprecated Use `\PunchoutCatalog\Yves\PunchoutCatalog\Plugin\Router\PunchoutCatalogRouteProviderPlugin` instead.
+ */
 class PunchoutCatalogControllerProvider extends AbstractYvesControllerProvider
 {
     protected const ROUTE_CART_TRANSFER = 'punchout-catalog/cart/transfer';
