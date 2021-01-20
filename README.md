@@ -12,8 +12,8 @@ composer require punchout-catalogs/punchout-catalog-spryker
 
 ## Documentation
 
+[Integration Documentation](https://documentation.spryker.com/docs/punchout-catalog-feature-integration)
 [Spryker Documentation](https://academy.spryker.com/developing_with_spryker/module_guide/modules.html)
-
 
 ## Testing
 
@@ -109,3 +109,57 @@ class PunchoutCatalogConfig extends BasePunchoutCatalogConfig
 
 If this opportunity is not enough, you could define your own plugin that should implement `PunchoutCatalog\Yves\PunchoutCatalog\Mapper\CartTransferMapperPluginInterface`
 and add it by overriding `PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogDependencyProvider::getCartTransferMapperPlugins` method.
+
+
+### Enable Controllers in a new way
+
+Register Punchout routes in src/Pyz/Yves/Router/RouterDependencyProvider.php:
+
+```php
+<?php
+
+namespace Pyz\Yves\Router;
+
+use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\Router\PunchoutCatalogRouteProviderPlugin;
+use Spryker\Yves\Router\RouterDependencyProvider as SprykerRouterDependencyProvider;
+
+class RouterDependencyProvider extends SprykerRouterDependencyProvider
+{
+    /**
+     * @return \Spryker\Yves\RouterExtension\Dependency\Plugin\RouteProviderPluginInterface[]
+     */
+    protected function getRouteProvider(): array
+    {
+        return [
+            new PunchoutCatalogRouteProviderPlugin()
+        ];
+    }
+}
+```
+### Enable Controllers in a legacy way
+
+Register Punchout routes in src/Pyz/Yves/ShopApplication/YvesBootstrap.php:
+
+```php
+<?php
+ 
+namespace Pyz\Yves\ShopApplication;
+ 
+use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\Provider\PunchoutCatalogControllerProvider;
+use SprykerShop\Yves\ShopApplication\YvesBootstrap as SprykerYvesBootstrap;
+ 
+class YvesBootstrap extends SprykerYvesBootstrap
+{
+    /**
+     * @param bool|null $isSsl
+     *
+     * @return \SprykerShop\Yves\ShopApplication\Plugin\Provider\AbstractYvesControllerProvider[]
+     */
+    protected function getControllerProviderStack($isSsl)
+    {
+        return [
+            new PunchoutCatalogControllerProvider($isSsl),
+        ];
+    }
+}
+```

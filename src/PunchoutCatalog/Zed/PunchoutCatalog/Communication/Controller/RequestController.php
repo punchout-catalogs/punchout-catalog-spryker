@@ -47,6 +47,9 @@ class RequestController extends AbstractController
     protected function mapSymfonyRequestToSetupRequestTransfer(Request $request): PunchoutCatalogSetupRequestTransfer
     {
         $idBusinessUnit = $request->query->get(static::PARAM_BUSINESS_UNIT);
+        if (is_null($idBusinessUnit)) {
+            $idBusinessUnit = $request->request->get(static::PARAM_BUSINESS_UNIT);//get from post
+        }
 
         $punchoutCatalogRequestTransfer = new PunchoutCatalogSetupRequestTransfer();
         $punchoutCatalogRequestTransfer->setIsSuccess(true);
@@ -71,7 +74,6 @@ class RequestController extends AbstractController
         } else {
             $punchoutCatalogRequestTransfer->setContent($request->getContent());//RAW BODY
         }
-
 
         return $punchoutCatalogRequestTransfer;
     }
