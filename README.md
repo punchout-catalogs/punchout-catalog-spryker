@@ -13,6 +13,7 @@ composer require punchout-catalogs/punchout-catalog-spryker
 ## Documentation
 
 [Integration Documentation](https://documentation.spryker.com/docs/punchout-catalog-feature-integration)
+
 [Spryker Documentation](https://academy.spryker.com/developing_with_spryker/module_guide/modules.html)
 
 ## Testing
@@ -113,7 +114,7 @@ and add it by overriding `PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogDe
 
 ### Enable Controllers in a new way
 
-Register Punchout routes in src/Pyz/Yves/Router/RouterDependencyProvider.php:
+Register Punchout routes in `src/Pyz/Yves/Router/RouterDependencyProvider.php`:
 
 ```php
 <?php
@@ -138,7 +139,7 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
 ```
 ### Enable Controllers in a legacy way
 
-Register Punchout routes in src/Pyz/Yves/ShopApplication/YvesBootstrap.php:
+Register Punchout routes in `src/Pyz/Yves/ShopApplication/YvesBootstrap.php`:
 
 ```php
 <?php
@@ -168,20 +169,20 @@ class YvesBootstrap extends SprykerYvesBootstrap
 
 The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`. 
 
-The easiest way to improve it is upgrading the field from `varchar(1024)` to `text`.
+The easiest way to improve it is upgrading the field from `varchar(1024)` to `LONGVARCHAR`.
 
-Uncomment the following code or copy to a separate schema.xml
-`Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth_upgrade.schema.xml`:
+Create a scheme file `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml`:
 ```xml
-    <table name="spy_oauth_access_token" ... >
-        <column name="user_identifier" type="LONGVARCHAR" required="true"/>
+<?xml version="1.0"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Oauth\Persistence" package="src.Orm.Zed.Oauth.Persistence">
+    <table name="spy_oauth_access_token">
+        <column name="user_identifier" type="LONGVARCHAR"/>
     </table>
+</database>
 ```
 
 DB upgrade:
 
-`vendor/bin/console propel:schema:copy`
+`vendor/bin/console propel:install`
 
-`vendor/bin/console propel:diff`
-
-`vendor/bin/console propel:migrate`
+[Database Schema Definition](https://documentation.spryker.com/docs/database-schema-definition)
