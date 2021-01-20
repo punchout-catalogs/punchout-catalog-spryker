@@ -19,6 +19,7 @@ use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
+use Propel\Runtime\Exception\PropelException;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Business\PunchoutCatalogFacade getFacade()
@@ -28,6 +29,8 @@ use Spryker\Zed\Kernel\Communication\AbstractPlugin;
 abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugin
 {
     protected const ERROR_UNEXPECTED = 'punchout-catalog.error.unexpected';
+    protected const ERROR_AUTH_TOKEN = 'customer.token.invalid';
+    protected const ERROR_AUTH_TOKEN_CREATE = 'punchout-catalog.error.auth.token.create';
 
     /**
      * @uses \PunchoutCatalog\Client\PunchoutCatalog\Plugin\Quote\SingleCompanyUserDatabaseStrategyPreCheckPlugin::check
@@ -56,16 +59,20 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $punchoutCatalogRequestTransfer->getContext()->setRawData($documentTransfer->toArray());
 
         $customerTransfer = $this->prepareCustomerTransfer($punchoutCatalogRequestTransfer, $documentTransfer);
-
-        /** @var \Generated\Shared\Transfer\OauthResponseTransfer $oAuthResponseTransfer */
-        $oAuthResponseTransfer = $this->getFactory()
-            ->getOauthCompanyUserFacade()
-            ->createCompanyUserAccessToken($customerTransfer);
+        
+        try {
+            /** @var \Generated\Shared\Transfer\OauthResponseTransfer $oAuthResponseTransfer */
+            $oAuthResponseTransfer = $this->getFactory()
+                ->getOauthCompanyUserFacade()
+                ->createCompanyUserAccessToken($customerTransfer);
+        } catch (PropelException $e) {
+            throw new AuthenticateException(self::ERROR_AUTH_TOKEN_CREATE);
+        }
 
         if (!$oAuthResponseTransfer->getIsValid() && $oAuthResponseTransfer->getError()) {
             throw new AuthenticateException($oAuthResponseTransfer->getError()->getMessage());
         } elseif (!$oAuthResponseTransfer->getIsValid() || !$oAuthResponseTransfer->getAccessToken()) {
-            throw new AuthenticateException(self::ERROR_UNEXPECTED);
+            throw new AuthenticateException(self::ERROR_AUTH_TOKEN);
         }
 
         $storeName = $this->getFactory()->getStoreFacade()->getCurrentStore()->getName();

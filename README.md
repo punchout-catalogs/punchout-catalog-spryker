@@ -163,3 +163,25 @@ class YvesBootstrap extends SprykerYvesBootstrap
     }
 }
 ```
+
+### Handle Auth Token Create Error
+
+The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`. 
+
+The easiest way to improve it is upgrading the field from `varchar(1024)` to `text`.
+
+Uncomment the following code or copy to a separate schema.xml
+`Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth_upgrade.schema.xml`:
+```xml
+    <table name="spy_oauth_access_token" ... >
+        <column name="user_identifier" type="LONGVARCHAR" required="true"/>
+    </table>
+```
+
+DB upgrade:
+
+`vendor/bin/console propel:schema:copy`
+
+`vendor/bin/console propel:diff`
+
+`vendor/bin/console propel:migrate`
