@@ -1,6 +1,4 @@
-# PunchOutCatalog Module
-[![Build Status](https://travis-ci.org/punchout-catalogs/punchout-catalog-spryker.svg)](https://travis-ci.org/punchout-catalogs/punchout-catalog-spryker)
-[![Coverage Status](https://coveralls.io/repos/github/punchout-catalogs/punchout-catalog-spryker/badge.svg)](https://coveralls.io/github/punchout-catalogs/punchout-catalog-spryker)
+# PunchOutCatalogs Module
 
 Punchout Catalog Module for Spryker eCommerce Platform
 
@@ -27,7 +25,7 @@ Running:
 
 ### Custom cart mapping
 
-Extending cart mapping behavior could be implemented by overriding 
+Extending cart mapping behavior could be implemented by overriding
 PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig class method:
 
 ```php
@@ -143,12 +141,12 @@ Register Punchout routes in `src/Pyz/Yves/ShopApplication/YvesBootstrap.php`:
 
 ```php
 <?php
- 
+
 namespace Pyz\Yves\ShopApplication;
- 
+
 use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\Provider\PunchoutCatalogControllerProvider;
 use SprykerShop\Yves\ShopApplication\YvesBootstrap as SprykerYvesBootstrap;
- 
+
 class YvesBootstrap extends SprykerYvesBootstrap
 {
     /**
@@ -167,7 +165,7 @@ class YvesBootstrap extends SprykerYvesBootstrap
 
 ### Handle Auth Token Create Error
 
-The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`. 
+The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`.
 
 The easiest way to improve it is upgrading the field from `varchar(1024)` to `LONGVARCHAR`.
 
