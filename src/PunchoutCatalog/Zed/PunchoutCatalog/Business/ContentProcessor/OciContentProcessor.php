@@ -21,24 +21,24 @@ class OciContentProcessor implements OciContentProcessorInterface
     public function fetchHeader(array $content): PunchoutCatalogProtocolDataTransfer
     {
         $username = $hookUrl = null;
-        
-        $usernameKeys = ['username', 'login', 'cid'];
+
+        $usernameKeys = ['username', 'login', 'loginname', 'cid'];
         $hookKeys = ['HOOK_URL', 'hook_url', 'Hook_Url'];
-        
+
         foreach ($usernameKeys as $usernameKey) {
             if (!empty($content[$usernameKey])) {
                 $username = $content[$usernameKey];
                 break;
             }
         }
-    
+
         foreach ($hookKeys as $hookKey) {
             if (!empty($content[$hookKey])) {
                 $hookUrl = $content[$hookKey];
                 break;
             }
         }
-        
+
         $password = $content['password'] ?? null;
 
         return (new PunchoutCatalogProtocolDataTransfer())
