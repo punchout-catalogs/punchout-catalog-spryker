@@ -5,7 +5,7 @@ Punchout Catalog Module for Spryker eCommerce Platform
 # Changelog
 
 # 2.2.0
-- Added `custom_sku` and `sale_bunch_quantity`, `sale_bunch_quantity_factor` fields to the mapping
+- Added `custom_fields/*`, `custom_sku` and `sale_bunch_quantity`, `sale_bunch_quantity_factor` fields to the mapping
 - Show the `Invalid Mapping Source` on cart transfer action if mapping is not valid, instead of a general message
 
 # 2.1.1
