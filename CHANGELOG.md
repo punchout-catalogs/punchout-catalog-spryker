@@ -8,6 +8,7 @@ Punchout Catalog Module for Spryker eCommerce Platform
 - Added `custom_fields/*`, `custom_sku` and `sale_bunch_quantity`, `sale_bunch_quantity_factor` fields to the mapping
 - Show the `Invalid Mapping Source` on cart transfer action if mapping is not valid, instead of a general message
 - Changed Default Totals Mode (on backend) from `TOTALS_MODE_LINE` to `TOTALS_MODE_DISABLED`
+- Updated `PunchoutCatalogDependencyProvider.php`
 
 # 2.1.1
 - Added the `loginname` OCI field key
