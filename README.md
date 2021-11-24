@@ -59,12 +59,38 @@ class PunchoutCatalogConfig extends BasePunchoutCatalogConfig
      */
     public function getCustomCartItemMapping(): array
     {
-        return[
+        return [
             //ItemTransfer => PunchoutCatalogDocumentCartItemTransfer
-
-            'tax_description' => function () {
-                return 'test';
+            'custom_sku' => function($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin) {
+                return 'here-is-custom-sku-' . $quoteItemTransfer->getAbstractSku();
             },
+
+            'sale_bunch_quantity' => function($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin)  {
+                //Product #1
+                if ($quoteItemTransfer->getAbstractSku() === 'any_condition_1') {
+                    return 100;
+                }
+                //Product #2
+                if ($quoteItemTransfer->getAbstractSku() === 'any_condition_2') {
+                    return  50;
+                }
+                return 1;
+            },
+
+            'custom_fields' => function($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin) {
+                return array(
+                    'custom_field_1' => 'quote-item-id=' . $quoteItemTransfer->getId(),
+                    'custom_field_2' => 'custom-abstract-sku-' . $quoteItemTransfer->getAbstractSku(),
+                    'custom_field_3' => 'custom_field_value_3',
+                    'custom_field_4' => 'custom_field_value_4_' . uniqid(),
+                    'custom_field_5' => 'custom_field_value_5_' . uniqid(),
+                    'custom_field_contract' => 'ContractID-'. uniqid(),
+                    'custom_field_org' => 'TestPurchOrg',
+                    'custom_field_ref' => 'some-ref',
+                    //...add as many custom fields as you need and can use in mapping
+                );
+            },
+
             /**
              * @param \Generated\Shared\Transfer\ItemTransfer
              * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
@@ -184,3 +210,104 @@ DB upgrade:
 `vendor/bin/console propel:install`
 
 [Database Schema Definition](https://documentation.spryker.com/docs/database-schema-definition)
+
+
+### Example of OCI mapping with many custom fields:
+
+```json
+{
+    "cart_item": {
+        "fields": {
+            "quantity": {
+                "path": "NEW_ITEM-QUANTITY[%line_number%]"
+            },
+            "internal_id": {
+                "path": "NEW_ITEM-EXT_PRODUCT_ID[%line_number%]"
+            },
+            "parent_line_number": {
+                "path": "NEW_ITEM-PARENT_ID[%line_number%]"
+            },
+            "item_type": {
+                "path": "NEW_ITEM-ITEM_TYPE[%line_number%]",
+                "transform":
+                [
+                    {
+                        "map": {
+                            "value": "composite",
+                            "result": "R"
+                        }
+                    },
+                    {
+                        "map": {
+                            "value": "item",
+                            "result": "O"
+                        }
+                    }
+                ]
+            },
+            "sku": {
+                "path": "NEW_ITEM-VENDORMAT[%line_number%],NEW_ITEM-MANUFACTMAT[%line_number%]"
+            },
+            "currency": {
+                "path": "NEW_ITEM-CURRENCY[%line_number%]"
+            },
+            "unit_total": {
+                "path": "NEW_ITEM-PRICE[%line_number%]"
+            },
+            "name": {
+                "path": "NEW_ITEM-DESCRIPTION[%line_number%]"
+            },
+            "long_description": {
+                "path": "NEW_ITEM-LONGTEXT_%line_number%:132[]"
+            },
+            "uom": {
+                "path": "NEW_ITEM-UNIT[%line_number%]",
+                "transform": [{
+                    "default": {
+                        "value": "EA"
+                    }
+                }]
+            },
+            "unspsc": {
+                "path": "NEW_ITEM-MATGROUP[%line_number%]"
+            },
+            "supplier_id": {
+                "path": "NEW_ITEM-VENDOR[%line_number%]"
+            },
+            "sale_bunch_quantity": {
+                "path": "NEW_ITEM-PRICEUNIT[%line_number%]"
+            },
+            "custom_fields/custom_field_org": {
+                "path": "NEW_ITEM-PURCHORG[%line_number%]"
+            },
+            "custom_fields/custom_field_ref": {
+                "path": "NEW_ITEM-PURCHINFREC[%line_number%]",
+                "transform": [
+                    "uppercase"
+                ]
+            },
+            "custom_fields/custom_field_contract": {
+                "path": "NEW_ITEM-CONTRACT[%line_number%]",
+                "transform": [
+                    "lowercase"
+                ]
+            },
+            "custom_fields/custom_field_1": {
+                "path": "NEW_ITEM-CUSTFIELD1[%line_number%]"
+            },
+            "custom_fields/custom_field_2": {
+                "path": "NEW_ITEM-CUSTFIELD2[%line_number%]"
+            },
+            "custom_fields/custom_field_3": {
+                "path": "NEW_ITEM-CUSTFIELD3[%line_number%]"
+            },
+            "custom_fields/custom_field_4": {
+                "path": "NEW_ITEM-CUSTFIELD4[%line_number%]"
+            },
+            "custom_fields/custom_field_5": {
+                "path": "NEW_ITEM-CUSTFIELD5[%line_number%]"
+            }
+        }
+    }
+}
+```

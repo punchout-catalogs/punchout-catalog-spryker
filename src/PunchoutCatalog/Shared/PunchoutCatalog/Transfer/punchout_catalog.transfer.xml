@@ -196,6 +196,7 @@
         <property name="discountDescription" type="string"/>
 
         <property name="customAttributes" type="PunchoutCatalogDocumentCustomAttribute[]" singular="customAttribute"/>
+        <property name="customFields" type="array" />
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCartItem">
@@ -216,6 +217,7 @@
         <property name="sku" type="string"/>
         <property name="groupKey" type="string"/>
         <property name="abstractSku" type="string"/>
+        <property name="customSku" type="string"/>
 
         <property name="name" type="string"/>
         <property name="description" type="string"/>
@@ -249,6 +251,22 @@
 
         <property name="options" type="PunchoutCatalogDocumentCustomAttribute[]" singular="option"/>
         <property name="customAttributes" type="PunchoutCatalogDocumentCustomAttribute[]" singular="customAttribute"/>
+        <property name="customFields" type="array" />
+
+        <!-- SUPPORT PRICEUNIT FIELD AND RELATED -->
+        <property name="saleBunchQuantity" type="float"/>
+        <property name="saleBunchQuantityFactor" type="float"/>
+
+        <property name="saleBunchQuantityUnitPrice" type="float"/>
+        <property name="saleBunchQuantitySumPrice" type="float"/>
+        <property name="saleBunchQuantityUnitTotal" type="float"/>
+        <property name="saleBunchQuantitySumTotal" type="float"/>
+
+        <property name="saleBunchQuantityUnitTaxAmount" type="float"/>
+        <property name="saleBunchQuantitySumTaxAmount" type="float"/>
+        <property name="saleBunchQuantityUnitTaxTotal" type="float"/>
+        <property name="saleBunchQuantitySumTaxTotal" type="float"/>
+        <!-- /SUPPORT PRICEUNIT FIELD AND RELATED -->
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCartCustomer">
@@ -258,6 +276,7 @@
         <property name="email" type="string"/>
 
         <property name="customAttributes" type="PunchoutCatalogDocumentCustomAttribute[]" singular="customAttribute"/>
+        <property name="customFields" type="array" />
     </transfer>
 
     <transfer name="PunchoutCatalogDocumentCustomAttribute">
