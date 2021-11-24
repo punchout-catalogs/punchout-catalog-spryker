@@ -26,6 +26,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected const BUNDLE_MODE_SINGLE = 'single';
     protected const BUNDLE_MODE_COMPOSITE = 'composite';
 
+    protected const TOTALS_MODE_DISABLED = 'disabled';
     protected const TOTALS_MODE_HEADER = 'header';
     protected const TOTALS_MODE_LINE = 'line';
 
@@ -863,7 +864,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     {
         if ($this->getTotalsMode() == self::TOTALS_MODE_LINE) {
             $this->prepareLineTotals($quoteTransfer, $cartRequestTransfer);
-        } else {
+        } elseif ($this->getTotalsMode() == self::TOTALS_MODE_HEADER) {
             $this->prepareHeaderTotals($quoteTransfer, $cartRequestTransfer);
         }
 
@@ -877,7 +878,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     {
         $cartDetails = $this->getPunchoutCartDetails();
 
-        return $cartDetails['totals_mode'] ?? self::TOTALS_MODE_LINE;
+        return $cartDetails['totals_mode'] ?? self::TOTALS_MODE_DISABLED;
     }
 
     /**
