@@ -410,12 +410,14 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $this->addItemDescriptionDetails($quoteTransfer, $quoteItemTransfer, $documentCartItemTransfer);
         $this->addItemAttributesDetails($quoteTransfer, $quoteItemTransfer, $documentCartItemTransfer);
 
-        return $this->applyCustomizations(
+        $this->applyCustomizations(
             $quoteItemTransfer,
             $documentCartItemTransfer,
             $this->cartItemMapping,
             [$quoteTransfer]
         );
+
+        return $this->addItemAfterCustomDetails($documentCartItemTransfer);
     }
 
     /**
@@ -774,6 +776,74 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     }
 
     /**
+     * @param \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
+     *
+     * @return \Generated\Shared\Transfer\PunchoutCatalogDocumentCartItemTransfer
+     */
+    public function addItemAfterCustomDetails(
+        PunchoutCatalogDocumentCartItemTransfer $documentCartItemTransfer
+    ): PunchoutCatalogDocumentCartItemTransfer
+    {
+        //handle default sale bunch quantity
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantity())) {
+            $documentCartItemTransfer->setSaleBunchQuantity(1);
+        }
+        $saleBunchQuantity = $documentCartItemTransfer->getSaleBunchQuantity();
+
+        //handle conversion factor
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantityFactor())) {
+            $documentCartItemTransfer->setSaleBunchQuantityFactor(1 / $saleBunchQuantity);
+        }
+        $factor = $documentCartItemTransfer->getSaleBunchQuantityFactor();
+
+        //BUNCH PRICES
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantityUnitPrice())) {
+            $documentCartItemTransfer->setSaleBunchQuantityUnitPrice(
+                $documentCartItemTransfer->getUnitPrice() * $factor
+            );
+        }
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantitySumPrice())) {
+            $documentCartItemTransfer->setSaleBunchQuantitySumPrice(
+                $documentCartItemTransfer->getSumPrice() * $factor
+            );
+        }
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantityUnitTotal())) {
+            $documentCartItemTransfer->setSaleBunchQuantityUnitTotal(
+                $documentCartItemTransfer->getUnitTotal() * $factor
+            );
+        }
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantitySumTotal())) {
+            $documentCartItemTransfer->setSaleBunchQuantitySumTotal(
+                $documentCartItemTransfer->getSumTotal() * $factor
+            );
+        }
+
+        //BUNCH TAX
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantityUnitTaxAmount())) {
+            $documentCartItemTransfer->setSaleBunchQuantityUnitTaxAmount(
+                $documentCartItemTransfer->getUnitTaxAmount() * $factor
+            );
+        }
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantitySumTaxAmount())) {
+            $documentCartItemTransfer->setSaleBunchQuantitySumTaxAmount(
+                $documentCartItemTransfer->getSumTaxAmount() * $factor
+            );
+        }
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantityUnitTaxTotal())) {
+            $documentCartItemTransfer->setSaleBunchQuantityUnitTaxTotal(
+                $documentCartItemTransfer->getUnitTaxTotal() * $factor
+            );
+        }
+        if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantitySumTaxTotal())) {
+            $documentCartItemTransfer->setSaleBunchQuantitySumTaxTotal(
+                $documentCartItemTransfer->getSumTaxTotal() * $factor
+            );
+        }
+
+        return $documentCartItemTransfer;
+    }
+
+    /**
      * @return int
      */
     protected function getNextLineNumber()
@@ -844,11 +914,11 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         }
         $documentCartTransfer = $cartRequestTransfer->getCart();
         $lineTaxTotalTransfer = new PunchoutCatalogDocumentCartItemTransfer();
-        
+
         $lineTaxTotalTransfer->setInternalId($this->getQuoteItemInternalId());
         $lineTaxTotalTransfer->setSupplierId($this->getDefaultSupplierId());
         $lineTaxTotalTransfer->setLocale($this->toLang($this->currentLocale));
-        
+
         $lineTaxTotalTransfer->setLineNumber($this->getNextLineNumber());
         $lineTaxTotalTransfer->setQuantity(1);
         $lineTaxTotalTransfer->setName('Estimated Tax');
@@ -863,10 +933,13 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
 
         $amount = $this->toAmount($quoteTransfer->getTotals()->getTaxTotal()->getAmount(),
             $documentCartTransfer->getCurrency());
+
         $lineTaxTotalTransfer->setUnitPrice($amount);
         $lineTaxTotalTransfer->setSumPrice($amount);
         $lineTaxTotalTransfer->setUnitTotal($amount);
         $lineTaxTotalTransfer->setSumTotal($amount);
+
+        $this->addItemAfterCustomDetails($lineTaxTotalTransfer);
 
         $cartRequestTransfer->addCartItem($lineTaxTotalTransfer);
         return $cartRequestTransfer;
@@ -896,7 +969,7 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
                 $expense->getName(),
                 $this->currentLocale
             );
-            
+
             $lineExpenseTransfer->setName($name);
             $lineExpenseTransfer->setSku('expense');
             $lineExpenseTransfer->setDescription($lineExpenseTransfer->getName());
@@ -912,6 +985,8 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
             $lineExpenseTransfer->setSumPrice($amount);
             $lineExpenseTransfer->setUnitTotal($amount);
             $lineExpenseTransfer->setSumTotal($amount);
+
+            $this->addItemAfterCustomDetails($lineExpenseTransfer);
 
             $cartRequestTransfer->addCartItem($lineExpenseTransfer);
         }
@@ -934,11 +1009,11 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         }
         $documentCartTransfer = $cartRequestTransfer->getCart();
         $lineDiscountTotalTransfer = new PunchoutCatalogDocumentCartItemTransfer();
-    
+
         $lineDiscountTotalTransfer->setInternalId($this->getQuoteItemInternalId());
         $lineDiscountTotalTransfer->setSupplierId($this->getDefaultSupplierId());
         $lineDiscountTotalTransfer->setLocale($this->toLang($this->currentLocale));
-        
+
         $lineDiscountTotalTransfer->setLineNumber($this->getNextLineNumber());
         $lineDiscountTotalTransfer->setQuantity(1);
         $lineDiscountTotalTransfer->setName('Estimated Discount');
@@ -949,9 +1024,9 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         if ($discountDescription) {
             $lineDiscountTotalTransfer->setDescription($discountDescription);
         }
-    
+
         $lineDiscountTotalTransfer->setLongDescription($lineDiscountTotalTransfer->getDescription());
-        
+
         if ($quoteTransfer->getCurrency() !== null) {
             $lineDiscountTotalTransfer->setCurrency($quoteTransfer->getCurrency()->getCode());
         }
@@ -962,6 +1037,8 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         $lineDiscountTotalTransfer->setSumPrice($amount);
         $lineDiscountTotalTransfer->setUnitTotal($amount);
         $lineDiscountTotalTransfer->setSumTotal($amount);
+
+        $this->addItemAfterCustomDetails($lineDiscountTotalTransfer);
 
         $cartRequestTransfer->addCartItem($lineDiscountTotalTransfer);
         return $cartRequestTransfer;
@@ -1087,5 +1164,15 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
     protected function isGrossPriceMode(QuoteTransfer $quoteTransfer)
     {
         return $quoteTransfer->getPriceMode() == self::PRICE_MODE_GROSS;
+    }
+
+    /**
+     * @param string|float|int|array|null $val
+     *
+     * @return bool
+     */
+    protected function hasValue($val = null)
+    {
+        return (null !== $val);
     }
 }

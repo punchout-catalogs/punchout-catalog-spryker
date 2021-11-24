@@ -4,6 +4,9 @@ Punchout Catalog Module for Spryker eCommerce Platform
 
 # Changelog
 
+# 2.2.0
+- Added `custom_sku` and `sale_bunch_quantity`, `sale_bunch_quantity_factor` fields to the mapping
+
 # 2.1.1
 - Added the `loginname` OCI field key
 
