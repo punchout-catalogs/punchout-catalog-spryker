@@ -462,7 +462,6 @@ class PunchoutCatalogFacade extends AbstractFacade implements PunchoutCatalogFac
     {
         $mapping = json_decode(trim($mapping), true);
 
-
         if (is_array($mapping) && !empty($mapping['cart_item']) && empty($mapping['multi_lines'])) {
             $mapping['cart_item']['multi_lines'] = true;
         }

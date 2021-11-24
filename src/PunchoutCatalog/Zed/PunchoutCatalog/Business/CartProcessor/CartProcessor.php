@@ -7,6 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\CartProcessor;
 
+use InvalidArgumentException;
 use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCartRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogCancelRequestTransfer;
@@ -119,7 +120,7 @@ class CartProcessor implements CartProcessorInterface
 
             return $punchoutCatalogCartResponseTransfer;
         } catch (\Exception $e) {
-            if ($e instanceof TransferredCartException) {
+            if (($e instanceof TransferredCartException) || ($e instanceof InvalidArgumentException)) {
                 $message = $e->getMessage();
                 $code = $e->getMessage();
             } else {
