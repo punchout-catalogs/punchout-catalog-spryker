@@ -77,7 +77,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    public function providePersistenceLayerDependencies(Container $container)
+    public function providePersistenceLayerDependencies(Container $container): Container
     {
         $container = parent::provideBusinessLayerDependencies($container);
         $container = $this->addPropelCustomerQuery($container);
@@ -91,7 +91,7 @@ class PunchoutCatalogDependencyProvider extends DataImportDependencyProvider
      *
      * @return \Spryker\Zed\Kernel\Container
      */
-    public function provideCommunicationLayerDependencies(Container $container)
+    public function provideCommunicationLayerDependencies(Container $container): Container
     {
         $container = parent::provideCommunicationLayerDependencies($container);
         $container = $this->addGlossaryFacade($container);
