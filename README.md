@@ -352,3 +352,5 @@ Restore menu items for `BREADCRUMB_MERGE_STRATEGY` easily by adding the followin
         </pages>
     </punchout-catalogs>
 ```
+
+And run the `application:build-navigation-cache` command if navigation menu is cached (store runs in `production` mode).
