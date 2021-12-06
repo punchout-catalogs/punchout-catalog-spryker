@@ -136,9 +136,9 @@ If this opportunity is not enough, you could define your own plugin that should 
 and add it by overriding `PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogDependencyProvider::getCartTransferMapperPlugins` method.
 
 
-### Enable Controllers in a new way (since Spryker version `202001`)
+### Enable Yves Controllers in a new way (since Spryker version `202001`)
 
-Register Punchout routes in `src/Pyz/Yves/Router/RouterDependencyProvider.php`:
+Enable Yves Punchout routes in `src/Pyz/Yves/Router/RouterDependencyProvider.php`:
 
 ```php
 <?php
@@ -161,7 +161,8 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
     }
 }
 ```
-### Enable Controllers in a legacy way
+
+### Enable Yves Controllers in a legacy way
 
 Register Punchout routes in `src/Pyz/Yves/ShopApplication/YvesBootstrap.php`:
 
@@ -185,6 +186,34 @@ class YvesBootstrap extends SprykerYvesBootstrap
         return [
             new PunchoutCatalogControllerProvider($isSsl),
         ];
+    }
+}
+```
+
+### Enable Zed Controllers in a new way (since Spryker version `202001`)
+
+Enable Zed Punchout routes in `src/Pyz/Zed/Router/RouterConfig.php`:
+
+```php
+<?php
+
+namespace Pyz\Zed\Router;
+
+use Spryker\Zed\Router\RouterConfig as SprykerRouterConfig;
+
+class RouterConfig extends SprykerRouterConfig
+{
+    /**
+     * @return string[]
+     */
+    public function getControllerDirectories(): array
+    {
+        $controllerDirectories = parent::getControllerDirectories();
+
+        //...
+        $controllerDirectories[] = sprintf('%s/punchout-catalogs/*/src/*/Zed/*/Communication/Controller/', APPLICATION_VENDOR_DIR);
+
+        return array_filter($controllerDirectories, 'glob');
     }
 }
 ```
