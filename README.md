@@ -136,9 +136,9 @@ If this opportunity is not enough, you could define your own plugin that should 
 and add it by overriding `PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogDependencyProvider::getCartTransferMapperPlugins` method.
 
 
-### Enable Controllers in a new way
+### Enable Yves Controllers in a new way (since Spryker version `202001`)
 
-Register Punchout routes in `src/Pyz/Yves/Router/RouterDependencyProvider.php`:
+Enable Yves Punchout routes in `src/Pyz/Yves/Router/RouterDependencyProvider.php`:
 
 ```php
 <?php
@@ -161,7 +161,8 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
     }
 }
 ```
-### Enable Controllers in a legacy way
+
+### Enable Yves Controllers in a legacy way (before Spryker version `202001`)
 
 Register Punchout routes in `src/Pyz/Yves/ShopApplication/YvesBootstrap.php`:
 
@@ -189,28 +190,33 @@ class YvesBootstrap extends SprykerYvesBootstrap
 }
 ```
 
-### Handle Auth Token Create Error
+### Enable Zed Controllers in a new way (since Spryker version `202001`)
 
-The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`.
+Enable Zed Punchout routes in `src/Pyz/Zed/Router/RouterConfig.php`:
 
-The easiest way to improve it is upgrading the field from `varchar(1024)` to `LONGVARCHAR`.
+```php
+<?php
 
-Create a scheme file `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml`:
-```xml
-<?xml version="1.0"?>
-<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Oauth\Persistence" package="src.Orm.Zed.Oauth.Persistence">
-    <table name="spy_oauth_access_token">
-        <column name="user_identifier" type="LONGVARCHAR"/>
-    </table>
-</database>
+namespace Pyz\Zed\Router;
+
+use Spryker\Zed\Router\RouterConfig as SprykerRouterConfig;
+
+class RouterConfig extends SprykerRouterConfig
+{
+    /**
+     * @return string[]
+     */
+    public function getControllerDirectories(): array
+    {
+        $controllerDirectories = parent::getControllerDirectories();
+
+        //...
+        $controllerDirectories[] = sprintf('%s/punchout-catalogs/*/src/*/Zed/*/Communication/Controller/', APPLICATION_VENDOR_DIR);
+
+        return array_filter($controllerDirectories, 'glob');
+    }
+}
 ```
-
-DB upgrade:
-
-`vendor/bin/console propel:install`
-
-[Database Schema Definition](https://documentation.spryker.com/docs/database-schema-definition)
-
 
 ### Example of OCI mapping with many custom fields:
 
@@ -311,3 +317,69 @@ DB upgrade:
     }
 }
 ```
+
+## Troubleshooting
+
+### Issue with Auth Token Create Error
+
+The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`.
+
+Solution:
+
+The easiest way to improve it is upgrading the field from `varchar(1024)` to `LONGVARCHAR`.
+
+Create a scheme file `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml`:
+```xml
+<?xml version="1.0"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Oauth\Persistence" package="src.Orm.Zed.Oauth.Persistence">
+    <table name="spy_oauth_access_token">
+        <column name="user_identifier" type="LONGVARCHAR"/>
+    </table>
+</database>
+```
+
+DB upgrade:
+
+`vendor/bin/console propel:install`
+
+[Database Schema Definition](https://documentation.spryker.com/docs/database-schema-definition)
+
+
+### Issue with disappeared `PunchOut` menu item in admin panel ( related to [`spryker-eco/punchout-catalogs`](https://github.com/spryker-eco/punchout-catalogs) )
+
+Possible Reason:
+
+Using `BREADCRUMB_MERGE_STRATEGY` hides all custom menu items which are not defined in the `config/Zed/navigation.xml` file.
+See: https://docs.spryker.com/docs/scos/dev/back-end-development/extending-spryker/adding-navigation-in-the-back-office.html#defining-a-navigation-merge-strategy
+Strategy defined in the `src/Pyz/Zed/ZedNavigation/ZedNavigationConfig.php` file.
+
+Solution:
+
+Restore menu items for `BREADCRUMB_MERGE_STRATEGY` easily by adding the following code to the `config/Zed/navigation.xml` file:
+
+```
+    <punchout-catalogs>
+        <label>PunchOut</label>
+        <title>PunchOut</title>
+        <pages>
+            <connection>
+                <label>Connections</label>
+                <title>Connections</title>
+                <bundle>punchout-catalogs</bundle>
+                <controller>index</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </connection>
+            <transaction-log>
+                <label>Transactions Log</label>
+                <title>Transactions Log</title>
+                <bundle>punchout-catalogs</bundle>
+                <controller>transaction</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </transaction-log>
+        </pages>
+    </punchout-catalogs>
+```
+
+And run the `application:build-navigation-cache` command if navigation menu is cached (store runs in `production` mode).
