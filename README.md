@@ -162,7 +162,7 @@ class RouterDependencyProvider extends SprykerRouterDependencyProvider
 }
 ```
 
-### Enable Yves Controllers in a legacy way
+### Enable Yves Controllers in a legacy way (before Spryker version `202001`)
 
 Register Punchout routes in `src/Pyz/Yves/ShopApplication/YvesBootstrap.php`:
 
