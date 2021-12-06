@@ -136,7 +136,7 @@ If this opportunity is not enough, you could define your own plugin that should 
 and add it by overriding `PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogDependencyProvider::getCartTransferMapperPlugins` method.
 
 
-### Enable Controllers in a new way
+### Enable Controllers in a new way (since Spryker version `202001`)
 
 Register Punchout routes in `src/Pyz/Yves/Router/RouterDependencyProvider.php`:
 
@@ -310,4 +310,43 @@ DB upgrade:
         }
     }
 }
+```
+
+## Troubleshooting
+
+### Issue with disappeared `PunchOut` menu item in admin panel ( related to [`spryker-eco/punchout-catalogs`](https://github.com/spryker-eco/punchout-catalogs) )
+
+Possible Reason:
+
+Using `BREADCRUMB_MERGE_STRATEGY` hides all custom menu items which are not defined in the `config/Zed/navigation.xml` file.
+See: https://docs.spryker.com/docs/scos/dev/back-end-development/extending-spryker/adding-navigation-in-the-back-office.html#defining-a-navigation-merge-strategy
+Strategy defined in the `src/Pyz/Zed/ZedNavigation/ZedNavigationConfig.php` file.
+
+Solution:
+
+Restore menu items for `BREADCRUMB_MERGE_STRATEGY` easily by adding the following code to the `config/Zed/navigation.xml` file:
+
+```
+    <punchout-catalogs>
+        <label>PunchOut</label>
+        <title>PunchOut</title>
+        <pages>
+            <connection>
+                <label>Connections</label>
+                <title>Connections</title>
+                <bundle>punchout-catalogs</bundle>
+                <controller>index</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </connection>
+            <transaction-log>
+                <label>Transactions Log</label>
+                <title>Transactions Log</title>
+                <bundle>punchout-catalogs</bundle>
+                <controller>transaction</controller>
+                <action>index</action>
+                <visible>1</visible>
+            </transaction-log>
+        </pages>
+    </punchout-catalogs>
 ```
