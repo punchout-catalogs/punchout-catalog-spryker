@@ -189,29 +189,6 @@ class YvesBootstrap extends SprykerYvesBootstrap
 }
 ```
 
-### Handle Auth Token Create Error
-
-The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`.
-
-The easiest way to improve it is upgrading the field from `varchar(1024)` to `LONGVARCHAR`.
-
-Create a scheme file `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml`:
-```xml
-<?xml version="1.0"?>
-<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Oauth\Persistence" package="src.Orm.Zed.Oauth.Persistence">
-    <table name="spy_oauth_access_token">
-        <column name="user_identifier" type="LONGVARCHAR"/>
-    </table>
-</database>
-```
-
-DB upgrade:
-
-`vendor/bin/console propel:install`
-
-[Database Schema Definition](https://documentation.spryker.com/docs/database-schema-definition)
-
-
 ### Example of OCI mapping with many custom fields:
 
 ```json
@@ -313,6 +290,31 @@ DB upgrade:
 ```
 
 ## Troubleshooting
+
+### Issue with Auth Token Create Error
+
+The `punchout-catalog.error.auth.token.create` error may happen if the `spy_oauth_access_token.user_identifier` field is too small for data which is storing in the field. By default it is `varchar(1024)`.
+
+Solution:
+
+The easiest way to improve it is upgrading the field from `varchar(1024)` to `LONGVARCHAR`.
+
+Create a scheme file `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml`:
+```xml
+<?xml version="1.0"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Oauth\Persistence" package="src.Orm.Zed.Oauth.Persistence">
+    <table name="spy_oauth_access_token">
+        <column name="user_identifier" type="LONGVARCHAR"/>
+    </table>
+</database>
+```
+
+DB upgrade:
+
+`vendor/bin/console propel:install`
+
+[Database Schema Definition](https://documentation.spryker.com/docs/database-schema-definition)
+
 
 ### Issue with disappeared `PunchOut` menu item in admin panel ( related to [`spryker-eco/punchout-catalogs`](https://github.com/spryker-eco/punchout-catalogs) )
 
