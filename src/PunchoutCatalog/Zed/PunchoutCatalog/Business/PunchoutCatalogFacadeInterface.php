@@ -7,6 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business;
 
+use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\DataImporterConfigurationTransfer;
 use Generated\Shared\Transfer\DataImporterReportTransfer;
 use Generated\Shared\Transfer\PgwPunchoutCatalogTransactionEntityTransfer;
@@ -242,4 +243,17 @@ interface PunchoutCatalogFacadeInterface
      * @return PunchoutCatalogEntryPointTransfer[]
      */
     public function getRequestEntryPointsByBusinessUnit(PunchoutCatalogEntryPointFilterTransfer $entryPointFilter): array;
+
+    /**
+     * Specification:
+     * - Finds company user by ID.
+     * - Returns null if company user does not exist.
+     *
+     * @api
+     *
+     * @param int $idCompanyUser
+     *
+     * @return \Generated\Shared\Transfer\CompanyUserTransfer|null
+     */
+    public function findCompanyUserById(int $idCompanyUser): ?CompanyUserTransfer;
 }
