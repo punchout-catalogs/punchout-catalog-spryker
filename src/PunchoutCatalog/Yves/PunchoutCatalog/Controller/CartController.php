@@ -24,7 +24,7 @@ class CartController extends AbstractController
     protected const REDIRECT_URL = 'cart';
     protected const ERROR_MESSAGE_IS_NOT_PUNCHOUT = 'punchout-catalog.error.is-not-punchout';
     protected const ERROR_MESSAGE_IS_NOT_ALLOWED  = 'punchout-catalog.error.is-not-allowed';
-   
+
     /**
      * Returns transferred cart
      *
@@ -72,7 +72,7 @@ class CartController extends AbstractController
     {
         return ($this->getPunchoutImpersonationDetails() && $this->getPunchoutImpersonationDetails()[PunchoutCatalogConstsInterface::IS_PUNCHOUT]);
     }
-    
+
     /**
      * @return bool
      */
@@ -81,10 +81,10 @@ class CartController extends AbstractController
         $validateQuoteResponseTransfer = $this->getFactory()
             ->getCartClient()
             ->validateQuote();
-        
+
         return $validateQuoteResponseTransfer->getIsSuccessful();
     }
-    
+
     /**
      * @return array|null
      */
@@ -137,7 +137,7 @@ class CartController extends AbstractController
         //Should go after the last data getting from customer session
         $this->logoutCustomer($request);
 
-        return $this->getApplication()->render('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
+        return $this->renderView('@PunchoutCatalog/views/cart/transfer.twig', $viewData, $response);
     }
 
     /**

@@ -100,7 +100,7 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_QUOTE);
     }
-    
+
     /**
      * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Client\PunchoutCatalogToCartClientInterface
      */
@@ -108,7 +108,7 @@ class PunchoutCatalogFactory extends AbstractFactory
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::CLIENT_CART);
     }
-    
+
     /**
      * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Service\PunchoutCatalogToUtilUuidGeneratorServiceInterface
      */
@@ -130,7 +130,7 @@ class PunchoutCatalogFactory extends AbstractFactory
     /**
      * @return \Spryker\Yves\Kernel\Application
      */
-    public function getApplication(): Application
+    public function getApplication()
     {
         return $this->getProvidedDependency(PunchoutCatalogDependencyProvider::APPLICATION);
     }
