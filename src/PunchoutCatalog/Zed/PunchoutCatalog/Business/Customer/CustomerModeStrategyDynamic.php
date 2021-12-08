@@ -7,6 +7,7 @@
 
 namespace PunchoutCatalog\Zed\PunchoutCatalog\Business\Customer;
 
+use DateTime;
 use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
@@ -85,7 +86,7 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
         if (null === $documentCustomerTransfer) {
             throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
         }
-        
+
         try {
             $documentCustomerTransfer->requireEmail();
         } catch (RequiredTransferPropertyException $e) {
@@ -108,12 +109,14 @@ class CustomerModeStrategyDynamic implements CustomerModeStrategyInterface
             } catch (RequiredTransferPropertyException $e) {
                 throw new AuthenticateException(self::ERROR_MISSING_COMPANY_USER);
             }
-            
+
             $customerTransfer = new CustomerTransfer();
             $customerTransfer->setEmail($documentCustomerTransfer->getEmail());
             $customerTransfer->setFirstName($documentCustomerTransfer->getFirstName());
             $customerTransfer->setLastName($documentCustomerTransfer->getLastName());
-            
+            $customerTransfer->setRegistered(new DateTime());
+            $customerTransfer->setRegistrationKey(null);
+
             $customerResponseTransfer = $this->customerFacade->addCustomer($customerTransfer);
 
             if (!$customerResponseTransfer->getIsSuccess()) {
