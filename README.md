@@ -261,7 +261,12 @@ class RouterConfig extends SprykerRouterConfig
                 "path": "NEW_ITEM-PRICE[%line_number%]"
             },
             "name": {
-                "path": "NEW_ITEM-DESCRIPTION[%line_number%]"
+                "path": "NEW_ITEM-DESCRIPTION[%line_number%]",
+                "transform": [{
+                    "cut": {
+                        "len": "40"
+                    }
+                }]
             },
             "long_description": {
                 "path": "NEW_ITEM-LONGTEXT_%line_number%:132[]"
