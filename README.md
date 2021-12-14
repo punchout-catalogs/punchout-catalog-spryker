@@ -8,11 +8,16 @@ Punchout Catalog Module for Spryker eCommerce Platform
 composer require punchout-catalogs/punchout-catalog-spryker
 ```
 
+*B2C* store additionally requires the `spryker-feature/company-account` feature.
+
+Look at `etc/integration-sample/*.patch` patches as example of integration with Spryker B2B and B2C vanilla stores.
+
 ## Documentation
 
 [Integration Documentation](https://documentation.spryker.com/docs/punchout-catalog-feature-integration)
 
 [Spryker Documentation](https://academy.spryker.com/developing_with_spryker/module_guide/modules.html)
+
 
 ## Testing
 
