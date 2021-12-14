@@ -1,0 +1,760 @@
+From 87fc3331b18fdc57524ae2d996e7e6278b4713e2 Mon Sep 17 00:00:00 2001
+From: Anatolii Lehkyi <tolik.legkyi@punchoutcatalogs.com>
+Date: Tue, 30 Nov 2021 20:21:54 +0200
+Subject: [PATCH] punchout catalogs integration: spryker release `201907`
+
+---
+ config/Shared/config_local.php                | 19 ++++++
+ data/import/glossary.csv                      | 64 +++++++++++++++++
+ .../BusinessOnBehalfDependencyProvider.php    | 19 ++++++
+ .../Customer/CustomerDependencyProvider.php   | 12 ++++
+ .../CartPage/CartPageDependencyProvider.php   | 33 +++++++++
+ src/Pyz/Yves/CartPage/CartPageFactory.php     |  9 +++
+ .../CartPage/Controller/CartController.php    |  6 ++
+ .../molecules/cart-summary/cart-summary.twig  | 14 +++-
+ .../page-layout-cart/page-layout-cart.twig    |  2 +
+ .../Controller/AccessTokenController.php      | 68 +++++++++++++++++++
+ .../PunchoutCatalog/PunchoutCatalogConfig.php | 63 +++++++++++++++++
+ .../PunchoutCatalogDependencyProvider.php     | 22 ++++++
+ .../ShopApplicationDependencyProvider.php     |  7 ++
+ .../Yves/ShopApplication/YvesBootstrap.php    |  4 ++
+ src/Pyz/Zed/Auth/AuthConfig.php               |  3 +
+ .../DataImportDependencyProvider.php          | 11 +++
+ src/Pyz/Zed/Oauth/OauthDependencyProvider.php |  5 ++
+ .../OauthCompanyUserDependencyProvider.php    | 25 +++++++
+ .../Propel/Schema/spy_oauth.schema.xml        |  6 ++
+ .../PunchoutCatalog/PunchoutCatalogConfig.php | 24 +++++++
+ .../PunchoutCatalogsDependencyProvider.php    | 47 +++++++++++++
+ 25 files changed, 587 insertions(+), 2 deletions(-)
+ create mode 100644 config/Shared/config_local.php
+ create mode 100644 src/Pyz/Client/BusinessOnBehalf/BusinessOnBehalfDependencyProvider.php
+ create mode 100644 src/Pyz/Yves/CustomerPage/Controller/AccessTokenController.php
+ create mode 100644 src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogConfig.php
+ create mode 100644 src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogDependencyProvider.php
+ create mode 100644 src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml
+ create mode 100644 src/Pyz/Zed/PunchoutCatalog/PunchoutCatalogConfig.php
+ create mode 100644 src/Pyz/Zed/PunchoutCatalogs/PunchoutCatalogsDependencyProvider.php
+
+diff --git a/config/Shared/config_local.php b/config/Shared/config_local.php
+new file mode 100644
+index 000000000..cf6a8ecbc
+--- /dev/null
++++ b/config/Shared/config_local.php
+@@ -0,0 +1,19 @@
++<?php
++use Spryker\Shared\Acl\AclConstants;
++use Spryker\Shared\Kernel\KernelConstants;
++use Spryker\Shared\Vault\VaultConstants;
++
++//POC
++$config[KernelConstants::PROJECT_NAMESPACES][] = 'PunchoutCatalog';
++
++$config[KernelConstants::CORE_NAMESPACES][] = 'PunchoutCatalog';
++
++$config[AclConstants::ACL_DEFAULT_RULES][] = [
++    'bundle' => 'punchout-catalog',
++    'controller' => 'request',
++    'action' => 'index',
++    'type' => 'allow',
++];
++
++//VAULT - remove if already defined in any config
++$config[VaultConstants::ENCRYPTION_KEY] = 'lxZFUEsBCJ2Yb14IF2ygAHI5N4+ZAUXXaSeeJm6+twsUmIen';
+
+diff --git a/data/import/glossary.csv b/data/import/glossary.csv
+index ca88b2554..0a3b26f49 100755
+--- a/data/import/glossary.csv
++++ b/data/import/glossary.csv
+@@ -2968,3 +2968,67 @@ billing.address.country.validation.not_found,Billing address country not found f
+ billing.address.country.validation.not_found,Rechnungsadresse Land für Ländercode nicht gefunden: %code%,de_DE
+ shipping.address.country.validation.not_found,Shipping address country not found for country code: %code%,en_US
+ shipping.address.country.validation.not_found,Lieferadresse Land für Ländercode nicht gefunden: %code%,de_DE
++punchout-catalog.connection.list.title,Punch-out Catalog,en_US
++punchout-catalog.connection.list.title,Ausstanzungskatalog,de_DE
++punchout-catalog.connection.list.name,Name,en_US
++punchout-catalog.connection.list.name,Name,de_DE
++punchout-catalog.connection.list.date,Date,en_US
++punchout-catalog.connection.list.date,Date,de_DE
++punchout-catalog.connection.list.edit,Edit,en_US
++punchout-catalog.connection.list.edit,Ändern,de_DE
++punchout-catalog.connection.list.delete,Delete,en_US
++punchout-catalog.connection.list.delete,Löschen,de_DE
++punchout-catalog.connection.add-new-connection,New connection,en_US
++punchout-catalog.connection.add-new-connection,Neu Anschluss,de_DE
++punchout-catalog.connection.list.empty,No connections were found,en_US
++punchout-catalog.connection.list.empty,Kein Anschluss wurde gefunden,de_DE
++punchout-catalog.connection.create.title,Add new connection,en_US
++punchout-catalog.connection.create.title,Neue Anschluss hinzufügen,de_DE
++punchout-catalog.connection.name,Name,en_US
++punchout-catalog.connection.name,Name,de_DE
++punchout-catalog.connection.added,Connection added,en_US
++punchout-catalog.connection.added,Connection wurde hinzufügt,de_DE
++punchout-catalog.connection.updated,Connection updated,en_US
++punchout-catalog.connection.updated,Anschluss wurde erfolgreich aktualisiert,de_DE
++punchout-catalog.connection.not_updated,Error during connection update,en_US
++punchout-catalog.connection.not_updated,Error during connection update DE,de_DE
++punchout-catalog.error.is-not-punchout,Current session is not PunchOut,de_DE
++punchout-catalog.error.is-not-punchout,Current session is not PunchOut,en_US
++punchout-catalog.error.is-not-allowed,Current cart is not valid to transfer,de_DE
++punchout-catalog.error.is-not-allowed,Current cart is not valid to transfer,en_US
++punchout-catalog.error.missing-connection,Could not define PunchOut Connection,de_DE
++punchout-catalog.error.missing-connection,Could not define PunchOut Connection,en_US
++punchout-catalog.error.missing-cart-format,Could not define PunchOut Format,de_DE
++punchout-catalog.error.missing-cart-format,Could not define PunchOut Format,en_US
++punchout-catalog.error.general,An error happened,de_DE
++punchout-catalog.error.general,An error happened,en_US
++punchout-catalog.error.authentication,Authentication Failed,de_DE
++punchout-catalog.error.authentication,Authentication Failed,en_US
++punchout-catalog.error.invalid-data,Invalid PunchOut Format,de_DE
++punchout-catalog.error.invalid-data,Invalid PunchOut Format,en_US
++punchout-catalog.error.unexpected,An unexpected error happened,de_DE
++punchout-catalog.error.unexpected,An unexpected error happened,en_US
++punchout-catalog.cart.return,Transferring Cart to eProcurement client...,de_DE
++punchout-catalog.cart.return,Transferring Cart to eProcurement client...,en_US
++punchout-catalog.cart.checkout,Transfer Cart,de_DE
++punchout-catalog.cart.checkout,Transfer Cart,en_US
++punchout-catalog.cart.cancel,Cancel Cart & Return,de_DE
++punchout-catalog.cart.cancel,Cancel Cart & Return,en_US
++punchout-catalog.cart.go-to-transfer,Transfer Cart to eProcurement client,de_DE
++punchout-catalog.cart.go-to-transfer,Transfer Cart to eProcurement client,en_US
++punchout-catalog.cart.go-to-cancel,Cancel & Return to eProcurement client,de_DE
++punchout-catalog.cart.go-to-cancel,Cancel & Return to eProcurement client,en_US
++punchout-catalog.error.missing-company-business-unit,Missed Company Business Unit,de_DE
++punchout-catalog.error.missing-company-business-unit,Missed Company Business Unit,en_US
++punchout-catalog.error.missing-company-user,Missed Company User,de_DE
++punchout-catalog.error.missing-company-user,Missed Company User,en_US
++punchout-catalog.error.invalid.document.data,Invalid Document Data,de_DE
++punchout-catalog.error.invalid.document.data,Invalid Document Data,en_US
++punchout-catalog.error.invalid.source.data,Invalid Source Data,de_DE
++punchout-catalog.error.invalid.source.data,Invalid Source Data,en_US
++punchout-catalog.error.invalid.mapping.source,Invalid Mapping Source,de_DE
++punchout-catalog.error.invalid.mapping.source,Invalid Mapping Source,en_US
++punchout-catalog.error.invalid.mapping.format,Invalid Mapping Format,de_DE
++punchout-catalog.error.invalid.mapping.format,Invalid Mapping Format,en_US
++punchout-catalog.error.too-many-company-users,Customer should have only one Company user to login,de_DE
++punchout-catalog.error.too-many-company-users,Customer should have only one Company user to login,en_US
+diff --git a/src/Pyz/Client/BusinessOnBehalf/BusinessOnBehalfDependencyProvider.php b/src/Pyz/Client/BusinessOnBehalf/BusinessOnBehalfDependencyProvider.php
+new file mode 100644
+index 000000000..2f7b973a7
+--- /dev/null
++++ b/src/Pyz/Client/BusinessOnBehalf/BusinessOnBehalfDependencyProvider.php
+@@ -0,0 +1,19 @@
++<?php
++
++namespace Pyz\Client\BusinessOnBehalf;
++
++use PunchoutCatalog\Client\PunchoutCatalog\Plugin\BusinessOnBehalf\DisallowPunchoutCompanyUserChangePlugin;
++use Spryker\Client\BusinessOnBehalf\BusinessOnBehalfDependencyProvider as BaseBusinessOnBehalfDependencyProvider;
++
++class BusinessOnBehalfDependencyProvider extends BaseBusinessOnBehalfDependencyProvider
++{
++    /**
++     * @return \Spryker\Client\BusinessOnBehalfExtension\Dependency\Plugin\CompanyUserChangeAllowedCheckPluginInterface[]
++     */
++    protected function getCompanyUserChangeAllowedCheckPlugins(): array
++    {
++        return [
++            new DisallowPunchoutCompanyUserChangePlugin(),
++        ];
++    }
++}
+diff --git a/src/Pyz/Client/Customer/CustomerDependencyProvider.php b/src/Pyz/Client/Customer/CustomerDependencyProvider.php
+index d06793eed..7de651e6b 100644
+--- a/src/Pyz/Client/Customer/CustomerDependencyProvider.php
++++ b/src/Pyz/Client/Customer/CustomerDependencyProvider.php
+@@ -14,6 +14,8 @@ use Spryker\Client\Customer\Plugin\CustomerTransferSessionRefreshPlugin;
+ use Spryker\Client\CustomerAccessPermission\Plugin\Customer\CustomerAccessSecuredPatternRulePlugin;
+ use Spryker\Client\MultiCart\Plugin\GuestCartSaveCustomerSessionSetPlugin;
+ use Spryker\Client\PersistentCart\Plugin\GuestCartUpdateCustomerSessionSetPlugin;
++use Spryker\Client\Customer\Exception\MissingAccessTokenAuthenticationHandlerPluginException;
++use Spryker\Client\CustomerExtension\Dependency\Plugin\AccessTokenAuthenticationHandlerPluginInterface;
+
+ class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
+ {
+@@ -58,4 +60,14 @@ class CustomerDependencyProvider extends SprykerCustomerDependencyProvider
+             new CustomerAccessSecuredPatternRulePlugin(), #CustomerAccessPermissionFeature
+         ];
+     }
++
++    /**
++     * @throws \Spryker\Client\Customer\Exception\MissingAccessTokenAuthenticationHandlerPluginException
++     *
++     * @return \Spryker\Client\CustomerExtension\Dependency\Plugin\AccessTokenAuthenticationHandlerPluginInterface
++     */
++    protected function getAccessTokenAuthenticationHandlerPlugin(): AccessTokenAuthenticationHandlerPluginInterface
++    {
++        return new \Spryker\Client\OauthCompanyUser\Plugin\Customer\CompanyUserAccessTokenAuthenticationHandlerPlugin();
++    }
+ }
+diff --git a/src/Pyz/Yves/CartPage/CartPageDependencyProvider.php b/src/Pyz/Yves/CartPage/CartPageDependencyProvider.php
+index a274d66aa..c0bd2ad40 100644
+--- a/src/Pyz/Yves/CartPage/CartPageDependencyProvider.php
++++ b/src/Pyz/Yves/CartPage/CartPageDependencyProvider.php
+@@ -10,6 +10,9 @@ namespace Pyz\Yves\CartPage;
+ use SprykerShop\Yves\CartPage\CartPageDependencyProvider as SprykerCartPageDependencyProvider;
+ use SprykerShop\Yves\ProductBundleWidget\Plugin\CartPage\ProductBundleCartItemTransformerPlugin;
+
++use Spryker\Yves\Kernel\Container;
++//use SprykerShop\Yves\CartPage\Dependency\Client\CartPageToCustomerClientBridge;
++
+ class CartPageDependencyProvider extends SprykerCartPageDependencyProvider
+ {
+     /**
+@@ -21,4 +24,34 @@ class CartPageDependencyProvider extends SprykerCartPageDependencyProvider
+             new ProductBundleCartItemTransformerPlugin(),
+         ];
+     }
++
++    public const CLIENT_CUSTOMER = 'CLIENT_CUSTOMER';
++
++    /**
++     * @param \Spryker\Yves\Kernel\Container $container
++     *
++     * @return \Spryker\Yves\Kernel\Container
++     */
++    public function provideDependencies(Container $container)
++    {
++        $container = parent::provideDependencies( $container);
++
++        $container = $this->addCustomerClient($container);
++
++        return $container;
++    }
++
++    /**
++     * @param \Spryker\Yves\Kernel\Container $container
++     *
++     * @return \Spryker\Yves\Kernel\Container
++     */
++    protected function addCustomerClient(Container $container)
++    {
++        $container[static::CLIENT_CUSTOMER] = function (Container $container) {
++            return $container->getLocator()->customer()->client();
++        };
++
++        return $container;
++    }
+ }
+diff --git a/src/Pyz/Yves/CartPage/CartPageFactory.php b/src/Pyz/Yves/CartPage/CartPageFactory.php
+index 51f3569b1..7c226c842 100644
+--- a/src/Pyz/Yves/CartPage/CartPageFactory.php
++++ b/src/Pyz/Yves/CartPage/CartPageFactory.php
+@@ -10,6 +10,7 @@ namespace Pyz\Yves\CartPage;
+ use Pyz\Yves\CartPage\Plugin\Provider\CartItemsProductProvider;
+ use Pyz\Yves\CartPage\Plugin\Provider\CartItemsProductProviderInterface;
+ use SprykerShop\Yves\CartPage\CartPageFactory as SprykerCartPageFactory;
++#use SprykerShop\Yves\CartPage\Dependency\Client\CartPageToCustomerClientInterface;
+
+ class CartPageFactory extends SprykerCartPageFactory
+ {
+@@ -22,4 +23,12 @@ class CartPageFactory extends SprykerCartPageFactory
+             $this->getProductStorageClient()
+         );
+     }
++
++    /**
++     * @return \SprykerShop\Yves\CartPage\Dependency\Client\CartPageToCustomerClientInterface
++     */
++    public function getCustomerClient()#: CartPageToCustomerClientInterface
++    {
++        return $this->getProvidedDependency(CartPageDependencyProvider::CLIENT_CUSTOMER);
++    }
+ }
+diff --git a/src/Pyz/Yves/CartPage/Controller/CartController.php b/src/Pyz/Yves/CartPage/Controller/CartController.php
+index 0c068a047..60de2b42d 100644
+--- a/src/Pyz/Yves/CartPage/Controller/CartController.php
++++ b/src/Pyz/Yves/CartPage/Controller/CartController.php
+@@ -33,6 +33,12 @@ class CartController extends SprykerCartController
+             ->createCartItemsProductsProvider()
+             ->getItemsProducts($cartItems, $this->getLocale());
+
++        //POC
++        $viewData['customer'] = $this->getFactory()
++            ->getCustomerClient()
++            ->getCustomer();
++        //POC
++
+         return $viewData;
+     }
+
+diff --git a/src/Pyz/Yves/CartPage/Theme/default/components/molecules/cart-summary/cart-summary.twig b/src/Pyz/Yves/CartPage/Theme/default/components/molecules/cart-summary/cart-summary.twig
+index ede8eeaaa..eca920f6e 100644
+--- a/src/Pyz/Yves/CartPage/Theme/default/components/molecules/cart-summary/cart-summary.twig
++++ b/src/Pyz/Yves/CartPage/Theme/default/components/molecules/cart-summary/cart-summary.twig
+@@ -12,7 +12,11 @@
+
+ {% set canProceedToCheckout = data.cart.items is not empty
+     and data.isQuoteValid
+-    and (not is_granted('ROLE_USER') or can('WriteSharedCartPermissionPlugin', data.cart.idQuote))
++    and (
++        not is_granted('ROLE_USER')
++        or can('WriteSharedCartPermissionPlugin', data.cart.idQuote)
++        or data.customer.punchoutCatalogImpersonationDetails.is_punchout
++    )
+ %}
+
+ {% block body %}
+@@ -76,7 +80,13 @@
+     {% endif %}
+
+     {% if canProceedToCheckout and can('SeeOrderPlaceSubmitPermissionPlugin') %}
+-        {% widget 'ProceedToCheckoutButtonWidget' args [data.cart] %}{% endwidget %}
++        {% if data.customer.punchoutCatalogImpersonationDetails.is_punchout is defined %}
++            <hr>
++            {% widget 'PunchoutCatalogCheckoutButtonsWidget' args [data.customer] %}{% endwidget %}
++            <hr>
++        {% else %}
++            {% widget 'ProceedToCheckoutButtonWidget' args [data.cart] %}{% endwidget %}
++        {% endif %}
+     {% endif %}
+
+     {% if is_granted('ROLE_USER') %}
+diff --git a/src/Pyz/Yves/CartPage/Theme/default/templates/page-layout-cart/page-layout-cart.twig b/src/Pyz/Yves/CartPage/Theme/default/templates/page-layout-cart/page-layout-cart.twig
+index 0eeca8611..bece58138 100644
+--- a/src/Pyz/Yves/CartPage/Theme/default/templates/page-layout-cart/page-layout-cart.twig
++++ b/src/Pyz/Yves/CartPage/Theme/default/templates/page-layout-cart/page-layout-cart.twig
+@@ -9,6 +9,7 @@
+     request: app.request,
+     products: _view.products | default,
+     title: 'cart.cart' | trans,
++    customer: _view.customer,
+ } %}
+
+ {% block breadcrumbs %}
+@@ -335,6 +336,7 @@
+                                     cart: data.cart,
+                                     isQuoteValid: data.isQuoteValid,
+                                     isQuoteEditable: data.isQuoteEditable,
++                                    customer: data.customer,
+                                 },
+                             } only %}
+                         {% endif %}
+diff --git a/src/Pyz/Yves/CustomerPage/Controller/AccessTokenController.php b/src/Pyz/Yves/CustomerPage/Controller/AccessTokenController.php
+new file mode 100644
+index 000000000..647c4a2e5
+--- /dev/null
++++ b/src/Pyz/Yves/CustomerPage/Controller/AccessTokenController.php
+@@ -0,0 +1,68 @@
++<?php
++
++namespace Pyz\Yves\CustomerPage\Controller;
++
++use SprykerShop\Yves\CustomerPage\Controller\AccessTokenController as SprykerAccessTokenController;
++use Symfony\Component\HttpFoundation\RedirectResponse;
++use Symfony\Component\HttpFoundation\Request;
++use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
++
++/**
++ * @method \SprykerShop\Yves\CustomerPage\CustomerPageFactory getFactory()
++ */
++class AccessTokenController extends SprykerAccessTokenController
++{
++    /**
++     * @param string $token
++     * @param \Symfony\Component\HttpFoundation\Request|null $request
++     *
++     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
++     *
++     * @return \Symfony\Component\HttpFoundation\RedirectResponse
++     */
++    public function indexAction(string $token, ?Request $request = null): RedirectResponse
++    {
++        $customerResponseTransfer = $this
++            ->getFactory()
++            ->getCustomerClient()
++            ->getCustomerByAccessToken($token);
++
++        if (!$customerResponseTransfer->getIsSuccess()) {
++            $this->addErrorMessage(static::GLOSSARY_KEY_INVALID_ACCESS_TOKEN);
++            throw new AccessDeniedHttpException();
++        }
++
++        if ($this->isLoggedInCustomer()) {
++            $this->getFactory()
++                ->getCustomerClient()
++                ->logout();
++        }
++
++        $customerTransfer = $customerResponseTransfer->getCustomerTransfer();
++        $token = $this->getFactory()->createUsernamePasswordToken($customerTransfer);
++
++        $this->getFactory()
++            ->createCustomerAuthenticator()
++            ->authenticateCustomer($customerTransfer, $token);
++
++        $returnRoute = $this->getReturnRoute($request);
++
++        return $this->redirectResponseInternal($returnRoute);
++    }
++
++    /**
++     * @param \Symfony\Component\HttpFoundation\Request|null $request
++     *
++     * @return string
++     */
++    protected function getReturnRoute(?Request $request = null): string
++    {
++        if ($request === null) {
++            return static::ROUTE_CUSTOMER_OVERVIEW;
++        }
++
++        $returnRoute = $request->query->get('returnUrl');
++
++        return empty($returnRoute) ? static::ROUTE_CUSTOMER_OVERVIEW : $returnRoute;
++    }
++}
+diff --git a/src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogConfig.php b/src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogConfig.php
+new file mode 100644
+index 000000000..6d78bae00
+--- /dev/null
++++ b/src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogConfig.php
+@@ -0,0 +1,63 @@
++<?php
++
++namespace Pyz\Yves\PunchoutCatalog;
++
++use PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig as BasePunchoutCatalogConfig;
++
++class PunchoutCatalogConfig extends BasePunchoutCatalogConfig
++{
++    /**
++     * @return array
++     */
++    public function getCustomCartMapping(): array
++    {
++        return [
++            // QuoteTransfer => PunchoutCatalogDocumentCartTransfer
++
++            // without key, should return transfer object
++            function ($quoteTransfer, $cartRequestTransfer, $plugin) {
++                $cartRequestTransfer->setCoupon('Coupon for ' . $quoteTransfer->getName());
++                return $cartRequestTransfer;
++            },
++            'cart_note' => 'name',
++        ];
++    }
++
++    /**
++     * @return array
++     */
++    public function getCustomCartItemMapping(): array
++    {
++        return [
++            'custom_sku' => function($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin) {
++                return 'here-is-custom-sku-' . $quoteItemTransfer->getAbstractSku();
++            },
++
++            'sale_bunch_quantity' => function($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin)  {
++//                //Product #1
++//                if ($quoteItemTransfer->getAbstractSku() === 'any_condition_1') {
++//                    return 100;
++//                }
++//                //Product #2
++//                if ($quoteItemTransfer->getAbstractSku() === 'any_condition_2') {
++//                    return 10;
++//                }
++                return rand(1, 10);
++            },
++
++            'custom_fields' => function($quoteItemTransfer, $documentCartItemTransfer, $quoteTransfer, $plugin) {
++                return array(
++                    'custom_field_1' => 'quote-item-id=' . $quoteItemTransfer->getId(),
++                    'custom_field_2' => 'custom-abstract-sku-' . $quoteItemTransfer->getAbstractSku(),
++                    'custom_field_3' => 'custom_field_value_3',
++                    'custom_field_4' => 'custom_field_value_4_' . uniqid(),
++                    'custom_field_5' => 'custom_field_value_5_' . uniqid(),
++                    'custom_field_contract' => 'ContractID-'. uniqid(),
++                    'custom_field_org' => 'TestPurchOrg',
++                    'custom_field_ref' => 'some-ref',
++                    //...add as many custom fields as you need and can use in mapping
++                );
++            },
++        ];
++    }
++}
+diff --git a/src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogDependencyProvider.php b/src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogDependencyProvider.php
+new file mode 100644
+index 000000000..01fb57496
+--- /dev/null
++++ b/src/Pyz/Yves/PunchoutCatalog/PunchoutCatalogDependencyProvider.php
+@@ -0,0 +1,22 @@
++<?php
++
++namespace Pyz\Yves\PunchoutCatalog;
++
++use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\PunchoutCatalog\ProductBundleCartItemTransformerPlugin;
++use PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogDependencyProvider as BasePunchoutCatalogDependencyProvider;
++
++/**
++ * @method \PunchoutCatalog\Yves\PunchoutCatalog\PunchoutCatalogConfig getConfig()
++ */
++class PunchoutCatalogDependencyProvider extends BasePunchoutCatalogDependencyProvider
++{
++    /**
++     * @return \PunchoutCatalog\Yves\PunchoutCatalog\Dependency\Plugin\CartItemTransformerPluginInterface[]
++     */
++    protected function getCartItemTransformerPlugins(): array
++    {
++        return [
++            new ProductBundleCartItemTransformerPlugin(),
++        ];
++    }
++}
+diff --git a/src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php b/src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php
+index 1da35f593..2b2284b47 100644
+--- a/src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php
++++ b/src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php
+@@ -107,6 +107,10 @@ use SprykerShop\Yves\ShoppingListWidget\Widget\ShoppingListNavigationMenuWidget;
+ use SprykerShop\Yves\ShoppingListWidget\Widget\ShoppingListSubtotalWidget;
+ use SprykerShop\Yves\TabsWidget\Widget\FullTextSearchTabsWidget;
+
++//POC
++use PunchoutCatalog\Yves\PunchoutCatalog\Widget\PunchoutCatalogCheckoutButtonsWidget;
++//POC
++
+ class ShopApplicationDependencyProvider extends SprykerShopApplicationDependencyProvider
+ {
+     /**
+@@ -205,6 +209,9 @@ class ShopApplicationDependencyProvider extends SprykerShopApplicationDependency
+             QuoteRequestAgentOverviewWidget::class,
+             QuoteRequestAgentCancelWidget::class,
+             CommentThreadWidget::class,
++
++            //POC
++            PunchoutCatalogCheckoutButtonsWidget::class,
+         ];
+     }
+
+diff --git a/src/Pyz/Yves/ShopApplication/YvesBootstrap.php b/src/Pyz/Yves/ShopApplication/YvesBootstrap.php
+index 3f26f4b00..f835c6664 100644
+--- a/src/Pyz/Yves/ShopApplication/YvesBootstrap.php
++++ b/src/Pyz/Yves/ShopApplication/YvesBootstrap.php
+@@ -82,6 +82,7 @@ use SprykerShop\Yves\ShopRouter\Plugin\Router\SilexRouter;
+ use SprykerShop\Yves\ShopRouter\Plugin\Router\StorageRouter;
+ use SprykerShop\Yves\ShopTranslator\Plugin\Provider\TranslationServiceProvider;
+ use SprykerShop\Yves\WebProfilerWidget\Plugin\ServiceProvider\WebProfilerWidgetServiceProvider;
++use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\Provider\PunchoutCatalogControllerProvider;
+
+ class YvesBootstrap extends SprykerYvesBootstrap
+ {
+@@ -195,6 +196,9 @@ class YvesBootstrap extends SprykerYvesBootstrap
+             new ResourceSharePageControllerProvider($isSsl),
+             new ShareCartByLinkWidgetControllerProvider($isSsl),
+             new CommentWidgetControllerProvider($isSsl),
++
++            //POC
++            new PunchoutCatalogControllerProvider($isSsl),
+         ];
+     }
+ }
+diff --git a/src/Pyz/Zed/Auth/AuthConfig.php b/src/Pyz/Zed/Auth/AuthConfig.php
+index c69581ad3..ca81e7662 100644
+--- a/src/Pyz/Zed/Auth/AuthConfig.php
++++ b/src/Pyz/Zed/Auth/AuthConfig.php
+@@ -19,6 +19,9 @@ class AuthConfig extends SprykerAuthConfig
+         $this->addIgnorable('heartbeat', 'index', 'index');
+         $this->addIgnorable('_profiler', 'wdt', '*');
+
++        //POC
++        $this->addIgnorable('punchout-catalog', 'request', 'index');
++
+         return parent::getIgnorable();
+     }
+ }
+diff --git a/src/Pyz/Zed/DataImport/DataImportDependencyProvider.php b/src/Pyz/Zed/DataImport/DataImportDependencyProvider.php
+index bbad28122..2f8fd74f8 100644
+--- a/src/Pyz/Zed/DataImport/DataImportDependencyProvider.php
++++ b/src/Pyz/Zed/DataImport/DataImportDependencyProvider.php
+@@ -60,6 +60,12 @@ use Spryker\Zed\ShoppingListDataImport\Communication\Plugin\ShoppingListCompanyU
+ use Spryker\Zed\ShoppingListDataImport\Communication\Plugin\ShoppingListDataImportPlugin;
+ use Spryker\Zed\ShoppingListDataImport\Communication\Plugin\ShoppingListItemDataImportPlugin;
+
++//POC
++use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\DataImport\PunchoutCatalogCartDataImportPlugin;
++use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\DataImport\PunchoutCatalogConnectionDataImportPlugin;
++use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\DataImport\PunchoutCatalogSetupDataImportPlugin;
++
++
+ class DataImportDependencyProvider extends SprykerDataImportDependencyProvider
+ {
+     public const FACADE_AVAILABILITY = 'availability facade';
+@@ -210,6 +216,11 @@ class DataImportDependencyProvider extends SprykerDataImportDependencyProvider
+             new ContentProductAbstractListDataImportPlugin(),
+             new ContentProductSetDataImportPlugin(),
+             new CommentDataImportPlugin(),
++
++            //POC
++            new PunchoutCatalogConnectionDataImportPlugin(),
++            new PunchoutCatalogSetupDataImportPlugin(),
++            new PunchoutCatalogCartDataImportPlugin(),
+         ];
+     }
+
+diff --git a/src/Pyz/Zed/Oauth/OauthDependencyProvider.php b/src/Pyz/Zed/Oauth/OauthDependencyProvider.php
+index 5c99fd3ce..2da9c29a2 100644
+--- a/src/Pyz/Zed/Oauth/OauthDependencyProvider.php
++++ b/src/Pyz/Zed/Oauth/OauthDependencyProvider.php
+@@ -15,6 +15,9 @@ use Spryker\Zed\OauthCustomerConnector\Communication\Plugin\Oauth\CustomerOauthS
+ use Spryker\Zed\OauthCustomerConnector\Communication\Plugin\Oauth\CustomerOauthUserProviderPlugin;
+ use Spryker\Zed\OauthPermission\Communication\Plugin\Filter\OauthUserIdentifierFilterPermissionPlugin;
+
++use Spryker\Zed\OauthCompanyUser\Communication\Plugin\Oauth\CompanyUserAccessTokenOauthUserProviderPlugin;
++use Spryker\Zed\OauthCompanyUser\Communication\Plugin\Oauth\CompanyUserAccessTokenOauthGrantTypeConfigurationProviderPlugin;
++
+ class OauthDependencyProvider extends SprykerOauthDependencyProvider
+ {
+     /**
+@@ -25,6 +28,7 @@ class OauthDependencyProvider extends SprykerOauthDependencyProvider
+         return [
+             new CustomerOauthUserProviderPlugin(),
+             new CompanyUserOauthUserProviderPlugin(),
++            new CompanyUserAccessTokenOauthUserProviderPlugin(),
+         ];
+     }
+
+@@ -46,6 +50,7 @@ class OauthDependencyProvider extends SprykerOauthDependencyProvider
+     {
+         return array_merge(parent::getGrantTypeConfigurationProviderPlugins(), [
+             new IdCompanyUserOauthGrantTypeConfigurationProviderPlugin(),
++            new CompanyUserAccessTokenOauthGrantTypeConfigurationProviderPlugin(),
+         ]);
+     }
+
+diff --git a/src/Pyz/Zed/OauthCompanyUser/OauthCompanyUserDependencyProvider.php b/src/Pyz/Zed/OauthCompanyUser/OauthCompanyUserDependencyProvider.php
+index baeffc628..a33efc3f1 100644
+--- a/src/Pyz/Zed/OauthCompanyUser/OauthCompanyUserDependencyProvider.php
++++ b/src/Pyz/Zed/OauthCompanyUser/OauthCompanyUserDependencyProvider.php
+@@ -10,6 +10,9 @@ namespace Pyz\Zed\OauthCompanyUser;
+ use Spryker\Zed\OauthCompanyUser\OauthCompanyUserDependencyProvider as SprykerOauthCompanyUserDependencyProvider;
+ use Spryker\Zed\OauthPermission\Communication\Plugin\OauthCompanyUser\PermissionOauthCompanyUserIdentifierExpanderPlugin;
+
++use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\OauthCompanyUser\ImpersonationDetailsCustomerExpanderPlugin;
++use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\OauthCompanyUser\ImpersonationDetailsCustomerOauthRequestMapperPlugin;
++
+ class OauthCompanyUserDependencyProvider extends SprykerOauthCompanyUserDependencyProvider
+ {
+     /**
+@@ -21,4 +24,26 @@ class OauthCompanyUserDependencyProvider extends SprykerOauthCompanyUserDependen
+             new PermissionOauthCompanyUserIdentifierExpanderPlugin(),
+         ];
+     }
++
++    //POC
++    /**
++     * @return \Spryker\Zed\OauthCompanyUserExtension\Dependency\Plugin\CustomerOauthRequestMapperPluginInterface[]
++     */
++    protected function getCustomerOauthRequestMapperPlugins(): array
++    {
++        return [
++            new ImpersonationDetailsCustomerOauthRequestMapperPlugin(),
++        ];
++    }
++
++    //POC
++    /**
++     * @return \Spryker\Zed\OauthCompanyUserExtension\Dependency\Plugin\CustomerExpanderPluginInterface[]
++     */
++    protected function getCustomerExpanderPlugins(): array
++    {
++        return [
++            new ImpersonationDetailsCustomerExpanderPlugin(),
++        ];
++    }
+ }
+diff --git a/src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml b/src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml
+new file mode 100644
+index 000000000..c6d118616
+--- /dev/null
++++ b/src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml
+@@ -0,0 +1,6 @@
++<?xml version="1.0"?>
++<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Oauth\Persistence" package="src.Orm.Zed.Oauth.Persistence">
++    <table name="spy_oauth_access_token">
++        <column name="user_identifier" type="LONGVARCHAR"/>
++    </table>
++</database>
+diff --git a/src/Pyz/Zed/PunchoutCatalog/PunchoutCatalogConfig.php b/src/Pyz/Zed/PunchoutCatalog/PunchoutCatalogConfig.php
+new file mode 100644
+index 000000000..326e89657
+--- /dev/null
++++ b/src/Pyz/Zed/PunchoutCatalog/PunchoutCatalogConfig.php
+@@ -0,0 +1,24 @@
++<?php
++/**
++ * This file is part of the Spryker Suite.
++ * For full license information, please view the LICENSE file that was distributed with this source code.
++ */
++namespace Pyz\Zed\PunchoutCatalog;
++use PunchoutCatalog\Zed\PunchoutCatalog\PunchoutCatalogConfig as SprykerPunchoutCatalogConfig;
++
++class PunchoutCatalogConfig extends SprykerPunchoutCatalogConfig
++{
++    /**
++     * @return string[]
++     */
++    protected function getBaseUrlYves(): array
++    {
++        $domain = getenv('VM_PROJECT') ?: 'suite-nonsplit';
++
++        return [
++            'DE' => sprintf('http://www.de.%s.local', $domain),
++            'AT' => sprintf('http://www.at.%s.local', $domain),
++            'US' => sprintf('http://www.us.%s.local', $domain),
++        ];
++    }
++}
+diff --git a/src/Pyz/Zed/PunchoutCatalogs/PunchoutCatalogsDependencyProvider.php b/src/Pyz/Zed/PunchoutCatalogs/PunchoutCatalogsDependencyProvider.php
+new file mode 100644
+index 000000000..a7d184dba
+--- /dev/null
++++ b/src/Pyz/Zed/PunchoutCatalogs/PunchoutCatalogsDependencyProvider.php
+@@ -0,0 +1,47 @@
++<?php
++
++/**
++ * Copyright © 2016-present Spryker Systems GmbH. All rights reserved.
++ * Use of this software requires acceptance of the Evaluation License Agreement. See LICENSE file.
++ */
++
++namespace Pyz\Zed\PunchoutCatalogs;
++
++use SprykerEco\Zed\PunchoutCatalogs\PunchoutCatalogsDependencyProvider as SprykerEcoPunchoutCatalogsDependencyProvider;
++
++/**
++ * @method \SprykerEco\Zed\PunchoutCatalogs\PunchoutCatalogsConfig getConfig()
++ */
++class PunchoutCatalogsDependencyProvider extends SprykerEcoPunchoutCatalogsDependencyProvider
++{
++    /**
++     * @return \SprykerEco\Zed\PunchoutCatalogs\Dependency\Plugin\PunchoutCatalogConnectionFormatPluginInterface[]
++     */
++    protected function getPunchoutCatalogConnectionFormatPlugins(): array
++    {
++        return [
++            new \SprykerEco\Zed\PunchoutCatalogs\Communication\Plugin\PunchoutCatalogs\CXmlPunchoutCatalogConnectionFormatPlugin(),
++            new \SprykerEco\Zed\PunchoutCatalogs\Communication\Plugin\PunchoutCatalogs\OciPunchoutCatalogConnectionFormatPlugin(),
++        ];
++    }
++
++    /**
++     * @return \SprykerEco\Zed\PunchoutCatalogs\Dependency\Plugin\PunchoutCatalogConnectionTypePluginInterface[]
++     */
++    protected function getPunchoutCatalogConnectionTypePlugins(): array
++    {
++        return [
++            new \SprykerEco\Zed\PunchoutCatalogs\Communication\Plugin\PunchoutCatalogs\SetupRequestPunchoutCatalogConnectionTypePlugin(),
++        ];
++    }
++
++    /**
++     * @return \SprykerEco\Zed\PunchoutCatalogs\Dependency\Plugin\PunchoutCatalogSetupRequestFormExtensionPluginInterface[]
++     */
++    protected function getPunchoutCatalogSetupRequestFormExtensionPlugins(): array
++    {
++        return [
++            new \SprykerEco\Zed\PunchoutCatalogs\Communication\Plugin\PunchoutCatalogs\BundleModePunchoutCatalogSetupRequestFormExtensionPlugin(),
++        ];
++    }
++}
+2.30.1 (Apple Git-130)
+
