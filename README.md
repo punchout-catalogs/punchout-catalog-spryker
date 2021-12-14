@@ -10,7 +10,7 @@ composer require punchout-catalogs/punchout-catalog-spryker
 
 *B2C* store additionally requires the `spryker-feature/company-account` feature.
 
-Look at `etc/integration-sample/*.patch` patches as example of integration with Spryker B2B and B2C vanilla stores.
+Look at `etc/integration-sample/*.patch` patches as example of integration with Spryker [B2B](https://github.com/spryker-shop/b2b-demo-shop)  and [B2C](https://github.com/spryker-shop/b2c-demo-shop) demo stores.
 
 ## Documentation
 
