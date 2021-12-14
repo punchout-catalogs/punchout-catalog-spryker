@@ -28,6 +28,7 @@ Subject: [PATCH] punchout catalogs integration spryker B2C release `202108`
  .../OauthCompanyUserDependencyProvider.php    | 36 ++++++++
  .../PunchoutCatalog/PunchoutCatalogConfig.php | 24 +++++
  .../PunchoutCatalogsDependencyProvider.php    | 51 +++++++++++
+ src/Pyz/Zed/SecurityGui/SecurityGuiConfig.php |  2 +-
  src/Pyz/Zed/Router/RouterConfig.php           |  3 +
  25 files changed, 630 insertions(+), 12 deletions(-)
  create mode 100644 config/Shared/config_local.php
@@ -235,7 +236,7 @@ index 74178e782..c14c7d2b6 100644
 @@ -14,6 +14,9 @@ use Spryker\Client\Customer\Plugin\CustomerTransferSessionRefreshPlugin;
  use Spryker\Client\CustomerAccessPermission\Plugin\Customer\CustomerAccessSecuredPatternRulePlugin;
  use Spryker\Client\PersistentCart\Plugin\GuestCartUpdateCustomerSessionSetPlugin;
- 
+
 +use Spryker\Client\CustomerExtension\Dependency\Plugin\AccessTokenAuthenticationHandlerPluginInterface;
 +use Spryker\Client\OauthCompanyUser\Plugin\Customer\CompanyUserAccessTokenAuthenticationHandlerPlugin;
 +
@@ -262,7 +263,7 @@ index 99c4929e8..1dd2c5df1 100644
 @@ -12,6 +12,9 @@ use Spryker\Client\Price\Plugin\PriceModeQuoteTransferExpanderPlugin;
  use Spryker\Client\Quote\QuoteDependencyProvider as BaseQuoteDependencyProvider;
  use Spryker\Client\Store\Plugin\StoreQuoteTransferExpanderPlugin;
- 
+
 +//POC
 +use PunchoutCatalog\Client\PunchoutCatalog\Plugin\Quote\SingleCompanyUserDatabaseStrategyPreCheckPlugin;
 +
@@ -290,11 +291,11 @@ index a274d66aa..4bf9c2f17 100644
 +++ b/src/Pyz/Yves/CartPage/CartPageDependencyProvider.php
 @@ -8,17 +8,37 @@
  namespace Pyz\Yves\CartPage;
- 
+
  use SprykerShop\Yves\CartPage\CartPageDependencyProvider as SprykerCartPageDependencyProvider;
 -use SprykerShop\Yves\ProductBundleWidget\Plugin\CartPage\ProductBundleCartItemTransformerPlugin;
 +use Spryker\Yves\Kernel\Container;
- 
+
  class CartPageDependencyProvider extends SprykerCartPageDependencyProvider
  {
 +    public const CLIENT_CUSTOMER = 'CLIENT_CUSTOMER';
@@ -364,7 +365,7 @@ index 0f85cbe5f..731edb1c4 100644
 --- a/src/Pyz/Yves/CartPage/Controller/CartController.php
 +++ b/src/Pyz/Yves/CartPage/Controller/CartController.php
 @@ -57,4 +57,20 @@ class CartController extends SprykerCartController
- 
+
          return $this->redirectResponseInternal(CartPageRouteProviderPlugin::ROUTE_NAME_CART);
      }
 +
@@ -394,7 +395,7 @@ index fd5401421..089ede992 100644
      isQuoteEditable: required,
 +    customer: required
  } %}
- 
+
  {% set canProceedToCheckout = data.cart.items is not empty
      and data.isQuoteValid
 -    and (not is_granted('IS_AUTHENTICATED_FULLY') or can('WriteSharedCartPermissionPlugin', data.cart.idQuote)) %}
@@ -403,12 +404,12 @@ index fd5401421..089ede992 100644
 +        or data.customer.punchoutCatalogImpersonationDetails.is_punchout
 +    )
 +%}
- 
+
  {% block body %}
      <div class="{{ config.name }}__inner">
 @@ -68,9 +73,14 @@
      </div>
- 
+
      {% if canProceedToCheckout %}
 -        <a class="button button--expand button--large"
 -           href="{{ url('checkout-index') }}" {{ qa('cart-go-to-checkout') }}>
@@ -432,12 +433,12 @@ index 365cc42d8..65c7b72ae 100644
 @@ -8,7 +8,8 @@
      attributes: _view.attributes,
      request: app.request,
- 
+
 -    title: 'cart.cart' | trans
 +    title: 'cart.cart' | trans,
 +    customer: _view.customer
  } %}
- 
+
  {% block title %}
 @@ -88,6 +89,7 @@
                              cart: data.cart,
@@ -625,7 +626,7 @@ index 04133c28a..91b33e840 100644
 @@ -52,6 +52,8 @@ use SprykerShop\Yves\SalesReturnPage\Plugin\Router\SalesReturnPageRouteProviderP
  use SprykerShop\Yves\StorageRouter\Plugin\Router\StorageRouterPlugin;
  use SprykerShop\Yves\WishlistPage\Plugin\Router\WishlistPageRouteProviderPlugin;
- 
+
 +use PunchoutCatalog\Yves\PunchoutCatalog\Plugin\Router\PunchoutCatalogRouteProviderPlugin;
 +
  class RouterDependencyProvider extends SprykerRouterDependencyProvider
@@ -640,7 +641,7 @@ index 04133c28a..91b33e840 100644
 +            new PunchoutCatalogRouteProviderPlugin()
          ];
      }
- 
+
 diff --git a/src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php b/src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php
 index 3a4bb5bbe..067b38cbb 100644
 --- a/src/Pyz/Yves/ShopApplication/ShopApplicationDependencyProvider.php
@@ -648,7 +649,7 @@ index 3a4bb5bbe..067b38cbb 100644
 @@ -96,6 +96,9 @@ use SprykerShop\Yves\TabsWidget\Widget\FullTextSearchTabsWidget;
  use SprykerShop\Yves\WebProfilerWidget\Plugin\Application\WebProfilerApplicationPlugin;
  use SprykerShop\Yves\WishlistWidget\Widget\WishlistMenuItemWidget;
- 
+
 +//POC
 +use PunchoutCatalog\Yves\PunchoutCatalog\Widget\PunchoutCatalogCheckoutButtonsWidget;
 +
@@ -664,7 +665,7 @@ index 3a4bb5bbe..067b38cbb 100644
 +            PunchoutCatalogCheckoutButtonsWidget::class,
          ];
      }
- 
+
 diff --git a/src/Pyz/Zed/CompanyUserGui/CompanyUserGuiDependencyProvider.php b/src/Pyz/Zed/CompanyUserGui/CompanyUserGuiDependencyProvider.php
 new file mode 100644
 index 000000000..321e307d5
@@ -766,7 +767,7 @@ index 411fb1160..6e9364924 100644
 @@ -49,6 +49,11 @@ use Spryker\Zed\StockAddressDataImport\Communication\Plugin\DataImport\StockAddr
  use Spryker\Zed\StockDataImport\Communication\Plugin\StockDataImportPlugin;
  use Spryker\Zed\StockDataImport\Communication\Plugin\StockStoreDataImportPlugin;
- 
+
 +//POC
 +use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\DataImport\PunchoutCatalogCartDataImportPlugin;
 +use PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\DataImport\PunchoutCatalogConnectionDataImportPlugin;
@@ -786,7 +787,7 @@ index 411fb1160..6e9364924 100644
 +            new PunchoutCatalogCartDataImportPlugin(),
          ];
      }
- 
+
 diff --git a/src/Pyz/Zed/Oauth/OauthDependencyProvider.php b/src/Pyz/Zed/Oauth/OauthDependencyProvider.php
 index 8a2d30b47..c6476fc40 100644
 --- a/src/Pyz/Zed/Oauth/OauthDependencyProvider.php
@@ -794,7 +795,7 @@ index 8a2d30b47..c6476fc40 100644
 @@ -24,6 +24,10 @@ use Spryker\Zed\OauthRevoke\Communication\Plugin\Oauth\OauthRefreshTokenRevokerP
  use Spryker\Zed\OauthRevoke\Communication\Plugin\Oauth\OauthRefreshTokensReaderPlugin;
  use Spryker\Zed\OauthRevoke\Communication\Plugin\Oauth\OauthRefreshTokensRevokerPlugin;
- 
+
 +//POC
 +use Spryker\Zed\OauthCompanyUser\Communication\Plugin\Oauth\CompanyUserAccessTokenOauthUserProviderPlugin;
 +use Spryker\Zed\OauthCompanyUser\Communication\Plugin\Oauth\CompanyUserAccessTokenOauthGrantTypeConfigurationProviderPlugin;
@@ -809,7 +810,7 @@ index 8a2d30b47..c6476fc40 100644
 +            new CompanyUserAccessTokenOauthUserProviderPlugin(),
          ];
      }
- 
+
 @@ -58,6 +63,8 @@ class OauthDependencyProvider extends SprykerOauthDependencyProvider
          return array_merge(parent::getGrantTypeConfigurationProviderPlugins(), [
              new AgentCredentialsOauthGrantTypeConfigurationProviderPlugin(),
@@ -818,7 +819,7 @@ index 8a2d30b47..c6476fc40 100644
 +            new CompanyUserAccessTokenOauthGrantTypeConfigurationProviderPlugin(),
          ]);
      }
- 
+
 diff --git a/src/Pyz/Zed/OauthCompanyUser/OauthCompanyUserDependencyProvider.php b/src/Pyz/Zed/OauthCompanyUser/OauthCompanyUserDependencyProvider.php
 new file mode 100644
 index 000000000..79a9a307e
@@ -948,6 +949,17 @@ index 000000000..3271630a8
 +        ];
 +    }
 +}
+diff --git a/src/Pyz/Zed/SecurityGui/SecurityGuiConfig.php b/src/Pyz/Zed/SecurityGui/SecurityGuiConfig.php
+index 1fb28ce4f..efe191ed2 100644
+--- a/src/Pyz/Zed/SecurityGui/SecurityGuiConfig.php
++++ b/src/Pyz/Zed/SecurityGui/SecurityGuiConfig.php
+@@ -11,5 +11,5 @@ use Spryker\Zed\SecurityGui\SecurityGuiConfig as SprykerSecurityGuiConfig;
+
+ class SecurityGuiConfig extends SprykerSecurityGuiConfig
+ {
+-    protected const IGNORABLE_ROUTE_PATTERN = '^/(security-gui|health-check|_profiler/wdt|api/rest/.+)';
++    protected const IGNORABLE_ROUTE_PATTERN = '^/(security-gui|health-check|_profiler/wdt|api/rest/.+|punchout-catalog/request)';
+ }
 diff --git a/src/Pyz/Zed/Router/RouterConfig.php b/src/Pyz/Zed/Router/RouterConfig.php
 index 3ed54a7ff..50653d61c 100644
 --- a/src/Pyz/Zed/Router/RouterConfig.php
@@ -955,13 +967,12 @@ index 3ed54a7ff..50653d61c 100644
 @@ -21,6 +21,9 @@ class RouterConfig extends SprykerRouterConfig
          $controllerDirectories[] = sprintf('%s/spryker-sdk/*/src/*/Zed/*/Communication/Controller/', APPLICATION_VENDOR_DIR);
          $controllerDirectories[] = sprintf('%s/spryker-eco/*/src/*/Zed/*/Communication/Controller/', APPLICATION_VENDOR_DIR);
- 
+
 +        //POC
 +        $controllerDirectories[] = sprintf('%s/punchout-catalogs/*/src/*/Zed/*/Communication/Controller/', APPLICATION_VENDOR_DIR);
 +
          return array_filter($controllerDirectories, 'glob');
      }
  }
--- 
+--
 2.30.1 (Apple Git-130)
-
