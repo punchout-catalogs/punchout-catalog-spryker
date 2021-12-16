@@ -1,0 +1,113 @@
+From f6eb2cb782b33eb8828229845ad4959fab3c66c4 Mon Sep 17 00:00:00 2001
+From: Tolik Legkyi <>
+Date: Thu, 16 Dec 2021 22:56:43 +0200
+Subject: [PATCH] enhancements to mini-cart release B2C 202108
+
+---
+ .../CartPage/Plugin/Twig/CartTwigPlugin.php   | 20 ++++++++++++
+ .../molecules/cart-block/cart-block.twig      | 32 ++++++++++++++-----
+ 2 files changed, 44 insertions(+), 8 deletions(-)
+
+diff --git a/src/Pyz/Yves/CartPage/Plugin/Twig/CartTwigPlugin.php b/src/Pyz/Yves/CartPage/Plugin/Twig/CartTwigPlugin.php
+index 41351ac14..53ee125dc 100644
+--- a/src/Pyz/Yves/CartPage/Plugin/Twig/CartTwigPlugin.php
++++ b/src/Pyz/Yves/CartPage/Plugin/Twig/CartTwigPlugin.php
+@@ -16,6 +16,7 @@ class CartTwigPlugin extends SprykerCartTwigPlugin
+ {
+     protected const FUNCTION_NAME_GET_QUOTE = 'getQuote';
+     protected const FUNCTION_NAME_GET_CART_ITEMS = 'getCartItems';
++    protected const FUNCTION_NAME_GET_CUSTOMER = 'getCustomer';
+ 
+     /**
+      * {@inheritDoc}
+@@ -33,6 +34,7 @@ class CartTwigPlugin extends SprykerCartTwigPlugin
+ 
+         $twig = $this->addQuoteFunction($twig);
+         $twig = $this->addCartItemsFunction($twig);
++        $twig = $this->addCustomerFunction($twig);
+ 
+         return $twig;
+     }
+@@ -74,4 +76,22 @@ class CartTwigPlugin extends SprykerCartTwigPlugin
+ 
+         return $twig;
+     }
++
++    /**
++     * @param \Twig\Environment $twig
++     *
++     * @return \Twig\Environment
++     */
++    protected function addCustomerFunction(Environment $twig): Environment
++    {
++        $customerFunction = new TwigFunction(static::FUNCTION_NAME_GET_CUSTOMER, function () {
++            return $this->getFactory()
++                ->getCustomerClient()
++                ->getCustomer();
++        });
++
++        $twig->addFunction($customerFunction);
++
++        return $twig;
++    }
+ }
+diff --git a/src/Pyz/Yves/ShopUi/Theme/default/components/molecules/cart-block/cart-block.twig b/src/Pyz/Yves/ShopUi/Theme/default/components/molecules/cart-block/cart-block.twig
+index f438b90ed..e503cb0b5 100644
+--- a/src/Pyz/Yves/ShopUi/Theme/default/components/molecules/cart-block/cart-block.twig
++++ b/src/Pyz/Yves/ShopUi/Theme/default/components/molecules/cart-block/cart-block.twig
+@@ -7,6 +7,7 @@
+ {% define data = {
+     quote: getQuote(),
+     cartItems: getCartItems(),
++    customer: getCustomer()
+ } %}
+ 
+ {% block body %}
+@@ -83,21 +84,36 @@
+         </div>
+ 
+         {% set canProceedToCheckout = data.quote.items is not empty
+-            and (not is_granted('IS_AUTHENTICATED_FULLY')
+-            or can('WriteSharedCartPermissionPlugin', data.quote.idQuote))
++            and (
++                not is_granted('IS_AUTHENTICATED_FULLY')
++                or can('WriteSharedCartPermissionPlugin', data.quote.idQuote)
++                or data.customer.punchoutCatalogImpersonationDetails.is_punchout
++            )
+         %}
+ 
+         {% if canProceedToCheckout %}
+-            <div class="{{ config.name }}__buttons-container grid grid--middle grid--justify">
+-                <a href="{{ url('cart') }}" class="{{ config.name }}__button button button--hollow col">{{ 'cart.cart' | trans }}</a>
+-                <a class="{{ config.name }}__button button col" href="{{ url('checkout-index') }}" {{qa('cart-go-to-checkout')}}>
+-                    {{ 'cart.checkout' | trans }}
+-                </a>
+-            </div>
++            {% if data.customer.punchoutCatalogImpersonationDetails.is_punchout is defined %}
++                {% widget 'PunchoutCatalogCheckoutButtonsWidget' args [data.customer] %}{% endwidget %}
++            {% else %}
++                <div class="{{ config.name }}__buttons-container grid grid--middle grid--justify">
++                    <a href="{{ url('cart') }}" class="{{ config.name }}__button button button--hollow col">{{ 'cart.cart' | trans }}</a>
++                    <a class="{{ config.name }}__button button col" href="{{ url('checkout-index') }}" {{qa('cart-go-to-checkout')}}>
++                        {{ 'cart.checkout' | trans }}
++                    </a>
++                </div>
++            {% endif %}
+         {% endif %}
+     {% endif %}
+ 
+     {% if data.quote.items is empty %}
+         <p class="{{ config.name }}__empty-text">{{ 'cart_widget.empty_text' | trans }}</p>
++        {% if data.customer.punchoutCatalogImpersonationDetails.is_punchout is defined %}
++            <div class="spacing-bottom">
++                <a class="button button--expand button--warning"
++                   href="{{ url('punchout-catalog/cart/cancel') }}" {{ qa('punchout-catalog.cart.go-to-cancel') }}>
++                    {{ 'punchout-catalog.cart.cancel' | trans }}
++                </a>
++            </div>
++        {% endif %}
+     {% endif %}
+ {% endblock %}
+-- 
+2.30.1 (Apple Git-130)
+
