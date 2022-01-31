@@ -55,6 +55,7 @@
 
     <transfer name="PunchoutCatalogProtocolData">
         <property name="ociCredentials" type="PunchoutCatalogProtocolDataOciCredentials" />
+        <property name="cxmlFromCredentials" type="PunchoutCatalogProtocolDataCxmlCredentials[]" />
         <property name="cxmlToCredentials" type="PunchoutCatalogProtocolDataCxmlCredentials" />
         <property name="cxmlSenderCredentials" type="PunchoutCatalogProtocolDataCxmlCredentials" />
         <property name="cart" type="PunchoutCatalogProtocolDataCart" />

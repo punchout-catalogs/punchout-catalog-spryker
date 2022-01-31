@@ -23,6 +23,7 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
     {
         $protocolDataTransfer
             ->requireCart()
+            ->requireCxmlFromCredentials()
             ->requireCxmlSenderCredentials()
             ->requireCxmlToCredentials();
 
