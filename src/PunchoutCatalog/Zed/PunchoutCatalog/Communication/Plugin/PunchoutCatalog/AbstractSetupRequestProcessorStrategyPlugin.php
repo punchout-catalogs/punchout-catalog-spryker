@@ -59,7 +59,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $punchoutCatalogRequestTransfer->getContext()->setRawData($documentTransfer->toArray());
 
         $customerTransfer = $this->prepareCustomerTransfer($punchoutCatalogRequestTransfer, $documentTransfer);
-        
+
         try {
             /** @var \Generated\Shared\Transfer\OauthResponseTransfer $oAuthResponseTransfer */
             $oAuthResponseTransfer = $this->getFactory()

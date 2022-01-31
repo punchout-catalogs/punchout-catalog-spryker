@@ -2,6 +2,20 @@
 
 Punchout Catalog Module for Spryker eCommerce Platform
 
+## Important Changes
+
+Since the `2.4.0` version it has been changed the way of punchout connection load.
+
+Is required to enter Sender ID for cXML Setup Request in the following format:
+`Credential_Domain_Value/Credential_Identity_Value`.
+
+Example #1:
+`AribaNetworkId/AN119990XX`
+
+Example #2:
+`NetworkId/NID119990XX`
+
+
 ## Installation
 
 ```
@@ -233,15 +247,38 @@ Solution:
 
 The easiest way to improve it is upgrading the field from `varchar(1024)` to `LONGVARCHAR`.
 
-Create a scheme file `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml`:
+Create a scheme file #1: `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth.schema.xml`:
 ```xml
 <?xml version="1.0"?>
-<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="zed" xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd" namespace="Orm\Zed\Oauth\Persistence" package="src.Orm.Zed.Oauth.Persistence">
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          name="zed"
+          xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd"
+          namespace="Orm\Zed\Oauth\Persistence"
+          package="src.Orm.Zed.Oauth.Persistence">
+
     <table name="spy_oauth_access_token">
         <column name="user_identifier" type="LONGVARCHAR"/>
     </table>
+
 </database>
 ```
+
+Create a scheme file #2: `src/Pyz/Zed/PunchoutCatalog/Persistence/Propel/Schema/spy_oauth_revoke.schema.xml`:
+```xml
+<?xml version="1.0"?>
+<database xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          name="zed"
+          xsi:noNamespaceSchemaLocation="http://static.spryker.com/schema-01.xsd"
+          namespace="Orm\Zed\OauthRevoke\Persistence"
+          package="src.Orm.Zed.OauthRevoke.Persistence">
+
+    <table name="spy_oauth_refresh_token">
+        <column name="user_identifier" type="LONGVARCHAR"/>
+    </table>
+
+</database>
+```
+
 
 DB upgrade:
 
