@@ -12,6 +12,7 @@ use Generated\Shared\Transfer\PunchoutCatalogConnectionCriteriaTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionListTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogConnectionTransfer;
 use Spryker\Zed\Kernel\Persistence\AbstractRepository;
+use Propel\Runtime\ActiveQuery\Criteria;
 
 /**
  * @method \PunchoutCatalog\Zed\PunchoutCatalog\Persistence\PunchoutCatalogPersistenceFactory getFactory()
@@ -49,25 +50,30 @@ class PunchoutCatalogRepository extends AbstractRepository implements PunchoutCa
     public function findConnectionByCredential(PunchoutCatalogConnectionCredentialSearchTransfer $connectionCredentialSearch): ?PunchoutCatalogConnectionTransfer
     {
         $connectionCredentialSearch
-            ->requireFkCompanyBusinessUnit()
+            //->requireFkCompanyBusinessUnit()
             ->requireFormat()
             ->requireType()
             ->requireUsername();
 
-        $connectionEntity = $this->getFactory()
+        $connectionQuery = $this->getFactory()
             ->createPunchoutCatalogConnectionQuery()
             ->joinWithPgwPunchoutCatalogConnectionCart()
             ->joinWithPgwPunchoutCatalogConnectionSetup()
-            ->filterByFkCompanyBusinessUnit($connectionCredentialSearch->getFkCompanyBusinessUnit())
             ->filterByFormat($connectionCredentialSearch->getFormat())
             ->filterByType($connectionCredentialSearch->getType())
-            ->filterByUsername($connectionCredentialSearch->getUsername())
-            ->filterByIsActive(1)
-            ->findOne();
+            ->filterByUsername($connectionCredentialSearch->getUsername(), Criteria::IN)
+            ->filterByIsActive(1);
 
-        if (!$connectionEntity) {
+        if ($connectionCredentialSearch->getFkCompanyBusinessUnit()) {
+            $connectionQuery->filterByFkCompanyBusinessUnit($connectionCredentialSearch->getFkCompanyBusinessUnit());
+        }
+
+        $countQuery = clone $connectionQuery;
+        if ($countQuery->count() !== 1) {
             return null;
         }
+
+        $connectionEntity = $connectionQuery->findOne();
 
         return $this->getFactory()
             ->createPunchoutCatalogConnectionMapper()
