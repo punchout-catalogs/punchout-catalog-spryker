@@ -154,23 +154,24 @@ class OciRequestProtocolStrategyPlugin extends AbstractPlugin implements Punchou
         $credentialSearchTransfer = (new PunchoutCatalogConnectionCredentialSearchTransfer())
             ->setFormat($punchoutCatalogRequestTransfer->getProtocolType())
             ->setType($connectionType)
-            ->setFkCompanyBusinessUnit(
-                $punchoutCatalogRequestTransfer
-                    ->getCompanyBusinessUnit()
-                    ->getIdCompanyBusinessUnit()
-            )
-            ->setUsername(
+            ->setUsername([
                 $punchoutCatalogRequestTransfer
                     ->getProtocolData()
                     ->getOciCredentials()
                     ->getUsername()
-            )
+            ])
             ->setPassword(
                 $punchoutCatalogRequestTransfer
                     ->getProtocolData()
                     ->getOciCredentials()
                     ->getPassword()
             );
+
+        if ($punchoutCatalogRequestTransfer->getCompanyBusinessUnit()) {
+            $credentialSearchTransfer->setFkCompanyBusinessUnit(
+                $punchoutCatalogRequestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
+            );
+        }
 
         return $this->getFacade()->findConnectionByCredential($credentialSearchTransfer);
     }

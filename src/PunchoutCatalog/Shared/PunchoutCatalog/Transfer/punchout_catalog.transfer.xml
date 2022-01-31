@@ -88,7 +88,7 @@
         <property name="fkCompanyBusinessUnit" type="int" />
         <property name="type" type="string" />
         <property name="format" type="string" />
-        <property name="username" type="string" />
+        <property name="username" type="string[]" />
         <property name="password" type="string" />
     </transfer>
 

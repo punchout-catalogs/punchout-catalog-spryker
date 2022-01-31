@@ -100,23 +100,26 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         $type = $this->mapProtocolOperationToConnectionType($punchoutCatalogRequestTransfer->getProtocolOperation());
 
         $credentialSearchTransfer = new PunchoutCatalogConnectionCredentialSearchTransfer();
-        $credentialSearchTransfer->setFkCompanyBusinessUnit(
-            $punchoutCatalogRequestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
-        );
-
         $credentialSearchTransfer->setFormat($punchoutCatalogRequestTransfer->getProtocolType());
         $credentialSearchTransfer->setType($type);
 
         $credentialSearchTransfer->setUsername(
-            $punchoutCatalogRequestTransfer->getProtocolData()
-                ->getCxmlSenderCredentials()
-                ->getIdentity()
+            $this->convertProtocolToUsername(
+                $punchoutCatalogRequestTransfer->getProtocolData()
+            )
         );
+
         $credentialSearchTransfer->setPassword(
             $punchoutCatalogRequestTransfer->getProtocolData()
                 ->getCxmlSenderCredentials()
                 ->getSharedSecret()
         );
+
+        if ($punchoutCatalogRequestTransfer->getCompanyBusinessUnit()) {
+            $credentialSearchTransfer->setFkCompanyBusinessUnit(
+                $punchoutCatalogRequestTransfer->getCompanyBusinessUnit()->getIdCompanyBusinessUnit()
+            );
+        }
 
         $punchoutCatalogConnectionTransfer = $this->getFacade()->findConnectionByCredential($credentialSearchTransfer);
         $punchoutCatalogRequestTransfer->getContext()->setPunchoutCatalogConnection(
@@ -134,5 +137,18 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
     protected function mapProtocolOperationToConnectionType($protocolOperation): ?string
     {
         return $protocolOperation == self::PROTOCOL_OPERATION_SETUP_REQUEST ? self::CONNECTION_TYPE_SETUP_REQUEST : null;
+    }
+
+    protected function convertProtocolToUsername(PunchoutCatalogProtocolDataTransfer $protocolData): array
+    {
+        $usernames = array();
+        $credentials = $protocolData->getCxmlFromCredentials();
+        $credentials[] = $protocolData->getCxmlSenderCredentials();
+
+        foreach ($credentials as $credential) {
+            $usernames[] = $credential->getDomain() . '/' . $credential->getIdentity();
+        }
+
+        return $usernames;
     }
 }
