@@ -40,7 +40,6 @@
         </foreign-key>
 
         <index>
-            <index-column name="fk_company_business_unit"/>
             <index-column name="type"/>
             <index-column name="format"/>
             <index-column name="username"/>
