@@ -15,16 +15,14 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
     /**
      *
      * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
-     * @param bool $validateSharedSecret
+     * @param bool $validateSecrets
      *
      * @return bool
      */
-    public function validate(PunchoutCatalogProtocolDataTransfer $protocolDataTransfer, bool $validateSharedSecret = true): bool
+    public function validate(PunchoutCatalogProtocolDataTransfer $protocolDataTransfer, bool $validateSecrets = true): bool
     {
         $protocolDataTransfer
             ->requireCart()
-            ->requireCxmlFromCredentials()
-            ->requireCxmlSenderCredentials()
             ->requireCxmlToCredentials();
 
         $protocolDataTransfer->getCart()
@@ -33,11 +31,15 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
             ->requireBuyerCookie()
             ->requireDeploymentMode();
 
-        $protocolDataTransfer->getCxmlSenderCredentials()
-            ->requireIdentity()
-            ->requireDomain();
+        if ($validateSecrets) {
+            $protocolDataTransfer
+                ->requireCxmlFromCredentials()
+                ->requireCxmlSenderCredentials();
 
-        if ($validateSharedSecret) {
+            $protocolDataTransfer->getCxmlSenderCredentials()
+                ->requireIdentity()
+                ->requireDomain();
+
             $protocolDataTransfer->getCxmlSenderCredentials()->requireSharedSecret();
         }
 

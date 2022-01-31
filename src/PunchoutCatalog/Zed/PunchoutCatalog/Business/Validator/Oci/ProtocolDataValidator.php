@@ -14,25 +14,29 @@ class ProtocolDataValidator implements ProtocolDataValidatorInterface
 {
     /**
      * @param \Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
+     * @param bool $validateSecrets
      *
      * @return bool
      */
-    public function validate(PunchoutCatalogProtocolDataTransfer $protocolDataTransfer): bool
+    public function validate(PunchoutCatalogProtocolDataTransfer $protocolDataTransfer, bool $validateSecrets = true): bool
     {
         $protocolDataTransfer
-            ->requireCart()
-            ->requireOciCredentials();
+            ->requireCart();
 
         $protocolDataTransfer
             ->getCart()
                 ->requireUrl()
                 ->requireOperation();
-        
-        $protocolDataTransfer
-            ->getOciCredentials()
+
+        if ($validateSecrets) {
+            $protocolDataTransfer->requireOciCredentials();
+
+            $protocolDataTransfer
+                ->getOciCredentials()
                 ->requireUsername()
                 ->requirePassword();
-        
+        }
+
         return true;
     }
 }

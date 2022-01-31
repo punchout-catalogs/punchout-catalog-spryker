@@ -50,7 +50,10 @@ class OciCartProcessorStrategyPlugin extends AbstractPlugin implements PunchoutC
             ->requireProtocolData()
             ->requirePunchoutCatalogConnection();
 
-        ($this->getFactory()->createOciProtocolDataValidator())->validate($punchoutCatalogCartRequestContextTransfer->getProtocolData());
+        ($this->getFactory()->createOciProtocolDataValidator())->validate(
+            $punchoutCatalogCartRequestContextTransfer->getProtocolData(),
+            false
+        );
 
         $fields = $this->prepareOciContent(
             $punchoutCatalogCartRequestTransfer,

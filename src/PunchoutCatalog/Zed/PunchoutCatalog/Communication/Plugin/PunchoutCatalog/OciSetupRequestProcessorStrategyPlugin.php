@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
 
@@ -110,5 +111,21 @@ class OciSetupRequestProcessorStrategyPlugin
     protected function createErrorResponse(MessageTransfer $messageTransfer): string
     {
         return sprintf('Punchout Error: %s', (string)$messageTransfer->getTranslatedMessage());
+    }
+
+    /**
+     * @param PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
+     *
+     * @return array
+     */
+    protected function prepareImpersonationDetailsProtocolData(
+        PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
+    ): array
+    {
+        $data = parent::prepareImpersonationDetailsProtocolData($protocolDataTransfer);
+
+        unset($data['oci_credentials']);
+
+        return $data;
     }
 }
