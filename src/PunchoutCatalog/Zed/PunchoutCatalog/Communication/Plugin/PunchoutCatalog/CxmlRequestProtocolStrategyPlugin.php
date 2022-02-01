@@ -162,10 +162,12 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
     ): PunchoutCatalogSetupRequestTransfer
     {
-        $username = $punchoutCatalogRequestTransfer->getContext()
-            ->getPunchoutCatalogConnection()
-            ->getUsername();
+        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
+        if (!$connection) {
+            return $punchoutCatalogRequestTransfer;
+        }
 
+        $username = (string)$connection->getUsername();
         if (strpos($username, '/') === false) {
             return $punchoutCatalogRequestTransfer;
         }
