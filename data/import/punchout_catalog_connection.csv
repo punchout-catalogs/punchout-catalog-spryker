@@ -1,5 +1,5 @@
 business_unit_key,username,password,credentials,is_active,type,format,name,mapping
-business-unit-regular-1,user_1,user_1_pass,,1,setup_request,cxml,Client 1 - cXml - User 1,"{
+business-unit-regular-1,NetworkId/user_1,user_1_pass,,1,setup_request,cxml,Client 1 - cXml - User 1,"{
   ""customer"": {
     ""fields"": {
       ""first_name"": {
@@ -36,7 +36,7 @@ business-unit-regular-1,user_1,user_1_pass,,1,setup_request,oci,Client 1 - Oci -
     }
   }
 }"
-Supplier_Department,user_2,user_2_pass,,1,setup_request,cxml,Client 1 - cXml - User 2,"{
+Supplier_Department,NetworkId/user_2,user_2_pass,,1,setup_request,cxml,Client 1 - cXml - User 2,"{
   ""customer"": {
     ""fields"": {
       ""first_name"": {
@@ -85,9 +85,9 @@ Supplier_Department,user_2,user_2_pass,,1,setup_request,oci,Client 2 - Oci - Use
     }
   }
 }"
-business-unit-regular-1,user_10,user_10_pass,,1,setup_request,cxml,Client 2 - cXml - User 1,"{}"
-business-unit-regular-1,user_20,user_20_pass,,0,setup_request,cxml,Client 2 - cXml - User 20,"{}"
-business-unit-mitte-1,user_30,user_30_pass,,1,setup_request,cxml,Client 3 - cXml - User 3,"{
+business-unit-regular-1,NetworkId/user_10,user_10_pass,,1,setup_request,cxml,Client 2 - cXml - User 1,{}
+business-unit-regular-1,NetworkId/user_20,user_20_pass,,0,setup_request,cxml,Client 2 - cXml - User 20,{}
+business-unit-mitte-1,NetworkId/user_30,user_30_pass,,1,setup_request,cxml,Client 3 - cXml - User 3,"{
   ""customer"": {
     ""fields"": {
       ""first_name"": {
