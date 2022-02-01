@@ -16,6 +16,7 @@ use Generated\Shared\Transfer\PunchoutCatalogMappingTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
 use Spryker\Zed\Kernel\Communication\AbstractPlugin;
@@ -59,7 +60,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
         $punchoutCatalogRequestTransfer->getContext()->setRawData($documentTransfer->toArray());
 
         $customerTransfer = $this->prepareCustomerTransfer($punchoutCatalogRequestTransfer, $documentTransfer);
-        
+
         try {
             /** @var \Generated\Shared\Transfer\OauthResponseTransfer $oAuthResponseTransfer */
             $oAuthResponseTransfer = $this->getFactory()
@@ -145,7 +146,7 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
 
         return [
             PunchoutCatalogConstsInterface::IS_PUNCHOUT => true,
-            'protocol_data' => $punchoutCatalogRequestTransfer->getProtocolData()->toArray(),
+            'protocol_data' => $this->prepareImpersonationDetailsProtocolData($punchoutCatalogRequestTransfer->getProtocolData()),
             'punchout_session_id' => $punchoutCatalogRequestTransfer->getContext()->getPunchoutSessionId(),
             'punchout_catalog_connection_id' => $connection->getIdPunchoutCatalogConnection(),
             'punchout_catalog_connection_cart' => [
@@ -159,6 +160,18 @@ abstract class AbstractSetupRequestProcessorStrategyPlugin extends AbstractPlugi
             //oAuth token table has 1024 symbold only length for storing all impersonalization details
             //'punchout_data' => $documentTransfer->toArray(),
         ];
+    }
+
+    /**
+     * @param PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
+     *
+     * @return array
+     */
+    protected function prepareImpersonationDetailsProtocolData(
+        PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
+    ): array
+    {
+        return $protocolDataTransfer->toArray();
     }
 
     /**

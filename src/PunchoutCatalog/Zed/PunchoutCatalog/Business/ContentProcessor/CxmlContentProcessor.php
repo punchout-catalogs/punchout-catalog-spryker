@@ -18,7 +18,21 @@ class CxmlContentProcessor implements CxmlContentProcessorInterface
     {
         $xml = $this->findXml($content);
 
+        $fromCredentials = [];
+        $from = $this->findValuesByXPath($xml, 'Header/From/Credential');
+        foreach ($from as $fromXml) {
+            $identity = $this->findFirstValueByXPath($fromXml, 'Identity');
+            $domain = $this->findFirstValueByXPath($fromXml, '@domain');
+            if ($identity && $domain) {
+                $fromCredentials[] = [
+                    'identity' => $identity,
+                    'domain'   => $domain,
+                ];
+            }
+        }
+
         return [
+            'cxml_from_credentials' => $fromCredentials,
             'cxml_to_credentials' => [
                 'identity' => $this->findFirstValueByXPath($xml, 'Header/To/Credential/Identity'),
                 'domain'   => $this->findFirstValueByXPath($xml, 'Header/To/Credential/@domain'),
@@ -48,7 +62,7 @@ class CxmlContentProcessor implements CxmlContentProcessorInterface
         if ($xml && $xml->Request && $xml->Request->children()[0] && $xml->Request->children()[0]->getName()) {
             return "request/" . strtolower($xml->Request->children()[0]->getName());
         }
-        
+
         return null;
     }
 
@@ -66,7 +80,7 @@ class CxmlContentProcessor implements CxmlContentProcessorInterface
 
         return false;
     }
-    
+
     /**
      * @param string $content
      *
@@ -78,7 +92,7 @@ class CxmlContentProcessor implements CxmlContentProcessorInterface
 
         return $xml ? $xml : null;
     }
-    
+
     /**
      * @param \SimpleXMLElement $XMLElement
      * @param string            $xpath
@@ -89,5 +103,17 @@ class CxmlContentProcessor implements CxmlContentProcessorInterface
     {
         $val = (string)current($XMLElement->xpath($xpath));
         return $val !== '' ? $val : null;
+    }
+
+    /**
+     * @param \SimpleXMLElement $XMLElement
+     * @param string            $xpath
+     *
+     * @return []
+     */
+    protected function findValuesByXPath(\SimpleXMLElement $XMLElement, string $xpath): array
+    {
+        $val = $XMLElement->xpath($xpath);
+        return $val !== false ? $val : [];
     }
 }

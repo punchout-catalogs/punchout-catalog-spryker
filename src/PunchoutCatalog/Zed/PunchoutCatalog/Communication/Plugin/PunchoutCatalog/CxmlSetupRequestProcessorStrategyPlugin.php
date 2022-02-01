@@ -11,6 +11,7 @@ use Generated\Shared\Transfer\MessageTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestDocumentTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupResponseTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogRequestProcessorStrategyPluginInterface;
 use SimpleXMLElement;
@@ -181,5 +182,21 @@ class CxmlSetupRequestProcessorStrategyPlugin
         <Status code="' . $status . '" text="' . $statusText . '">' . $statusMessage . '</Status>
     </Response>
 </cXML>';
+    }
+
+    /**
+     * @param PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
+     *
+     * @return array
+     */
+    protected function prepareImpersonationDetailsProtocolData(
+        PunchoutCatalogProtocolDataTransfer $protocolDataTransfer
+    ): array
+    {
+        $data = parent::prepareImpersonationDetailsProtocolData($protocolDataTransfer);
+
+        unset($data['cxml_from_credentials'], $data['cxml_sender_credentials']);
+
+        return $data;
     }
 }

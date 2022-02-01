@@ -40,10 +40,10 @@
         </foreign-key>
 
         <index>
-            <index-column name="fk_company_business_unit"/>
             <index-column name="type"/>
             <index-column name="format"/>
             <index-column name="username"/>
+            <index-column name="fk_company_business_unit"/>
         </index>
 
         <id-method-parameter value="pgw_punchout_catalog_connection_pk_seq"/>

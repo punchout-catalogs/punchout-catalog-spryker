@@ -60,7 +60,7 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
             new CxmlRequestProtocolStrategyPlugin(),
             new OciRequestProtocolStrategyPlugin(),
         ];
-        
+
         $this->companyBusinessUnitFacade = $companyBusinessUnitFacade;
         $this->vaultFacade = $vaultFacade;
         $this->punchoutCatalogRepository = $punchoutCatalogRepository;
@@ -82,19 +82,21 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
         $punchoutCatalogRequestTransfer
             ->requireContent()
             ->requireContentType()
-            ->requireContext()
-            ->requireFkCompanyBusinessUnit();
+            ->requireContext();
+            //->requireFkCompanyBusinessUnit();
 
-        $companyBusinessUnitTransfer = $this->companyBusinessUnitFacade->findCompanyBusinessUnitById(
-            $punchoutCatalogRequestTransfer->getFkCompanyBusinessUnit()
-        );
-        
-        if (!$companyBusinessUnitTransfer) {
-            throw new AuthenticateException(self::ERROR_MISSING_COMPANY_BUSINESS_UNIT);
+        if ($punchoutCatalogRequestTransfer->getFkCompanyBusinessUnit()) {
+            $companyBusinessUnitTransfer = $this->companyBusinessUnitFacade->findCompanyBusinessUnitById(
+                $punchoutCatalogRequestTransfer->getFkCompanyBusinessUnit()
+            );
+
+            if (!$companyBusinessUnitTransfer) {
+                throw new AuthenticateException(self::ERROR_MISSING_COMPANY_BUSINESS_UNIT);
+            }
+
+            $punchoutCatalogRequestTransfer->setCompanyBusinessUnit($companyBusinessUnitTransfer);
         }
 
-        $punchoutCatalogRequestTransfer->setCompanyBusinessUnit($companyBusinessUnitTransfer);
-        
         foreach ($this->protocolStrategyPlugins as $strategy) {
             if ($strategy->isApplicable($punchoutCatalogRequestTransfer)) {
                 return $this->applyProtocolStrategy($strategy, $punchoutCatalogRequestTransfer);
@@ -124,11 +126,11 @@ class ConnectionAuthenticator implements ConnectionAuthenticatorInterface
             ->requireProtocolType()
             ->requireContext()
             ->requireProtocolData();
-        
+
         $punchoutCatalogRequestTransfer = $protocolStrategyPlugin->setPunchoutCatalogConnection(
             $punchoutCatalogRequestTransfer
         );
-        
+
         if (null === $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection()) {
             throw new AuthenticateException(self::ERROR_AUTHENTICATION);
         }

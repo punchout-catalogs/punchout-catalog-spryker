@@ -145,14 +145,20 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
         $context = $punchoutCatalogCartRequestTransfer->getContext();
 
         $toCxml = $context->getProtocolData()->getCxmlToCredentials();
-        $senderCxml = $context->getProtocolData()->getCxmlSenderCredentials();
+        $buyerCxml = $context->getProtocolData()->getCxmlBuyerCredentials();
+
         $cart = $context->getProtocolData()->getCart();
 
         $supDomain = htmlentities($toCxml->getDomain());
         $supId = htmlentities($toCxml->getIdentity());
 
-        $senderDomain = htmlentities($senderCxml->getDomain());
-        $senderId = htmlentities($senderCxml->getIdentity());
+        $buyerDomain = 'NetworkId';
+        $buyerId = 'Tester';
+
+        if ($buyerCxml) {
+            $buyerDomain = $buyerCxml->getDomain() ? htmlentities($buyerCxml->getDomain()) : $buyerDomain;
+            $buyerId = $buyerCxml->getIdentity() ? htmlentities($buyerCxml->getIdentity()) : $buyerId;
+        }
 
         $buyerCookie = htmlentities($cart->getBuyerCookie());
         $deploymentMode = htmlentities($cart->getDeploymentMode());
@@ -178,8 +184,8 @@ class CxmlCartProcessorStrategyPlugin extends AbstractPlugin implements Punchout
             </Credential>
         </From>
         <To>
-            <Credential domain="{$senderDomain}">
-                <Identity>{$senderId}</Identity>
+            <Credential domain="{$buyerDomain}">
+                <Identity>{$buyerId}</Identity>
             </Credential>
         </To>
         <Sender>
