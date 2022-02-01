@@ -105,7 +105,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         $credentialSearchTransfer->setType($type);
 
         $credentialSearchTransfer->setUsername(
-            $this->convertProtocolToUsername(
+            $this->getCxmlUsernames(
                 $punchoutCatalogRequestTransfer->getProtocolData()
             )
         );
@@ -145,7 +145,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
      *
      * @return array
      */
-    protected function convertProtocolToUsername(PunchoutCatalogProtocolDataTransfer $protocolData): array
+    protected function getCxmlUsernames(PunchoutCatalogProtocolDataTransfer $protocolData): array
     {
         $usernames = array();
         $credentials = $protocolData->getCxmlFromCredentials();
@@ -155,17 +155,24 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
             $usernames[] = $credential->getDomain() . '/' . $credential->getIdentity();
         }
 
-        return $usernames;
+        return array_unique($usernames);
     }
 
+    /**
+     * @param PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+     *
+     * @return PunchoutCatalogSetupRequestTransfer
+     */
     protected function prepareBuyerCredentials(
         PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
     ): PunchoutCatalogSetupRequestTransfer
     {
-        $username = $punchoutCatalogRequestTransfer->getContext()
-            ->getPunchoutCatalogConnection()
-            ->getUsername();
+        $connection = $punchoutCatalogRequestTransfer->getContext()->getPunchoutCatalogConnection();
+        if (!$connection) {
+            return $punchoutCatalogRequestTransfer;
+        }
 
+        $username = (string)$connection->getUsername();
         if (strpos($username, '/') === false) {
             return $punchoutCatalogRequestTransfer;
         }
