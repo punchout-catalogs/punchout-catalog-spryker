@@ -85,8 +85,36 @@ Supplier_Department,user_2,user_2_pass,,1,setup_request,oci,Client 2 - Oci - Use
     }
   }
 }"
-business-unit-regular-1,NetworkId/user_10,user_10_pass,,1,setup_request,cxml,Client 2 - cXml - User 10,{}
-business-unit-regular-1,NetworkId/user_20,user_20_pass,,0,setup_request,cxml,Client 2 - cXml - User 20,{}
+business-unit-regular-1,NetworkId/user_10,user_10_pass,,1,setup_request,cxml,Client 2 - cXml - User 10,"{
+  ""customer"": {
+    ""fields"": {
+      ""first_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='FirstName']""
+      },
+      ""last_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='LastName']""
+      },
+      ""email"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='UserEmail']""
+      }
+    }
+  }
+}"
+business-unit-regular-1,NetworkId/user_20,user_20_pass,,0,setup_request,cxml,Client 2 - cXml - User 20,"{
+  ""customer"": {
+    ""fields"": {
+      ""first_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='FirstName']""
+      },
+      ""last_name"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='LastName']""
+      },
+      ""email"": {
+        ""path"": ""/cXML/Request[1]/PunchOutSetupRequest[1]/Extrinsic[@name='UserEmail']""
+      }
+    }
+  }
+}"
 business-unit-mitte-1,NetworkId/user_30,user_30_pass,,1,setup_request,cxml,Client 3 - cXml - User 30,"{
   ""customer"": {
     ""fields"": {
