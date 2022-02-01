@@ -54,11 +54,16 @@
     </transfer>
 
     <transfer name="PunchoutCatalogProtocolData">
+        <property name="cart" type="PunchoutCatalogProtocolDataCart" />
         <property name="ociCredentials" type="PunchoutCatalogProtocolDataOciCredentials" />
+        <!-- cXML Request Protocol -->
         <property name="cxmlFromCredentials" type="PunchoutCatalogProtocolDataCxmlCredentials[]" />
         <property name="cxmlToCredentials" type="PunchoutCatalogProtocolDataCxmlCredentials" />
         <property name="cxmlSenderCredentials" type="PunchoutCatalogProtocolDataCxmlCredentials" />
-        <property name="cart" type="PunchoutCatalogProtocolDataCart" />
+        <!--/cXML Request Protocol -->
+        <!-- Pass Sender ID/Domain from connection -->
+        <property name="cxmlBuyerCredentials" type="PunchoutCatalogProtocolDataCxmlCredentials" />
+        <!--/Pass Sender ID/Domain from connection -->
     </transfer>
 
     <transfer name="PunchoutCatalogProtocolDataCart">

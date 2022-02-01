@@ -6,7 +6,9 @@ Punchout Catalog Module for Spryker eCommerce Platform
 
 Since the `2.4.0` version it has been changed the way of punchout connection load.
 
-Is required to enter Sender ID for cXML Setup Request in the following format:
+#1. Business Unit become optional in Gateway URL (Entry Point)
+
+#2. It is required to enter Sender ID for cXML Setup Request in the following format:
 `Credential_Domain_Value/Credential_Identity_Value`.
 
 Example #1:

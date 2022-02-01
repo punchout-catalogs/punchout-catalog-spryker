@@ -10,6 +10,7 @@ namespace PunchoutCatalog\Zed\PunchoutCatalog\Communication\Plugin\PunchoutCatal
 use Generated\Shared\Transfer\PunchoutCatalogConnectionCredentialSearchTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogProtocolDataTransfer;
 use Generated\Shared\Transfer\PunchoutCatalogSetupRequestTransfer;
+use Generated\Shared\Transfer\PunchoutCatalogProtocolDataCxmlCredentialsTransfer;
 use PunchoutCatalog\Shared\PunchoutCatalog\PunchoutCatalogConstsInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Dependency\Plugin\PunchoutCatalogProtocolStrategyPluginInterface;
 use PunchoutCatalog\Zed\PunchoutCatalog\Exception\AuthenticateException;
@@ -126,7 +127,7 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
             $punchoutCatalogConnectionTransfer
         );
 
-        return $punchoutCatalogRequestTransfer;
+        return $this->prepareBuyerCredentials($punchoutCatalogRequestTransfer);
     }
 
     /**
@@ -139,6 +140,11 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         return $protocolOperation == self::PROTOCOL_OPERATION_SETUP_REQUEST ? self::CONNECTION_TYPE_SETUP_REQUEST : null;
     }
 
+    /**
+     * @param PunchoutCatalogProtocolDataTransfer $protocolData
+     *
+     * @return array
+     */
     protected function convertProtocolToUsername(PunchoutCatalogProtocolDataTransfer $protocolData): array
     {
         $usernames = array();
@@ -150,5 +156,29 @@ class CxmlRequestProtocolStrategyPlugin extends AbstractPlugin implements Puncho
         }
 
         return $usernames;
+    }
+
+    protected function prepareBuyerCredentials(
+        PunchoutCatalogSetupRequestTransfer $punchoutCatalogRequestTransfer
+    ): PunchoutCatalogSetupRequestTransfer
+    {
+        $username = $punchoutCatalogRequestTransfer->getContext()
+            ->getPunchoutCatalogConnection()
+            ->getUsername();
+
+        if (strpos($username, '/') === false) {
+            return $punchoutCatalogRequestTransfer;
+        }
+
+        list($domain, $identity, ) = explode('/', $username);
+
+        $cxmlBuyerCredentials = new PunchoutCatalogProtocolDataCxmlCredentialsTransfer();
+        $cxmlBuyerCredentials->setDomain($domain);
+        $cxmlBuyerCredentials->setIdentity($identity);
+
+        $punchoutCatalogRequestTransfer->getProtocolData()
+            ->setCxmlBuyerCredentials($cxmlBuyerCredentials);
+
+        return $punchoutCatalogRequestTransfer;
     }
 }
