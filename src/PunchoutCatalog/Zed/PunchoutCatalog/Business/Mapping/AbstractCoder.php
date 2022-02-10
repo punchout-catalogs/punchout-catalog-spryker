@@ -27,6 +27,7 @@ use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\RoundCo
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\SplitCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\StripCommand;
 use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\UppercaseCommand;
+use PunchoutCatalog\Zed\PunchoutCatalog\Business\Mapping\Coder\Transform\AbsCommand;
 use Spryker\Shared\Kernel\Transfer\TransferInterface;
 use \InvalidArgumentException;
 
@@ -353,6 +354,7 @@ abstract class AbstractCoder
             'round' => new RoundCommand(),
             'strip' => new StripCommand(),
             'htmlspecial' => new HtmlspecialCommand(),
+            'abs' => new AbsCommand(),
         ];
     }
 

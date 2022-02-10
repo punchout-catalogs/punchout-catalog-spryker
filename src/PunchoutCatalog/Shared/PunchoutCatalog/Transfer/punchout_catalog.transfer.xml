@@ -260,6 +260,7 @@
         <property name="customFields" type="array" />
 
         <!-- SUPPORT PRICEUNIT FIELD AND RELATED -->
+        <property name="saleQuantity" type="float"/>
         <property name="saleBunchQuantity" type="float"/>
         <property name="saleBunchQuantityFactor" type="float"/>
 
