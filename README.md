@@ -434,6 +434,51 @@ And run the `application:build-navigation-cache` command if navigation menu is c
 }
 ```
 
+### Example of OCI Cart mapping with integrated sale_bunch_quantity (and with NEW_ITEM-PRICEUNIT):
+
+```json
+{
+    "cart_item": {
+        "fields": {
+            ...
+            "quantity": {
+                "path": "NEW_ITEM-QUANTITY[%line_number%]"
+            },
+            "sale_bunch_quantity": {
+                "path": "NEW_ITEM-PRICEUNIT[%line_number%]",
+                "transform": [
+                    "round"
+                ]
+            },
+            "unit_total": {
+                "path": "NEW_ITEM-PRICE[%line_number%]"
+            }
+        }
+    }
+}
+```
+
+### Example of OCI Cart mapping with sale_quantity (without NEW_ITEM-PRICEUNIT and divided prices):
+
+```json
+{
+    "cart_item": {
+        "fields": {
+            ...
+            "sale_quantity": {
+                "path": "NEW_ITEM-QUANTITY[%line_number%]"
+            },
+            "sale_bunch_quantity_unit_total": {
+                "path": "NEW_ITEM-PRICE[%line_number%]",
+                "transform": [
+                    {"round":  {"precision":  "3"}}
+                ]
+            }
+        }
+    }
+}
+```
+
 ### Example of cXML Cart mapping:
 ```json
 {

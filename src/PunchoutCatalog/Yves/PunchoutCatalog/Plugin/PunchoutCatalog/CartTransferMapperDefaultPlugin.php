@@ -797,6 +797,13 @@ class CartTransferMapperDefaultPlugin extends AbstractPlugin implements CartTran
         }
         $factor = $documentCartItemTransfer->getSaleBunchQuantityFactor();
 
+        //handle default sale quantity
+        if (!$this->hasValue($documentCartItemTransfer->getSaleQuantity())) {
+            $documentCartItemTransfer->setSaleQuantity(
+                $documentCartItemTransfer->getQuantity() * $factor
+            );
+        }
+
         //BUNCH PRICES
         if (!$this->hasValue($documentCartItemTransfer->getSaleBunchQuantityUnitPrice())) {
             $documentCartItemTransfer->setSaleBunchQuantityUnitPrice(
